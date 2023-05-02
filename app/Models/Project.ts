@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, HasMany, hasMany, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm'
 import Skills from 'App/Models/Skills'
+import Portfolio from './Portfolio'
 
 export default class Project extends BaseModel {
   @hasMany(() => Skills)
@@ -31,6 +32,9 @@ export default class Project extends BaseModel {
   @column()
   public project_description: string
 
+  @column()
+  public size: string
+
   @column.dateTime({ autoCreate: true })
   public start_date: DateTime
 
@@ -39,9 +43,6 @@ export default class Project extends BaseModel {
 
   @column()
   public cloud: string
-
-  @column()
-  public size: string
 
   @column()
   public actions: string

@@ -3,7 +3,9 @@ import { BaseModel, column, hasMany, HasMany, afterCreate } from '@ioc:Adonis/Lu
 import Project from 'App/Models/Project'
 
 export default class Portfolio extends BaseModel {
-  @hasMany(() => Project)
+  @hasMany(() => Project, {
+    foreignKey: 'portfolio_id',
+  })
   public projects: HasMany<typeof Project>
 
   @column({ isPrimary: true })
