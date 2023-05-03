@@ -1,23 +1,43 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Project from 'App/Models/Project'
+import Portfolio from 'App/Models/Portfolio'
 
 export default class ProjectsController {
-  public async view({ params }: HttpContextContract) {
-    return await Project.findOrFail(params.id)
+  public async view({ params, response }: HttpContextContract) {
+    const project = await Project.find(params.id)
+    if (!project)
+      return response.status(422).send({
+        status: 'Not Found',
+        error: 'Project not found',
+      })
+    return project
   }
 
   public async store({ response, request, params }: HttpContextContract) {
     response.status(201)
     const data = request.body()
+    //check the project exists
+    const portfolio = await Portfolio.find(params.id)
+    if (!portfolio)
+      return response.status(422).send({
+        status: 'Not Found',
+        error: 'Portfolio not found',
+      })
+
     return await Project.create({
       ...data,
       portfolio_id: params.id,
     })
   }
 
-  public async update({ request, params }: HttpContextContract) {
+  public async update({ request, params, response }: HttpContextContract) {
     const data = request.body()
-    const project = await Project.findOrFail(params.id)
+    const project = await Project.find(params.id)
+    if (!project)
+      return response.status(422).send({
+        status: 'Not Found',
+        error: 'Project not found',
+      })
     return await project.merge(data).save()
   }
 

@@ -29,11 +29,16 @@ export default class PortfoliosController {
     return portfolio
   }
 
-  public async update({ request, params }: HttpContextContract) {
+  public async update({ request, params, response }: HttpContextContract) {
     const { id } = params
     const data = request.body()
-    const project = await Portfolio.findByOrFail('id', id)
-    return await project.merge(data).save()
+    const portfolio = await Portfolio.findBy('id', id)
+    if (!portfolio)
+      return response.status(422).send({
+        status: 'Not Found',
+        error: 'Portfolio to update not found',
+      })
+    return await portfolio.merge(data).save()
   }
 
   public async delete({ response, params }: HttpContextContract) {

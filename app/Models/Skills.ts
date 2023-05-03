@@ -15,16 +15,4 @@ export default class Portfolio extends BaseModel {
 
   @column()
   public Value: string
-
-  // @column()
-  // public Framework
-
-  // @column()
-  // public Method
-
-  // @column()
-  // public Language
-
-  // @column()
-  // public Tool: string
 }
