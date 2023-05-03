@@ -1,18 +1,17 @@
 import { BaseModel, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
-import Project from 'App/Models/Project'
 
 const type = ['Framework', 'Method', 'Language', 'Tool']
 
-export default class Portfolio extends BaseModel {
-  @hasMany(() => Project)
-  public projects: HasMany<typeof Project>
-
+export default class Skill extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public Type: string
+  public project_id: number
 
   @column()
-  public Value: string
+  public type: string
+
+  @column()
+  public value: string
 }

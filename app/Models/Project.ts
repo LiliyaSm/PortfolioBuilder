@@ -1,11 +1,12 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, HasMany, hasMany, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm'
-import Skills from 'App/Models/Skills'
-import Portfolio from './Portfolio'
+import Skill from 'App/Models/Skill'
 
 export default class Project extends BaseModel {
-  @hasMany(() => Skills)
-  public projects: HasMany<typeof Skills>
+  @hasMany(() => Skill, {
+    foreignKey: 'project_id',
+  })
+  public skills: HasMany<typeof Skill>
 
   @column({ isPrimary: true })
   public id: number

@@ -29,7 +29,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     }
 
     if (error.code === 'E_ROW_NOT_FOUND') {
-      return ctx.response.status(422).send(error.messages)
+      return ctx.response.status(422).send({ message: 'Not found' })
     }
 
     /**

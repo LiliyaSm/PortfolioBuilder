@@ -8,7 +8,7 @@ export default class UsersController {
   //   const users = await User.all()
   //   return view.render('portfolios', { users })
   // }
-  public async register({ request, response }: HttpContextContract) {
+  public async register({ request }: HttpContextContract) {
     const payload = await request.validate(RegisterValidator)
     return await User.create(payload)
   }

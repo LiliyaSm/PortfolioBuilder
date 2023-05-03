@@ -9,7 +9,7 @@ export default class PortfoliosController {
 
   public async viewOne({ params, response }: HttpContextContract) {
     const portfolio = await Portfolio.query()
-      .preload('projects')
+      .preload('projects', (p) => p.preload('skills'))
       .where({ id: params.id })
       .firstOrFail()
 
@@ -23,9 +23,7 @@ export default class PortfoliosController {
 
   public async store({ response }: HttpContextContract) {
     response.status(201)
-    const portfolio = await Portfolio.create({})
-    portfolio.user_id = 1
-    await portfolio.save()
+    const portfolio = await Portfolio.create({ user_id: 1 })
     return portfolio
   }
 

@@ -16,6 +16,8 @@ export default class ProjectsController {
   public async store({ response, request, params }: HttpContextContract) {
     response.status(201)
     const data = request.body()
+
+    const { project, skills } = data
     //check the project exists
     const portfolio = await Portfolio.find(params.id)
     if (!portfolio)
@@ -23,11 +25,14 @@ export default class ProjectsController {
         status: 'Not Found',
         error: 'Portfolio not found',
       })
-
-    return await Project.create({
-      ...data,
+    const newProject = await Project.create({
+      ...project,
       portfolio_id: params.id,
     })
+
+    await newProject.related('skills').createMany(skills)
+
+    return newProject
   }
 
   public async update({ request, params, response }: HttpContextContract) {
