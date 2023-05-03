@@ -3,8 +3,6 @@
   "include": ["**/*"],
   "exclude": ["node_modules", "build"],
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "Node",
     "outDir": "build",
     "rootDir": "./",
     "sourceMap": true,
@@ -21,7 +19,4 @@
       "@adonisjs/lucid"
     ]
   },
-  "ts-node": {
-    "esm": true
-  }
 }
