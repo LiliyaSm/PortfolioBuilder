@@ -12,7 +12,7 @@ export default class Portfolio extends BaseModel {
   public id: number
 
   @column({ columnName: 'user_id', serializeAs: 'user_id' })
-  public user_id: number
+  public userId: number
 
   @column()
   public name?: string

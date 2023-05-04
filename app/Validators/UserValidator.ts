@@ -8,13 +8,13 @@ export default class RegisterValidator extends BaseValidator {
   }
 
   public schema = schema.create({
-    first_name: schema.string({ trim: true }, [
+    firstName: schema.string({ trim: true }, [
       rules.maxLength(50),
       rules.minLength(3),
       rules.regex(/^[a-zA-Z0-9-_]+$/),
       rules.notIn(['admin', 'super', 'moderator', 'public', 'dev', 'alpha', 'mail']),
     ]),
-    second_name: schema.string({ trim: true }, [
+    lastName: schema.string({ trim: true }, [
       rules.maxLength(50),
       rules.minLength(3),
       rules.regex(/^[a-zA-Z0-9-_]+$/),

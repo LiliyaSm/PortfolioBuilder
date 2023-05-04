@@ -23,7 +23,7 @@ export default class PortfoliosController {
 
   public async store({ response }: HttpContextContract) {
     response.status(201)
-    const portfolio = await Portfolio.create({ user_id: 1 })
+    const portfolio = await Portfolio.create({ userId: 1 })
     return portfolio
   }
 
