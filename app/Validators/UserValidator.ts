@@ -20,8 +20,10 @@ export default class RegisterValidator extends BaseValidator {
       rules.regex(/^[a-zA-Z0-9-_]+$/),
       rules.notIn(['admin', 'super', 'moderator', 'public', 'dev', 'alpha', 'mail']),
     ]),
-    // email: schema.string({ trim: true }, [rules.unique({ table: 'users', column: 'email' })]),
-    // password: schema.string({}, [rules.minLength(8)]),
-    email: schema.string({}, [rules.minLength(8)]),
+    password: schema.string({}, [rules.minLength(6)]),
+    email: schema.string({}, [
+      rules.minLength(8),
+      rules.unique({ table: 'users', column: 'email' }),
+    ]),
   })
 }

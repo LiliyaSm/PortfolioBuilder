@@ -7,23 +7,23 @@ export default class extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary
-      table.integer('portfolio_id').unsigned().references('portfolios.id').onDelete('CASCADE') // delete post when portfolio is deleted
-      table.boolean('is_draft').defaultTo(true)
+      table.integer('portfolioId').unsigned().references('portfolios.id').onDelete('CASCADE') // delete post when portfolio is deleted
+      table.boolean('isDraft').defaultTo(true)
       //
-      table.string('client_name').notNullable()
-      table.string('client_description')
-      table.string('client_industry')
-      table.string('project_name')
-      table.string('project_description')
+      table.string('clientName').notNullable()
+      table.string('clientDescription')
+      table.string('clientIndustry')
+      table.string('projectName')
+      table.string('projectDescription')
       table.string('size').notNullable()
-      table.timestamp('start_date', { useTz: true })
-      table.timestamp('end_date', { useTz: true })
+      table.timestamp('startDate', { useTz: true })
+      table.timestamp('endDate', { useTz: true })
       table.string('cloud') //optional
       table.string('actions').notNullable() //optional
       table.string('outcome').notNullable() //optional
       //
-      table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
+      table.timestamp('createdAt', { useTz: true })
+      table.timestamp('updatedAt', { useTz: true })
     })
   }
 

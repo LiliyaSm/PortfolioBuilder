@@ -4,23 +4,23 @@ import Project from 'App/Models/Project'
 
 export default class Portfolio extends BaseModel {
   @hasMany(() => Project, {
-    foreignKey: 'portfolio_id',
+    foreignKey: 'portfolioId',
   })
   public projects: HasMany<typeof Project>
 
   @column({ isPrimary: true })
   public id: number
 
-  @column({ columnName: 'user_id', serializeAs: 'user_id' })
+  @column({ columnName: 'userId' })
   public userId: number
 
   @column()
   public name?: string
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({ columnName: 'createdAt', autoCreate: true })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ columnName: 'updatedAt', autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
   @afterCreate()

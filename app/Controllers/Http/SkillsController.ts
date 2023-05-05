@@ -6,7 +6,7 @@ export default class SkillsController {
     const data = request.body()
     return await Skill.create({
       ...data,
-      project_id: params.id,
+      projectId: params.id,
     })
   }
 

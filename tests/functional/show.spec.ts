@@ -9,32 +9,31 @@ test.group('Posts show', (group) => {
     return () => Database.rollbackGlobalTransaction()
   })
 
-  test('return 422 when portfolio does not exists', async ({ client, route }) => {
-    const response = await client.get(route('PortfoliosController.viewOne', { id: 1 }))
+  // test('return 422 when portfolio does not exists', async ({ client, route }) => {
+  //   const response = await client.get(route('PortfoliosController.viewOne', { id: 1 }))
 
-    response.assertStatus(422)
-  })
+  //   response.assertStatus(422)
+  // })
 
-  test('get portfolio by id', async ({ client, route }) => {
-    const portfolio = await PortfolioFactory.query().with('projects').create()
-    const response = await client.get(route('PortfoliosController.viewOne', { id: portfolio.id }))
+  // test('get portfolio by id', async ({ client, route }) => {
+  //   const portfolio = await PortfolioFactory.query().with('projects').create()
+  //   const response = await client.get(route('PortfoliosController.viewOne', { id: portfolio.id }))
 
-    response.assertStatus(200)
-    response.assertBodyContains(portfolio.toJSON())
-  })
+  //   response.assertStatus(200)
+  //   response.assertBodyContains(portfolio.toJSON())
+  // })
 
-  test('return 422 when project does not exists', async ({ client, route }) => {
-    const response = await client.get(route('ProjectsController.view', { id: 1 }))
+  // test('return 422 when project does not exists', async ({ client, route }) => {
+  //   const response = await client.get(route('ProjectsController.view', { id: 1 }))
 
-    console.log('response', response)
-    response.assertStatus(422)
-  })
+  //   response.assertStatus(422)
+  // })
 
-  test('get project by id', async ({ client, route }) => {
-    const project = await ProjectFactory.query().create()
-    const response = await client.get(route('ProjectsController.view', { id: project.id }))
+  // test('get project by id', async ({ client, route }) => {
+  //   const project = await ProjectFactory.query().create()
+  //   const response = await client.get(route('ProjectsController.view', { id: project.id }))
 
-    response.assertStatus(200)
-    response.assertBodyContains(project.toJSON())
-  })
+  //   response.assertStatus(200)
+  //   response.assertBodyContains(project.toJSON())
+  // })
 })

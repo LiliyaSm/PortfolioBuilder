@@ -6,8 +6,8 @@ export default class Skill extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column()
-  public project_id: number
+  @column({ columnName: 'projectId' })
+  public projectId: number
 
   @column()
   public type: string

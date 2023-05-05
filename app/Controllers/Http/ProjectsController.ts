@@ -27,7 +27,7 @@ export default class ProjectsController {
       })
     const newProject = await Project.create({
       ...project,
-      portfolio_id: params.id,
+      portfolioId: params.id,
     })
 
     await newProject.related('skills').createMany(skills)

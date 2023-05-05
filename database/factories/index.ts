@@ -6,7 +6,7 @@ import User from 'App/Models/User'
 export const UserFactory = Factory.define(User, ({ faker }) => {
   return {
     email: faker.internet.email(),
-    // password: faker.internet.password(),
+    password: faker.internet.password(),
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
   }

@@ -20,6 +20,5 @@ Route.group(() => {
     Route.get('projects/:id', 'ProjectsController.view')
     Route.put('projects/:id', 'ProjectsController.update')
     Route.delete('projects/:id', 'ProjectsController.delete')
-  })
-  // }).middleware('auth:api')
+  }).middleware('auth:api')
 }).prefix('api')

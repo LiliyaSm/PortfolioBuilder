@@ -1,26 +1,36 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import Portfolio from 'App/Models/Portfolio'
+import Hash from '@ioc:Adonis/Core/Hash'
+import { column, beforeSave, BaseModel, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 
 export default class User extends BaseModel {
-  @hasMany(() => Portfolio)
-  public portfolios: HasMany<typeof Portfolio>
-
   @column({ isPrimary: true })
   public id: number
 
   @column()
   public email: string
 
-  @column()
-  public firstName: string
-
-  @column()
+  @column({ columnName: 'lastName' })
   public lastName: string
 
-  @column.dateTime({ autoCreate: true })
+  @column({ columnName: 'firstName' })
+  public firstName: string
+
+  @column({ columnName: 'password' })
+  public password: string
+
+  @column.dateTime({ columnName: 'createdAt', autoCreate: true })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ columnName: 'updatedAt', autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @beforeSave()
+  public static async hashPassword(user: User) {
+    if (user.$dirty.password) {
+      user.password = await Hash.make(user.password)
+    }
+  }
+  @hasMany(() => Portfolio)
+  public portfolios: HasMany<typeof Portfolio>
 }

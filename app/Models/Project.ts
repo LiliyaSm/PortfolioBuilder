@@ -4,43 +4,43 @@ import Skill from 'App/Models/Skill'
 
 export default class Project extends BaseModel {
   @hasMany(() => Skill, {
-    foreignKey: 'project_id',
+    foreignKey: 'projectId',
   })
   public skills: HasMany<typeof Skill>
 
   @column({ isPrimary: true })
   public id: number
 
-  @column()
-  public portfolio_id: number
+  @column({ columnName: 'portfolioId' })
+  public portfolioId: number
 
   @column()
-  public is_draft: boolean
+  public isDraft: boolean
 
   //
-  @column()
-  public client_name: string
+  @column({ columnName: 'clientName' })
+  public clientName: string
 
   @column()
-  public client_description: string
+  public clientDescription: string
 
   @column()
-  public client_industry: string
+  public clientIndustry: string
 
   @column()
-  public project_name: string
+  public projectName: string
 
   @column()
-  public project_description: string
+  public projectDescription: string
 
   @column()
   public size: string
 
-  @column.dateTime({ autoCreate: true })
-  public start_date: DateTime
+  @column.dateTime({ columnName: 'startDate', autoCreate: true })
+  public startDate: DateTime
 
-  @column.dateTime({ autoCreate: true })
-  public end_date: DateTime
+  @column.dateTime({ columnName: 'endDate', autoCreate: true })
+  public endDate: DateTime
 
   @column()
   public cloud: string
@@ -52,9 +52,9 @@ export default class Project extends BaseModel {
   public outcome: string
   //
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime({ columnName: 'createdAt', autoCreate: true })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ columnName: 'updatedAt', autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 }
