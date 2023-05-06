@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, belongsTo, BelongsTo, column, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Skill from 'App/Models/Skill'
+import Portfolio from './Portfolio'
 
 export default class Project extends BaseModel {
   @hasMany(() => Skill, {
@@ -11,23 +12,26 @@ export default class Project extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column({ columnName: 'portfolioId' })
+  @column({ columnName: 'portfolioId', serializeAs: 'portfolioId' })
   public portfolioId: number
+
+  @belongsTo(() => Portfolio)
+  public portfolio: BelongsTo<typeof Portfolio>
 
   @column()
   public isDraft: boolean
 
   //
-  @column({ columnName: 'clientName' })
+  @column({ columnName: 'clientName', serializeAs: 'clientName' })
   public clientName: string
 
-  @column()
+  @column({ columnName: 'clientDescription', serializeAs: 'clientDescription' })
   public clientDescription: string
 
-  @column()
+  @column({ columnName: 'clientIndustry', serializeAs: 'clientIndustry' })
   public clientIndustry: string
 
-  @column()
+  @column({ columnName: 'projectName', serializeAs: 'projectName' })
   public projectName: string
 
   @column()
@@ -36,10 +40,10 @@ export default class Project extends BaseModel {
   @column()
   public size: string
 
-  @column.dateTime({ columnName: 'startDate', autoCreate: true })
+  @column.dateTime({ columnName: 'startDate', serializeAs: 'startDate' })
   public startDate: DateTime
 
-  @column.dateTime({ columnName: 'endDate', autoCreate: true })
+  @column.dateTime({ columnName: 'endDate', serializeAs: 'endDate' })
   public endDate: DateTime
 
   @column()
@@ -52,9 +56,14 @@ export default class Project extends BaseModel {
   public outcome: string
   //
 
-  @column.dateTime({ columnName: 'createdAt', autoCreate: true })
+  @column.dateTime({ columnName: 'createdAt', autoCreate: true, serializeAs: 'createdAt' })
   public createdAt: DateTime
 
-  @column.dateTime({ columnName: 'updatedAt', autoCreate: true, autoUpdate: true })
+  @column.dateTime({
+    columnName: 'updatedAt',
+    autoCreate: true,
+    autoUpdate: true,
+    serializeAs: 'updatedAt',
+  })
   public updatedAt: DateTime
 }

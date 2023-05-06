@@ -1,47 +1,46 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Portfolio from 'App/Models/Portfolio'
+import { PORTFOLIO_NOT_FOUND } from 'App/constants'
 
 export default class PortfoliosController {
-  public async index() {
-    const portfolios = await Portfolio.all()
+  public async index({ auth }: HttpContextContract) {
+    const portfolios = await auth.user!.related('portfolios').query()
     return portfolios
   }
 
-  public async viewOne({ params, response }: HttpContextContract) {
-    const portfolio = await Portfolio.query()
+  public async viewOne({ params, response, auth }: HttpContextContract) {
+    const portfolio = await auth
+      .user!.related('portfolios')
+      .query()
       .preload('projects', (p) => p.preload('skills'))
       .where({ id: params.id })
-      .firstOrFail()
+      .first()
 
-    if (!portfolio)
-      return response.status(422).send({
-        status: 'Not Found',
-        error: 'Portfolio not found',
-      })
+    if (!portfolio) return response.status(422).send(PORTFOLIO_NOT_FOUND)
     return portfolio
   }
 
-  public async store({ response }: HttpContextContract) {
-    response.status(201)
-    const portfolio = await Portfolio.create({ userId: 1 })
-    return portfolio
+  public async store({ response, auth }: HttpContextContract) {
+    const portfolio = await auth.user!.related('portfolios').create({})
+    return response.created(portfolio)
   }
 
-  public async update({ request, params, response }: HttpContextContract) {
+  public async update({ request, params, response, auth }: HttpContextContract) {
     const { id } = params
     const data = request.body()
-    const portfolio = await Portfolio.findBy('id', id)
-    if (!portfolio)
-      return response.status(422).send({
-        status: 'Not Found',
-        error: 'Portfolio to update not found',
-      })
+    const portfolio = await auth.user!.related('portfolios').query().where('id', id).firstOrFail()
+    if (!portfolio) return response.status(422).send(PORTFOLIO_NOT_FOUND)
+
     return await portfolio.merge(data).save()
   }
 
-  public async delete({ response, params }: HttpContextContract) {
-    const portfolio = await Portfolio.findOrFail(params.id)
-    response.status(204)
-    return await portfolio?.delete()
+  public async delete({ response, params, auth }: HttpContextContract) {
+    const portfolio = await auth
+      .user!.related('portfolios')
+      .query()
+      .where('id', params.id)
+      .firstOrFail()
+    await portfolio?.delete()
+
+    return response.noContent()
   }
 }

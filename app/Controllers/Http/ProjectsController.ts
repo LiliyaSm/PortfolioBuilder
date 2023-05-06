@@ -1,54 +1,89 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Project from 'App/Models/Project'
-import Portfolio from 'App/Models/Portfolio'
+import { PORTFOLIO_NOT_FOUND, PROJECT_NOT_FOUND, UNAUTHORIZED_ACCESS } from 'App/constants'
 
 export default class ProjectsController {
-  public async view({ params, response }: HttpContextContract) {
+  public async view({ params, response, auth }: HttpContextContract) {
     const project = await Project.find(params.id)
-    if (!project)
-      return response.status(422).send({
-        status: 'Not Found',
-        error: 'Project not found',
-      })
+    if (!project) return response.status(422).send(PROJECT_NOT_FOUND)
+
+    await project.load('portfolio')
+    if (project.portfolio.userId !== auth.user!.id) {
+      return response.status(401).send(UNAUTHORIZED_ACCESS)
+    }
+
+    await project.load('skills')
     return project
   }
 
-  public async store({ response, request, params }: HttpContextContract) {
-    response.status(201)
+  public async store({ response, request, params, auth }: HttpContextContract) {
     const data = request.body()
-
     const { project, skills } = data
+
     //check the project exists
-    const portfolio = await Portfolio.find(params.id)
-    if (!portfolio)
-      return response.status(422).send({
-        status: 'Not Found',
-        error: 'Portfolio not found',
-      })
+    const portfolio = await auth
+      .user!.related('portfolios')
+      .query()
+      .where({ id: params.id })
+      .first()
+
+    if (!portfolio) return response.status(422).send(PORTFOLIO_NOT_FOUND)
     const newProject = await Project.create({
       ...project,
       portfolioId: params.id,
     })
 
     await newProject.related('skills').createMany(skills)
-
-    return newProject
+    await newProject.load('skills')
+    return response.created(newProject)
   }
 
-  public async update({ request, params, response }: HttpContextContract) {
-    const data = request.body()
-    const project = await Project.find(params.id)
-    if (!project)
-      return response.status(422).send({
-        status: 'Not Found',
-        error: 'Project not found',
-      })
-    return await project.merge(data).save()
+  public async update({ request, params, response, auth }: HttpContextContract) {
+    const updatedProject = request.body()
+    const project = await Project.query()
+      .preload('portfolio')
+      .preload('skills')
+      .where({ id: params.id })
+      .first()
+
+    if (!project) return response.status(422).send(PROJECT_NOT_FOUND)
+
+    if (project.portfolio.userId !== auth.user!.id) {
+      return response.status(401).send(UNAUTHORIZED_ACCESS)
+    }
+
+    // update project entity fields
+    await project.merge(updatedProject).save()
+
+    // find skills removed and delete them from database
+    const toDelete = project.skills.filter((s) => !updatedProject.skills.find((x) => x.id === s.id))
+    for (let skill of toDelete) {
+      await skill.delete()
+    }
+
+    // find skills created and create them in database
+    const toCreate = updatedProject.skills.filter((s) => !project.skills.find((x) => x.id === s.id))
+    console.log(toCreate)
+    await project.related('skills').createMany(toCreate)
+
+    // refresh skills to return updated list in response
+    await project.load('skills')
+
+    return project
   }
 
-  public async delete({ response, params }: HttpContextContract) {
-    const portfolio = await Project.findOrFail(params.id)
-    response.status(204)
-    return await portfolio?.delete()
+  public async delete({ response, params, auth }: HttpContextContract) {
+    const project = await Project.findOrFail(params.id)
+
+    if (!project) return response.status(422).send(PROJECT_NOT_FOUND)
+    await project.load('portfolio')
+
+    if (project.portfolio.userId !== auth.user!.id) {
+      return response.status(401).send(UNAUTHORIZED_ACCESS)
+    }
+
+    await project?.delete()
+
+    return response.noContent()
   }
 }

@@ -11,16 +11,21 @@ export default class Portfolio extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column({ columnName: 'userId' })
+  @column({ columnName: 'userId', serializeAs: 'userId' })
   public userId: number
 
   @column()
   public name?: string
 
-  @column.dateTime({ columnName: 'createdAt', autoCreate: true })
+  @column.dateTime({ columnName: 'createdAt', autoCreate: true, serializeAs: 'createdAt' })
   public createdAt: DateTime
 
-  @column.dateTime({ columnName: 'updatedAt', autoCreate: true, autoUpdate: true })
+  @column.dateTime({
+    columnName: 'updatedAt',
+    autoUpdate: true,
+    autoCreate: true,
+    serializeAs: 'updatedAt',
+  })
   public updatedAt: DateTime
 
   @afterCreate()

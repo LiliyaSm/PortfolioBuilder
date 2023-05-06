@@ -16,7 +16,7 @@ export const UserFactory = Factory.define(User, ({ faker }) => {
 
 export const ProjectFactory = Factory.define(Project, ({ faker }) => {
   return {
-    client_name: faker.lorem.words(5),
+    clientName: faker.lorem.words(5),
     size: 'small',
     actions: 'actions',
     outcome: 'outcome',

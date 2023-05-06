@@ -8,6 +8,6 @@ export default class RegisterValidator extends BaseValidator {
   }
 
   public schema = schema.create({
-    client_name: schema.string.optional({ trim: true }, [rules.maxLength(150)]),
+    clientName: schema.string.optional({ trim: true }, [rules.maxLength(150)]),
   })
 }
