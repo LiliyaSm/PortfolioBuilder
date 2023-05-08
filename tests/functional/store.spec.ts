@@ -1,109 +1,93 @@
 import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
-import Drive from '@ioc:Adonis/Core/Drive'
-import { file } from '@ioc:Adonis/Core/Helpers'
 import { UserFactory } from 'Database/factories'
-import Portfolio from 'App/Models/Portfolio'
 
-test.group('Posts store', (group) => {
+const projectMock = {
+  size: 'small',
+  actions: 'actions',
+  outcome: 'outcome',
+  clientDescription: 'clientDescription',
+  clientIndustry: 'clientIndustry',
+  projectDescription: 'projectDescription',
+  startDate: '2020-01-01',
+  endDate: '2020-01-05',
+  cloud: 'none',
+  projectName: 'projectName',
+
+  skills: [
+    {
+      value: 'js',
+      type: 'language',
+    },
+  ],
+}
+
+const projectMockAllFields = {
+  ...projectMock,
+  clientName: 'clientName',
+}
+
+test.group('store', (group) => {
   group.each.setup(async () => {
     await Database.beginGlobalTransaction()
     return () => Database.rollbackGlobalTransaction()
   })
 
-  // test('user must be logged in before creating the post', async ({ client, route }) => {
-  //   const response = await client.post(route('PostsController.store')).form({
-  //     title: 'Hello world',
-  //     content: 'Hello, everyone. This is testing 101',
-  //   })
+  test('user must be logged in before creating the portfolio', async ({ client, route }) => {
+    const response = await client.post(route('PortfoliosController.store')).form({
+      name: 'Portfolio name',
+    })
 
-  //   response.assertStatus(401)
-  //   response.assertAgainstApiSpec()
-  //   response.assertBodyContains({
-  //     errors: [{ message: 'E_UNAUTHORIZED_ACCESS: Unauthorized access' }],
-  //   })
-  // })
+    response.assertStatus(401)
+    response.assertBodyContains({
+      errors: [{ message: 'E_UNAUTHORIZED_ACCESS: Unauthorized access' }],
+    })
+  })
 
-  // test('make sure post title and content is provided', async ({ client, route }) => {
-  //   const user = await UserFactory.query().create()
-  //   const response = await client.post(route('PostsController.store')).loginAs(user)
+  test('user must be logged in before creating the project', async ({ client, route }) => {
+    const response = await client.post(route('ProjectsController.store', { id: 1 })).form({
+      name: 'project name',
+    })
 
-  //   response.assertStatus(422)
-  //   response.assertAgainstApiSpec()
-  //   response.assertBodyContains({
-  //     errors: [{ message: 'required validation failed', field: 'title' }],
-  //   })
-  // })
+    response.assertStatus(401)
+    response.assertBodyContains({
+      errors: [{ message: 'E_UNAUTHORIZED_ACCESS: Unauthorized access' }],
+    })
+  })
 
-  // test('create a post with title and content', async ({ client, route }) => {
-  //   const user = await UserFactory.query().create()
-  //   const response = await client.post(route('PostsController.store')).loginAs(user).form({
-  //     title: 'Hello world',
-  //     content: 'Hello, everyone. This is testing 101',
-  //   })
+  test('make sure project required fields are provided', async ({ client, route }) => {
+    const user = await UserFactory.query().with('portfolios', 2).create()
+    const { id } = user.portfolios[0]
 
-  //   response.assertStatus(201)
-  //   response.assertAgainstApiSpec()
-  //   response.assertBodyContains({
-  //     data: {
-  //       title: 'Hello world',
-  //       content: 'Hello, everyone. This is testing 101',
-  //       author: { id: user.id },
-  //     },
-  //   })
-  // })
+    const response = await client
+      .post(route('ProjectsController.store', { id }))
+      .loginAs(user)
+      .form(projectMock)
 
-  // test('create a post with cover image', async ({ client, route, assert }) => {
-  //   const user = await UserFactory.query().create()
-  //   const { contents, name } = await file.generateJpg('800kb')
-  //   const fakeDrive = Drive.fake()
+    response.assertStatus(422)
+    response.assertBodyContains({
+      errors: [{ message: 'clientName is required', field: 'clientName', rule: 'required' }],
+    })
+  })
 
-  //   const response = await client
-  //     .post(route('PostsController.store'))
-  //     .loginAs(user)
-  //     .fields({
-  //       title: 'Hello world',
-  //       content: 'Hello, everyone. This is testing 101',
-  //     })
-  //     .file('cover_image', contents, { filename: name })
+  test('should create a project', async ({ client, route }) => {
+    const user = await UserFactory.query().with('portfolios', 2).create()
+    const { id } = user.portfolios[0]
 
-  //   response.assertStatus(201)
-  //   response.assertAgainstApiSpec()
-  //   response.assertBodyContains({
-  //     data: {
-  //       title: 'Hello world',
-  //       content: 'Hello, everyone. This is testing 101',
-  //       cover_image: {
-  //         mimeType: 'image/jpeg',
-  //         extname: 'jpg',
-  //       },
-  //       author: { id: user.id },
-  //     },
-  //   })
+    const response = await client
+      .post(route('ProjectsController.store', { id }))
+      .loginAs(user)
+      .form(projectMockAllFields)
 
-  //   assert.isTrue(await fakeDrive.exists(name))
-  // })
+    response.assertStatus(201)
+  })
 
-  // test('do not allow cover image bigger than 1mb', async ({ client, route, assert }) => {
-  //   const user = await UserFactory.query().create()
-  //   const { contents, name } = await file.generateJpg('2mb')
-  //   const fakeDrive = Drive.fake()
+  test('should create a portfolio', async ({ client, route }) => {
+    const user = await UserFactory.query().create()
+    const response = await client.post(route('PortfoliosController.store')).loginAs(user).form({
+      name: 'Portfolio name',
+    })
 
-  //   const response = await client
-  //     .post(route('PostsController.store'))
-  //     .loginAs(user)
-  //     .fields({
-  //       title: 'Hello world',
-  //       content: 'Hello, everyone. This is testing 101',
-  //     })
-  //     .file('cover_image', contents, { filename: name })
-
-  //   response.assertStatus(422)
-  //   response.assertAgainstApiSpec()
-  //   response.assertBodyContains({
-  //     errors: [{ field: 'cover_image', message: 'File size should be less than 1MB' }],
-  //   })
-
-  //   assert.isFalse(await fakeDrive.exists(name))
-  // })
+    response.assertStatus(201)
+  })
 })

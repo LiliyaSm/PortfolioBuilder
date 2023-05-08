@@ -1,39 +1,60 @@
 import { test } from '@japa/runner'
 import Database from '@ioc:Adonis/Lucid/Database'
-import { PortfolioFactory } from 'Database/factories'
-import { ProjectFactory } from 'Database/factories'
+import { UserFactory } from 'Database/factories'
 
-test.group('Posts show', (group) => {
+test.group('show', (group) => {
   group.each.setup(async () => {
     await Database.beginGlobalTransaction()
     return () => Database.rollbackGlobalTransaction()
   })
 
-  // test('return 422 when portfolio does not exists', async ({ client, route }) => {
-  //   const response = await client.get(route('PortfoliosController.viewOne', { id: 1 }))
+  test('return 422 when portfolio does not exists', async ({ client, route }) => {
+    const user = await UserFactory.query().with('portfolios', 2).create()
 
-  //   response.assertStatus(422)
-  // })
+    const response = await client
+      .get(route('PortfoliosController.viewOne', { id: 1 }))
+      .loginAs(user)
 
-  // test('get portfolio by id', async ({ client, route }) => {
-  //   const portfolio = await PortfolioFactory.query().with('projects').create()
-  //   const response = await client.get(route('PortfoliosController.viewOne', { id: portfolio.id }))
+    response.assertStatus(422)
+  })
 
-  //   response.assertStatus(200)
-  //   response.assertBodyContains(portfolio.toJSON())
-  // })
+  test('get portfolio by id', async ({ client, route }) => {
+    const user = await UserFactory.query().with('portfolios', 1).create()
+    const { id } = user.portfolios[0]
 
-  // test('return 422 when project does not exists', async ({ client, route }) => {
-  //   const response = await client.get(route('ProjectsController.view', { id: 1 }))
+    const response = await client.get(route('PortfoliosController.viewOne', { id })).loginAs(user)
+    response.assertStatus(200)
+    response.assertBodyContains(user.portfolios[0].toJSON())
+  })
 
-  //   response.assertStatus(422)
-  // })
+  test('return 422 when project does not exists', async ({ client, route }) => {
+    const user = await UserFactory.query()
+      .with('portfolios', 1, (q) => q.with('projects'))
+      .create()
+    const response = await client.get(route('ProjectsController.view', { id: 1 })).loginAs(user)
 
-  // test('get project by id', async ({ client, route }) => {
-  //   const project = await ProjectFactory.query().create()
-  //   const response = await client.get(route('ProjectsController.view', { id: project.id }))
+    response.assertStatus(422)
+  })
 
-  //   response.assertStatus(200)
-  //   response.assertBodyContains(project.toJSON())
-  // })
+  test('get project by id', async ({ client, route }) => {
+    const user = await UserFactory.query()
+      .with('portfolios', 1, (q) => q.with('projects'))
+      .create()
+    const { id } = user.portfolios[0].$preloaded.projects[0]
+
+    const response = await client.get(route('ProjectsController.view', { id })).loginAs(user)
+
+    response.assertStatus(200)
+    response.assertBodyContains(user.portfolios[0].$preloaded.projects[0].toJSON())
+  })
+  test('user must be logged in before viewing the projects', async ({ client, route }) => {
+    const user = await UserFactory.query()
+      .with('portfolios', 1, (q) => q.with('projects'))
+      .create()
+    const { id } = user.portfolios[0].$preloaded.projects[0]
+
+    const response = await client.get(route('ProjectsController.view', { id }))
+
+    response.assertStatus(401)
+  })
 })

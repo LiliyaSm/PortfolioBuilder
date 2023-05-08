@@ -56,16 +56,22 @@ export default class ProjectsController {
     // update project entity fields
     await project.merge(updatedProject).save()
 
-    // find skills removed and delete them from database
-    const toDelete = project.skills.filter((s) => !updatedProject.skills.find((x) => x.id === s.id))
-    for (let skill of toDelete) {
-      await skill.delete()
-    }
+    if (updatedProject.skills) {
+      // find skills removed and delete them from database
+      const toDelete = project.skills.filter(
+        (s) => !updatedProject.skills.find((x) => x.id === s.id)
+      )
+      for (let skill of toDelete) {
+        await skill.delete()
+      }
 
-    // find skills created and create them in database
-    const toCreate = updatedProject.skills.filter((s) => !project.skills.find((x) => x.id === s.id))
-    console.log(toCreate)
-    await project.related('skills').createMany(toCreate)
+      // find skills created and create them in database
+      const toCreate = updatedProject.skills.filter(
+        (s) => !project.skills.find((x) => x.id === s.id)
+      )
+      console.log(toCreate)
+      await project.related('skills').createMany(toCreate)
+    }
 
     // refresh skills to return updated list in response
     await project.load('skills')

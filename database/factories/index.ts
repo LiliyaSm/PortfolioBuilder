@@ -2,6 +2,7 @@ import Factory from '@ioc:Adonis/Lucid/Factory'
 import Portfolio from 'App/Models/Portfolio'
 import Project from 'App/Models/Project'
 import User from 'App/Models/User'
+import Skill from 'App/Models/Skill'
 
 export const UserFactory = Factory.define(User, ({ faker }) => {
   return {
@@ -14,6 +15,13 @@ export const UserFactory = Factory.define(User, ({ faker }) => {
   .relation('portfolios', () => PortfolioFactory)
   .build()
 
+export const SkillsFactory = Factory.define(Skill, ({ faker }) => {
+  return {
+    type: faker.lorem.words(5),
+    value: faker.lorem.words(5),
+  }
+}).build()
+
 export const ProjectFactory = Factory.define(Project, ({ faker }) => {
   return {
     clientName: faker.lorem.words(5),
@@ -22,13 +30,12 @@ export const ProjectFactory = Factory.define(Project, ({ faker }) => {
     outcome: 'outcome',
   }
 })
-  // .relation('ski', () => ProjectFactory)
+  .relation('skills', () => SkillsFactory)
   .build()
 
 export const PortfolioFactory = Factory.define(Portfolio, ({ faker }) => {
   return {
     name: faker.lorem.words(5),
-    // content: faker.lorem.paragraphs(3),
   }
 })
   .relation('projects', () => ProjectFactory)

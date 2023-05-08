@@ -10,5 +10,5 @@ export const PROJECT_NOT_FOUND = {
 
 export const PORTFOLIO_NOT_FOUND = {
   status: 'Not Found',
-  error: 'Project not found',
+  error: 'Portfolio not found',
 }
