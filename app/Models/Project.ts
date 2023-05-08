@@ -15,9 +15,6 @@ export default class Project extends BaseModel {
   @column({ columnName: 'portfolioId', serializeAs: 'portfolioId' })
   public portfolioId: number
 
-  @belongsTo(() => Portfolio)
-  public portfolio: BelongsTo<typeof Portfolio>
-
   @column()
   public isDraft: boolean
 
@@ -34,7 +31,7 @@ export default class Project extends BaseModel {
   @column({ columnName: 'projectName', serializeAs: 'projectName' })
   public projectName: string
 
-  @column()
+  @column({ columnName: 'projectDescription', serializeAs: 'projectDescription' })
   public projectDescription: string
 
   @column()
@@ -66,4 +63,7 @@ export default class Project extends BaseModel {
     serializeAs: 'updatedAt',
   })
   public updatedAt: DateTime
+
+  @belongsTo(() => Portfolio)
+  public portfolio: BelongsTo<typeof Portfolio>
 }

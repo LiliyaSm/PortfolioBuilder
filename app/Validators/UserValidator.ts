@@ -21,9 +21,6 @@ export default class RegisterValidator extends BaseValidator {
       rules.notIn(['admin', 'super', 'moderator', 'public', 'dev', 'alpha', 'mail']),
     ]),
     password: schema.string({}, [rules.minLength(6)]),
-    email: schema.string({}, [
-      rules.minLength(8),
-      rules.unique({ table: 'users', column: 'email' }),
-    ]),
+    email: schema.string([rules.email(), rules.unique({ table: 'users', column: 'email' })]),
   })
 }

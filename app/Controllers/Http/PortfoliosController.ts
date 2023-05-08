@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { PORTFOLIO_NOT_FOUND } from 'App/constants'
+import PortfolioValidator from 'App/Validators/PortfolioValidator'
 
 export default class PortfoliosController {
   public async index({ auth }: HttpContextContract) {
@@ -26,7 +27,8 @@ export default class PortfoliosController {
 
   public async update({ request, params, response, auth }: HttpContextContract) {
     const { id } = params
-    const data = request.body()
+    const data = await request.validate(PortfolioValidator)
+
     const portfolio = await auth.user!.related('portfolios').query().where('id', id).firstOrFail()
     if (!portfolio) return response.status(422).send(PORTFOLIO_NOT_FOUND)
 

@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Project from 'App/Models/Project'
 import { PORTFOLIO_NOT_FOUND, PROJECT_NOT_FOUND, UNAUTHORIZED_ACCESS } from 'App/constants'
+import ProjectValidator from 'App/Validators/ProjectValidator'
 
 export default class ProjectsController {
   public async view({ params, response, auth }: HttpContextContract) {
@@ -17,10 +18,10 @@ export default class ProjectsController {
   }
 
   public async store({ response, request, params, auth }: HttpContextContract) {
-    const data = request.body()
-    const { project, skills } = data
+    const data = await request.validate(ProjectValidator)
+    const { skills, ...project } = data
 
-    //check the project exists
+    //check the portfolio exists
     const portfolio = await auth
       .user!.related('portfolios')
       .query()

@@ -4,7 +4,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import RegisterValidator from 'App/Validators/UserValidator'
 
 export default class UsersController {
-  public async register({ request, auth, response }: HttpContextContract) {
+  public async register({ request, auth }: HttpContextContract) {
     const payload = await request.validate(RegisterValidator)
     const user = await User.create(payload)
     const { firstName, lastName, id } = user
