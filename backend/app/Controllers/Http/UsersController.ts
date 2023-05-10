@@ -1,4 +1,3 @@
-// import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from '../../Models/User'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import RegisterValidator from 'App/Validators/UserValidator'
@@ -12,6 +11,7 @@ export default class UsersController {
     const newUser = { id, firstName, lastName, token }
     return newUser
   }
+
   public async login({ request, auth, response }: HttpContextContract) {
     const { email, password } = request.body()
     try {
