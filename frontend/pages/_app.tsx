@@ -3,7 +3,6 @@ import Layout from "../components/Layout";
 import type { AppProps } from "next/app";
 
 function MyApp({ Component, pageProps, ...appProps }: AppProps) {
-  console.log(appProps.router.pathname);
   const isLayoutNotNeeded = ["/login", "/register"].includes(
     appProps.router.pathname
   );

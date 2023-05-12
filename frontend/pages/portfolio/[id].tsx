@@ -1,10 +1,12 @@
 import { server } from "../../config";
 import { Portfolio } from "../../types";
+import nextCookie from "next-cookies";
+import { withAuthSync, redirectOnError } from "../../utils/auth";
 
 export default function Portfolios({ portfolio }: { portfolio: Portfolio }) {
   return (
     <>
-      <h2>The Portfolio</h2>
+      <h2>Edit the Portfolio</h2>
       <div>
         <h3>{portfolio.name}</h3>
         {/* <p>{post.content}</p> */}
@@ -14,17 +16,19 @@ export default function Portfolios({ portfolio }: { portfolio: Portfolio }) {
   );
 }
 
-export async function getStaticProps() {
-  //   const token = localStorage.getItem("token");
-  const token =
-    "NA.iQ4uYK2nbE9enpJnvH1kVaSP4oW9Ymv2m4NmHlMLAU3rjM5EDQreJqMEOm7k";
+export async function getServerSideProps(context) {
+  const { id } = context.query;
+  const apiUrl = `${server}/api/portfolios/${id}`;
+
+  const { token } = nextCookie(context);
+
   const headers = { Authorization: `Bearer ${token}` };
-  const response = await fetch(`${server}/api/portfolio/[id]`, {
+  const response = await fetch(apiUrl, {
     headers,
   });
   const portfolio = await response.json();
 
-  console.log(response);
+  console.log(portfolio);
 
   return {
     props: {
@@ -33,22 +37,36 @@ export async function getStaticProps() {
   };
 }
 
-export const getStaticPaths = async () => {
-  //   const token = localStorage.getItem("token");
-  const token =
-    "NA.iQ4uYK2nbE9enpJnvH1kVaSP4oW9Ymv2m4NmHlMLAU3rjM5EDQreJqMEOm7k";
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await fetch(`${server}/api/portfolios`, {
-    headers,
-  });
+// export const getStaticPaths = async (ctx: {
+//   req?: { headers: { cookie?: string | undefined } } | undefined;
+// }) => {
+//   const { token } = nextCookie(ctx);
+//   const apiUrl = `${server}/api/portfolios`;
 
-  const portfolios = await response.json();
+//   return {
+//     paths: [{ params: { id: "14" } }],
+//     fallback: false,
+//   };
 
-  const ids = portfolios.map((portfolio: Portfolio) => portfolio.id);
-  const paths = ids.map((id: number) => ({ params: { id: id.toString() } }));
+//   const response = await fetch(apiUrl, {
+//     credentials: "include",
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   });
 
-  return {
-    paths,
-    fallback: false,
-  };
-};
+//   console.log(ctx);
+
+//   if (response.ok) {
+//     const portfolios = await response.json();
+
+//     const ids = portfolios.map((portfolio: Portfolio) => portfolio.id);
+//     const paths = ids.map((id: number) => ({ params: { id: id.toString() } }));
+//     return {
+//       paths,
+//       fallback: false,
+//     };
+//   } else {
+//     // return await redirectOnError(ctx);
+//   }
+// };

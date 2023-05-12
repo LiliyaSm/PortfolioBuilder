@@ -20,7 +20,7 @@ export default class UsersController {
     } catch {
       return response.unauthorized({
         status: 'unauthorized',
-        error: 'Invalid credentials',
+        error: 'Invalid password or email',
       })
     }
   }

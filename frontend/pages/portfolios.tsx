@@ -12,12 +12,12 @@ import { Box, ThemeProvider, createTheme } from "@mui/system";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { Portfolio } from "../types";
+import nextCookie from "next-cookies";
+import { server } from "../config";
+import Router from "next/router";
+import { withAuthSync, redirectOnError } from "../utils/auth";
 
-export default function Portfolios({
-  portfolios,
-}: {
-  portfolios: Portfolio[];
-}) {
+function Portfolios({ portfolios }: { portfolios: Portfolio[] }) {
   return (
     <Container component="div" maxWidth="md">
       <Typography sx={{ textAlign: "center" }} variant="h3">
@@ -26,8 +26,8 @@ export default function Portfolios({
       <List>
         {portfolios.map((portfolio, index) => {
           return (
-            <>
-              <ListItem button key={portfolio.id}>
+            <div key={portfolio.id}>
+              <ListItem button >
                 <ListItemText>
                   <Typography variant="h5" sx={{ mb: 2 }}>
                     <Link
@@ -52,7 +52,7 @@ export default function Portfolios({
                 </Stack>
               </ListItem>
               <Divider />
-            </>
+            </div>
           );
         })}
       </List>
@@ -60,22 +60,32 @@ export default function Portfolios({
   );
 }
 
-export async function getStaticProps() {
-  let portfolios = [];
-    const token = localStorage.getItem("token");
-  // const token =
-  //   "NA.iQ4uYK2nbE9enpJnvH1kVaSP4oW9Ymv2m4NmHlMLAU3rjM5EDQreJqMEOm7k";
-  const headers = { Authorization: `Bearer ${token}` };
-  const response = await fetch("http://127.0.0.1:3333/api/portfolios", {
-    headers,
-  });
-  portfolios = await response.json();
+Portfolios.getInitialProps = async (ctx: { res?: any; req?: { headers: { cookie?: string | undefined; }; } | undefined; }) => {
+  const { token } = nextCookie(ctx);
+  const apiUrl = `${server}/api/portfolios`;
 
-  console.log(response);
 
-  return {
-    props: {
-      portfolios,
-    },
-  };
-}
+
+  try {
+    const response = await fetch(apiUrl, {
+      credentials: "include",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      const portfolios = await response.json();
+      return {
+        portfolios,
+      };
+    } else {
+      return await redirectOnError(ctx);
+    }
+  } catch (error) {
+    // Implementation or Network error
+    return redirectOnError(ctx);
+  }
+};
+
+export default withAuthSync(Portfolios);

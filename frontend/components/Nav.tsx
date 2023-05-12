@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { purple, red } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { logout } from '../utils/auth'
 
 export default function MenuAppBar() {
   const accent = purple["A200"]; // #e040fb
@@ -108,7 +109,7 @@ export default function MenuAppBar() {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={handleClose}>Log out</MenuItem>
+                  <MenuItem onClick={logout}>Log out</MenuItem>
                 </Menu>
               </div>
             )}

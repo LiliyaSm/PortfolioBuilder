@@ -38,8 +38,11 @@ export default function SignUp() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    var object = {};
-    data.forEach((value, key) => (object[key] = value));
+    const object: { [key: string]: FormDataEntryValue } = {};
+
+    data.forEach(
+      (value: FormDataEntryValue, key: string) => (object[key] = value)
+    );
 
     const requestOptions = {
       method: "POST",
@@ -51,7 +54,6 @@ export default function SignUp() {
       .then((response) => response.json())
       .then((data) => {
         localStorage.setItem("token", data.token);
-        console.log(data);
       });
 
     console.log(event.currentTarget, data);
