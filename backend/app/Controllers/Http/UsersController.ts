@@ -18,7 +18,10 @@ export default class UsersController {
       const token = await auth.use('api').attempt(email, password)
       return token
     } catch {
-      return response.unauthorized('Invalid credentials')
+      return response.unauthorized({
+        status: 'unauthorized',
+        error: 'Invalid credentials',
+      })
     }
   }
 }
