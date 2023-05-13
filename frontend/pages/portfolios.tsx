@@ -15,9 +15,30 @@ import { Portfolio } from "../types";
 import nextCookie from "next-cookies";
 import { server } from "../config";
 import Router from "next/router";
-import { withAuthSync, redirectOnError } from "../utils/auth";
+import { withAuthSync, redirectOnError } from "../utils";
 
-function Portfolios({ portfolios }: { portfolios: Portfolio[] }) {
+function Portfolios({
+  portfolios,
+  token,
+}: {
+  portfolios: Portfolio[];
+  token: string;
+}) {
+  const deletePortfolio = async (id: number) => {
+    const apiUrl = `${server}/api/portfolios/${id}`;
+
+    const response = await fetch(apiUrl, {
+      credentials: "include",
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      Router.push("/portfolios");
+    }
+  };
   return (
     <Container component="div" maxWidth="md">
       <Typography sx={{ textAlign: "center" }} variant="h3">
@@ -27,7 +48,7 @@ function Portfolios({ portfolios }: { portfolios: Portfolio[] }) {
         {portfolios.map((portfolio, index) => {
           return (
             <div key={portfolio.id}>
-              <ListItem button >
+              <ListItem button>
                 <ListItemText>
                   <Typography variant="h5" sx={{ mb: 2 }}>
                     <Link
@@ -48,7 +69,7 @@ function Portfolios({ portfolios }: { portfolios: Portfolio[] }) {
                 <Stack direction="row" spacing={1}>
                   <PreviewIcon />
                   <EditIcon />
-                  <DeleteIcon />
+                  <DeleteIcon onClick={() => deletePortfolio(portfolio.id)} />
                 </Stack>
               </ListItem>
               <Divider />
@@ -60,11 +81,12 @@ function Portfolios({ portfolios }: { portfolios: Portfolio[] }) {
   );
 }
 
-Portfolios.getInitialProps = async (ctx: { res?: any; req?: { headers: { cookie?: string | undefined; }; } | undefined; }) => {
+Portfolios.getInitialProps = async (ctx: {
+  res?: any;
+  req?: { headers: { cookie?: string | undefined } } | undefined;
+}) => {
   const { token } = nextCookie(ctx);
   const apiUrl = `${server}/api/portfolios`;
-
-
 
   try {
     const response = await fetch(apiUrl, {
@@ -78,6 +100,7 @@ Portfolios.getInitialProps = async (ctx: { res?: any; req?: { headers: { cookie?
       const portfolios = await response.json();
       return {
         portfolios,
+        token,
       };
     } else {
       return await redirectOnError(ctx);

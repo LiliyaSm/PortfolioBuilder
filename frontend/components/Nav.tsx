@@ -5,19 +5,18 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import MenuIcon from "@mui/icons-material/Menu";
+import Router from "next/router";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import { purple, red } from "@mui/material/colors";
+import { purple } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { logout } from '../utils/auth'
+import { logout } from "../utils";
 
 export default function MenuAppBar() {
-  const accent = purple["A200"]; // #e040fb
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -42,7 +41,6 @@ export default function MenuAppBar() {
         light: "#faf9bb",
         main: "#fdee00",
         dark: "#f7f402",
-        // contrastText: "#9C27B0",
         contrastText: "#9C27B0",
       },
     },
@@ -74,7 +72,12 @@ export default function MenuAppBar() {
             >
               <MenuIcon />
             </IconButton> */}
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Typography
+              onClick={() => Router.push("/portfolios")}
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1, cursor: 'pointer' }}
+            >
               Portfolio builder
             </Typography>
             {auth && (
@@ -82,7 +85,7 @@ export default function MenuAppBar() {
                 <Button sx={{ mr: 10 }} variant="contained" size="large">
                   Create new portfolio
                 </Button>
-               <span> Hello, user!</span>
+                <span> Hello, user!</span>
                 <IconButton
                   size="large"
                   aria-label="account of current user"

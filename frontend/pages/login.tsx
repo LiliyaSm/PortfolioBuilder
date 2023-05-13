@@ -13,6 +13,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import cookie from "js-cookie";
 import Router from "next/router";
 import Container from "@mui/material/Container";
+import { createObjectFromForm } from "../utils"
 
 function Copyright(props: any) {
   return (
@@ -41,11 +42,8 @@ export default function SignIn() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const object: { [key: string]: FormDataEntryValue } = {};
 
-    data.forEach(
-      (value: FormDataEntryValue, key: string) => (object[key] = value)
-    );
+    const object = createObjectFromForm(data)
 
     const requestOptions = {
       method: "POST",
@@ -115,10 +113,10 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
-            />
+            /> */}
             <Button
               type="submit"
               fullWidth
