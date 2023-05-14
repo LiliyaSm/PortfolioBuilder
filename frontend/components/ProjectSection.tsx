@@ -1,4 +1,5 @@
 import { server } from "../config";
+import * as React from "react";
 import { Project } from "../types";
 import nextCookie from "next-cookies";
 import { withAuthSync, redirectOnError, createObjectFromForm } from "../utils";
@@ -11,14 +12,61 @@ import Button from "@mui/material/Button";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { purple } from "@mui/material/colors";
 import Router from "next/router";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateField } from "@mui/x-date-pickers/DateField";
+import dayjs from 'dayjs';
 
-const ProjectSection = (project: Project) => {
-  const handleUpdatePortfolio = () => {};
+const ProjectSection = ({
+  project,
+  token,
+}: {
+  project: Project;
+  token: string;
+}) => {
+  const [size, setSize] = React.useState<string>(project.size);
+  // const [endDate, setEndDate] = React.useState<string | null>("");
+  // const [startDate, setStartDate] = React.useState<string | null>("");
+
+  const deleteProject = () => {};
+  const handleSelectChange = (event: SelectChangeEvent) => {
+    setSize(event.target.value as string);
+  };
+  const handleUpdateProject = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const apiUrl = `${server}/api/projects/${project.id}`;
+    const object = createObjectFromForm(data);
+
+    console.log(object);
+
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(object),
+    };
+
+    const response = await fetch(apiUrl, requestOptions);
+    console.log(response);
+
+    if (response.ok) {
+      Router.push(`/portfolio/${project.portfolioId}`);
+    } else {
+      const { error } = await response.json();
+      console.log(error);
+    }
+  };
   return (
     <Box
       component="form"
-      onSubmit={handleUpdatePortfolio}
+      onSubmit={handleUpdateProject}
       sx={{
         my: 8,
         px: 1,
@@ -34,10 +82,10 @@ const ProjectSection = (project: Project) => {
           }}
           fullWidth
           color="secondary"
-          id="outlined-required"
-          label="project.clientName"
+          id="clientName"
+          label="Project client name"
           defaultValue={project.clientName}
-          name="projectName"
+          name="clientName"
         />
         <Stack
           sx={{
@@ -49,16 +97,16 @@ const ProjectSection = (project: Project) => {
           <TextField
             fullWidth
             color="secondary"
-            id="outlined-required"
-            label="Project clientName"
-            defaultValue={project.clientName}
-            name="clientName"
+            id="projectName"
+            label="Project name"
+            defaultValue={project.projectName}
+            name="projectName"
           />
           <TextField
             fullWidth
             color="secondary"
-            id="outlined-required"
-            label="Project clientIndustry"
+            id="clientIndustry"
+            label="Client industry"
             defaultValue={project.clientIndustry}
             name="clientIndustry"
           />
@@ -69,7 +117,7 @@ const ProjectSection = (project: Project) => {
           }}
           fullWidth
           color="secondary"
-          id="outlined-required"
+          id="clientDescription"
           label="Client description"
           multiline
           rows={2}
@@ -82,17 +130,65 @@ const ProjectSection = (project: Project) => {
           }}
           fullWidth
           color="secondary"
-          id="outlined-required"
+          id="projectDescription"
           label="Project description"
           multiline
           rows={3}
           defaultValue={project.clientDescription}
           name="projectDescription"
         />
+        <Stack direction="row" justifyContent="space-around">
+          <Box
+            sx={{
+              mb: 2,
+            }}
+          >
+            <InputLabel id="size-label">Select size</InputLabel>
+            <Select
+              sx={{ minWidth: 140 }}
+              labelId="size-label"
+              id="size"
+              name="size"
+              required
+              color="secondary"
+              onChange={handleSelectChange}
+              value={size}
+            >
+              <MenuItem value="Small">Small</MenuItem>
+              <MenuItem value="Medium">Medium</MenuItem>
+              <MenuItem value="Large">Large</MenuItem>
+            </Select>
+          </Box>
+          <Box>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateField
+                required
+                name="startDate"
+                label="Start date"
+                defaultValue={dayjs(project.startDate)}
+              />
+            </LocalizationProvider>
+          </Box>
+          <Box>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateField
+                required
+                name="endDate"
+                label="End date"
+                defaultValue={dayjs(project.endDate)}
+              />
+            </LocalizationProvider>
+          </Box>
+        </Stack>
         <Button type="submit" sx={{ mr: 2 }} variant="contained" size="large">
           update project
         </Button>
-        <Button type="submit" sx={{ mr: 10 }} variant="contained" size="large">
+        <Button
+          onClick={deleteProject}
+          sx={{ mr: 10 }}
+          variant="contained"
+          size="large"
+        >
           delete project
         </Button>
       </>

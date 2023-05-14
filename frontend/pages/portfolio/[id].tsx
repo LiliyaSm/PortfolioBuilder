@@ -93,7 +93,7 @@ export default function Portfolios({
 
       <div>
         {portfolio.projects.map((project) => (
-          <ProjectSection key={project.id} project={project} />
+          <ProjectSection key={project.id} token={token} project={project} />
         ))}
       </div>
     </ThemeProvider>

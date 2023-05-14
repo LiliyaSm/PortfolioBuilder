@@ -11,16 +11,16 @@ export default class extends BaseSchema {
       table.boolean('isDraft').defaultTo(true)
       //
       table.string('clientName').notNullable()
-      table.string('clientDescription')
-      table.string('clientIndustry')
-      table.string('projectName')
-      table.string('projectDescription')
+      table.text('clientDescription')
+      table.text('clientIndustry')
+      table.text('projectName')
+      table.text('projectDescription')
       table.string('size').notNullable()
       table.timestamp('startDate', { useTz: true })
       table.timestamp('endDate', { useTz: true })
       table.string('cloud') //optional
-      table.string('actions').notNullable() //optional
-      table.string('outcome').notNullable() //optional
+      table.text('actions').notNullable() //optional
+      table.text('outcome').notNullable() //optional
       //
       table.timestamp('createdAt', { useTz: true })
       table.timestamp('updatedAt', { useTz: true })
