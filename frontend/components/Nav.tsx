@@ -15,10 +15,30 @@ import Menu from "@mui/material/Menu";
 import { purple } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { logout } from "../utils";
+import { server } from "../config";
+import { getCookie } from "cookies-next";
 
-export default function MenuAppBar() {
+
+export default function MenuAppBar( ) {
+  const token = getCookie("token");
+
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const createNewPortfolio = async () => {
+    const apiUrl = `${server}/api/portfolios`;
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const response = await fetch(apiUrl, requestOptions);
+    const portfolio = await response.json();
+    if (response.ok) {
+      Router.push(`/portfolio/${portfolio.id}`);}
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAuth(event.target.checked);
@@ -76,13 +96,18 @@ export default function MenuAppBar() {
               onClick={() => Router.push("/portfolios")}
               variant="h6"
               component="div"
-              sx={{ flexGrow: 1, cursor: 'pointer' }}
+              sx={{ flexGrow: 1, cursor: "pointer" }}
             >
               Portfolio builder
             </Typography>
             {auth && (
               <div>
-                <Button sx={{ mr: 10 }} variant="contained" size="large">
+                <Button
+                  sx={{ mr: 10 }}
+                  variant="contained"
+                  size="large"
+                  onClick={createNewPortfolio}
+                >
                   Create new portfolio
                 </Button>
                 <span> Hello, user!</span>

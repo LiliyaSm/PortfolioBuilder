@@ -1,12 +1,12 @@
-import { useEffect } from 'react'
-import Router from 'next/router'
-import nextCookie from 'next-cookies'
-import cookie from 'js-cookie'
+import { useEffect } from "react";
+import Router from "next/router";
+import { deleteCookie } from "cookies-next";
+import { setCookie, getCookie } from "cookies-next";
 
-export const login = ({ token }) => {
-  cookie.set('token', token, { expires: 1 })
-  Router.push('/profile')
-}
+export const login = (token: string) => {
+  setCookie("token", token);
+  Router.push("/portfolios");
+};
 
 export const createObjectFromForm = (data) => {
   const object: { [key: string]: FormDataEntryValue } = {};
@@ -17,63 +17,64 @@ export const createObjectFromForm = (data) => {
 };
 
 export const redirectOnError = (ctx) =>
-typeof window !== "undefined"
-  ? Router.push("/login")
-  : ctx.res.writeHead(302, { Location: "/login" }).end();
+  typeof window !== "undefined"
+    ? Router.push("/login")
+    : ctx.res.writeHead(302, { Location: "/login" }).end();
 
-export const auth = ctx => {
-  const { token } = nextCookie(ctx)
+export const auth = (ctx) => {
+  const token = getCookie("token");
 
   // If there's no token, it means the user is not logged in.
   if (!token) {
-    if (typeof window === 'undefined') {
-      ctx.res.writeHead(302, { Location: '/login' })
-      ctx.res.end()
+    if (typeof window === "undefined") {
+      ctx.res.writeHead(302, { Location: "/login" });
+      ctx.res.end();
     } else {
-      Router.push('/login')
+      Router.push("/login");
     }
   }
 
-  return token
-}
+  return token;
+};
 
 export const logout = () => {
-  cookie.remove('token')
-  // to support logging out from all windows
-  window.localStorage.setItem('logout', Date.now())
-  Router.push('/login')
-}
+  deleteCookie("token");
 
-export const withAuthSync = WrappedComponent => {
-  const Wrapper = props => {
-    const syncLogout = event => {
-      if (event.key === 'logout') {
-        console.log('logged out from storage!')
-        Router.push('/login')
+  // to support logging out from all windows
+  window.localStorage.setItem("logout", Date.now().toString());
+  Router.push("/login");
+};
+
+export const withAuthSync = (WrappedComponent) => {
+  const Wrapper = (props) => {
+    const syncLogout = (event) => {
+      if (event.key === "logout") {
+        console.log("logged out from storage!");
+        Router.push("/login");
       }
-    }
+    };
 
     useEffect(() => {
-      window.addEventListener('storage', syncLogout)
+      window.addEventListener("storage", syncLogout);
 
       return () => {
-        window.removeEventListener('storage', syncLogout)
-        window.localStorage.removeItem('logout')
-      }
-    }, [])
+        window.removeEventListener("storage", syncLogout);
+        window.localStorage.removeItem("logout");
+      };
+    }, []);
 
-    return <WrappedComponent {...props} />
-  }
+    return <WrappedComponent {...props} />;
+  };
 
-  Wrapper.getInitialProps = async ctx => {
-    const token = auth(ctx)
+  Wrapper.getInitialProps = async (ctx) => {
+    const token = auth(ctx);
 
     const componentProps =
       WrappedComponent.getInitialProps &&
-      (await WrappedComponent.getInitialProps(ctx))
+      (await WrappedComponent.getInitialProps(ctx));
 
-    return { ...componentProps, token }
-  }
+    return { ...componentProps, token };
+  };
 
-  return Wrapper
-}
+  return Wrapper;
+};

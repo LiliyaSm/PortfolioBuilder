@@ -1,6 +1,5 @@
 import { server } from "../../config";
 import { Portfolio } from "../../types";
-import nextCookie from "next-cookies";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
@@ -12,6 +11,8 @@ import { purple } from "@mui/material/colors";
 import { createObjectFromForm } from "../../utils";
 import Router from "next/router";
 import ProjectSection from "../../components/ProjectSection";
+import { withAuthSync, redirectOnError } from "../../utils";
+import { getCookie } from "cookies-next";
 
 export default function Portfolios({
   portfolio,
@@ -20,7 +21,7 @@ export default function Portfolios({
   portfolio: Portfolio;
   token: string;
 }) {
-  // console.log(portfolio.projects)
+
 
   const handleSubmitPortfolio = async (
     event: React.FormEvent<HTMLFormElement>
@@ -104,20 +105,21 @@ export async function getServerSideProps(context) {
   const { id } = context.query;
   const apiUrl = `${server}/api/portfolios/${id}`;
 
-  const { token } = nextCookie(context);
+  const token = getCookie("token");
 
   const headers = { Authorization: `Bearer ${token}` };
   const response = await fetch(apiUrl, {
     headers,
   });
-  const portfolio = await response.json();
 
-  // console.log(portfolio);
 
-  return {
-    props: {
+  if (response.ok) {
+    const portfolio = await response.json();
+    return {
       portfolio,
       token,
-    },
-  };
+    };
+  } else {
+    return await redirectOnError(context);
+  }
 }

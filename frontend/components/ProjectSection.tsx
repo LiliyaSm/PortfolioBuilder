@@ -1,7 +1,6 @@
 import { server } from "../config";
 import * as React from "react";
 import { Project } from "../types";
-import nextCookie from "next-cookies";
 import { withAuthSync, redirectOnError, createObjectFromForm } from "../utils";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -54,7 +53,6 @@ const ProjectSection = ({
     };
 
     const response = await fetch(apiUrl, requestOptions);
-    console.log(response);
 
     if (response.ok) {
       Router.push(`/portfolio/${project.portfolioId}`);

@@ -3,17 +3,13 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "../src/app/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import cookie from "js-cookie";
-import Router from "next/router";
 import Container from "@mui/material/Container";
-import { createObjectFromForm } from "../utils"
+import { createObjectFromForm, login } from "../utils"
 
 function Copyright(props: any) {
   return (
@@ -37,7 +33,6 @@ const theme = createTheme();
 
 export default function SignIn() {
   const [error, setError] = useState("");
-  // const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -58,8 +53,7 @@ export default function SignIn() {
 
     if (response.status === 200) {
       const { token } = await response.json();
-      cookie.set("token", token, { expires: 1 });
-      Router.push("/portfolios");
+      login(token)
     } else {
       const { error } = await response.json();
       setError(error);

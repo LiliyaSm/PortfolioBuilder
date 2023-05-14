@@ -1,10 +1,9 @@
-import * as React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import Router from "next/router";
 import Link from "../src/app/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -12,6 +11,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { setCookie } from "cookies-next";
 
 function Copyright(props: any) {
   return (
@@ -22,8 +22,8 @@ function Copyright(props: any) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="https://github.com/LiliyaSm">
+        LiliyaSm
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -34,7 +34,9 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignUp() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
@@ -50,17 +52,25 @@ export default function SignUp() {
       body: JSON.stringify(object),
     };
 
-    fetch("http://127.0.0.1:3333/api/register", requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        localStorage.setItem("token", data.token);
-      });
+    const response = await fetch(
+      "http://127.0.0.1:3333/api/register",
+      requestOptions
+    );
 
-    console.log(event.currentTarget, data);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    if (response.status === 200) {
+      const { token } = await response.json();
+      setCookie("token", token);
+      Router.push("/portfolios");
+    } else {
+      const { error } = await response.json();
+      const array: string[] = [];
+      if (Array.isArray(error.errors)) {
+        error.errors.forEach(({ message }: { message: string }) => {
+          array.push(message);
+        });
+      }
+      setValidationErrors(array);
+    }
   };
 
   return (
@@ -130,8 +140,7 @@ export default function SignUp() {
                   autoComplete="new-password"
                 />
               </Grid>
-              <Grid item xs={12}>
-              </Grid>
+              <Grid item xs={12}></Grid>
             </Grid>
             <Button
               type="submit"
@@ -141,6 +150,11 @@ export default function SignUp() {
             >
               Sign Up
             </Button>
+            {validationErrors.map((error) => (
+              <Typography key={error} sx={{ m: 1 }} color="error">
+                {error}
+              </Typography>
+            ))}
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="./login" variant="body2">

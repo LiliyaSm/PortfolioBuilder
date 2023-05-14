@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import Link from "../src/app/Link";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -12,10 +13,10 @@ import { Box, ThemeProvider, createTheme } from "@mui/system";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { Portfolio } from "../types";
-import nextCookie from "next-cookies";
 import { server } from "../config";
 import Router from "next/router";
 import { withAuthSync, redirectOnError } from "../utils";
+import { getCookie, getCookies } from "cookies-next";
 
 function Portfolios({
   portfolios,
@@ -39,13 +40,23 @@ function Portfolios({
       Router.push("/portfolios");
     }
   };
+
+  if (!portfolios || !portfolios.length) {
+    return (
+      <Container component="div" maxWidth="md">
+        <Typography sx={{ textAlign: "center" }} variant="h3">
+          You don't have any portfolios yet
+        </Typography>
+      </Container>
+    );
+  }
   return (
     <Container component="div" maxWidth="md">
       <Typography sx={{ textAlign: "center" }} variant="h3">
         Portfolios:
       </Typography>
       <List>
-        {portfolios.map((portfolio, index) => {
+        {portfolios.map((portfolio) => {
           return (
             <div key={portfolio.id}>
               <ListItem button>
@@ -85,7 +96,7 @@ Portfolios.getInitialProps = async (ctx: {
   res?: any;
   req?: { headers: { cookie?: string | undefined } } | undefined;
 }) => {
-  const { token } = nextCookie(ctx);
+  const token = getCookie("token");
   const apiUrl = `${server}/api/portfolios`;
 
   try {
@@ -102,9 +113,10 @@ Portfolios.getInitialProps = async (ctx: {
         portfolios,
         token,
       };
-    } else {
-      return await redirectOnError(ctx);
+    } else if (response.status == 401) {
+      return Router.push("/login");
     }
+    return redirectOnError(ctx);
   } catch (error) {
     // Implementation or Network error
     return redirectOnError(ctx);
