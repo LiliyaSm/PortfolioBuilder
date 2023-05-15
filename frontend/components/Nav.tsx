@@ -110,7 +110,7 @@ export default function MenuAppBar( ) {
                 >
                   Create new portfolio
                 </Button>
-                <span> Hello, user!</span>
+                {/* <span> Hello, user!</span> */}
                 <IconButton
                   size="large"
                   aria-label="account of current user"

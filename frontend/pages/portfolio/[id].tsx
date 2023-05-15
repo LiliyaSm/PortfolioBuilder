@@ -13,6 +13,7 @@ import Router from "next/router";
 import ProjectSection from "../../components/ProjectSection";
 import { withAuthSync, redirectOnError } from "../../utils";
 import AddIcon from "@mui/icons-material/Add";
+import { GetServerSidePropsContext } from "next";
 
 const theme = createTheme({
   palette: {
@@ -36,6 +37,10 @@ export default function Portfolios({
   token: string;
 }) {
   const [newProject, setNewProject] = useState<boolean>(false);
+
+  const sortedProjects = portfolio.projects.sort((a, b) => {
+    return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
+  });
 
   const handleSubmitPortfolio = async (
     event: React.FormEvent<HTMLFormElement>
@@ -121,7 +126,7 @@ export default function Portfolios({
             setNewProject={setNewProject}
           />
         )}
-        {portfolio.projects.map((project) => (
+        {sortedProjects.map((project) => (
           <ProjectSection
             key={project.id}
             token={token}
@@ -134,7 +139,7 @@ export default function Portfolios({
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { id } = context.query;
   const token = context.req.cookies["token"];
   const apiUrl = `${server}/api/portfolios/${id}`;

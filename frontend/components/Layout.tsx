@@ -1,14 +1,15 @@
+import React, { ReactNode } from "react";
 import Nav from "./Nav";
 // import Meta from './Meta'
 import Container from "@mui/material/Container";
 
-const Layout = ({ children }) => {
+const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       {/* <Meta /> */}
       <Nav />
       <div>
-        <Container sx={{ mt: 10 }} component="main" maxWidth="md">
+        <Container sx={{ mt: 10 }} component="main" maxWidth="lg">
           {children}
         </Container>
       </div>

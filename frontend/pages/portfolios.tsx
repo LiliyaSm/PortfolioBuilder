@@ -9,14 +9,13 @@ import ListItemText from "@mui/material/ListItemText";
 import Container from "@mui/material/Container";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import { Box, ThemeProvider, createTheme } from "@mui/system";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { Portfolio } from "../types";
 import { server } from "../config";
 import Router from "next/router";
 import { withAuthSync, redirectOnError } from "../utils";
-import { getCookie, getCookies } from "cookies-next";
+import { GetServerSidePropsContext } from "next";
 
 function Portfolios({
   portfolios,
@@ -25,6 +24,9 @@ function Portfolios({
   portfolios: Portfolio[];
   token: string;
 }) {
+  const sortedPortfolios = portfolios.sort((a, b) => {
+    return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
+  });
   const deletePortfolio = async (id: number) => {
     const apiUrl = `${server}/api/portfolios/${id}`;
 
@@ -56,7 +58,7 @@ function Portfolios({
         Portfolios:
       </Typography>
       <List>
-        {portfolios.map((portfolio) => {
+        {sortedPortfolios.map((portfolio) => {
           return (
             <div key={portfolio.id}>
               <ListItem button>
@@ -92,11 +94,8 @@ function Portfolios({
   );
 }
 
-Portfolios.getInitialProps = async (ctx: {
-  res?: any;
-  req?: { headers: { cookie?: string | undefined } } | undefined;
-}) => {
-  const token = getCookie("token");
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const token = context.req.cookies["token"];
   const apiUrl = `${server}/api/portfolios`;
 
   try {
@@ -110,16 +109,18 @@ Portfolios.getInitialProps = async (ctx: {
     if (response.ok) {
       const portfolios = await response.json();
       return {
-        portfolios,
-        token,
+        props: {
+          portfolios,
+          token,
+        },
       };
     } else if (response.status == 401) {
       return Router.push("/login");
     }
-    return redirectOnError(ctx);
+    return redirectOnError(context);
   } catch (error) {
     // Implementation or Network error
-    return redirectOnError(ctx);
+    return redirectOnError(context);
   }
 };
 
