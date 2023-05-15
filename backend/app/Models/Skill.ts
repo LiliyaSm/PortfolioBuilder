@@ -6,7 +6,7 @@ export default class Skill extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column({ columnName: 'projectId' })
+  @column({ columnName: 'projectId', serializeAs: 'projectId' })
   public projectId: number
 
   @column()

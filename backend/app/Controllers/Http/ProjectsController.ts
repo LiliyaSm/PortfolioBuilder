@@ -40,7 +40,8 @@ export default class ProjectsController {
   }
 
   public async update({ request, params, response, auth }: HttpContextContract) {
-    const updatedProject = request.body()
+    const updatedProject = await request.validate(ProjectValidator)
+    // const updatedProject = request.body()
     const project = await Project.query()
       .preload('portfolio')
       .preload('skills')

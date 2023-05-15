@@ -24,3 +24,25 @@ export interface Project {
   updatedAt: string;
   skills: [];
 }
+
+export interface ValidationErrors {
+  portfolioId?: string;
+  clientName?: string;
+  clientDescription?: string;
+  clientIndustry?: string;
+  projectName?: string;
+  projectDescription?: string;
+  size?: string;
+  startDate?: string;
+  endDate?: string;
+  cloud?: string;
+  actions?: string;
+  outcome?: string;
+}
+
+export interface ISkills {
+  id?: number;
+  projectId?: number;
+  type: string;
+  value: string;
+}

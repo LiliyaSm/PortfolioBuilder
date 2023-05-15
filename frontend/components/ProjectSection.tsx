@@ -1,47 +1,112 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from "react";
 import { server } from "../config";
-import * as React from "react";
-import { Project } from "../types";
-import { withAuthSync, redirectOnError, createObjectFromForm } from "../utils";
+import { Project, ValidationErrors, ISkills } from "../types";
+import {
+  withAuthSync,
+  redirectOnError,
+  createErrors,
+  createObjectFromForm,
+} from "../utils";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { purple } from "@mui/material/colors";
 import Router from "next/router";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateField } from "@mui/x-date-pickers/DateField";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
+import Skills from "./Skills";
+import _ from "lodash";
+import ProjectSectionButtons from "./ProjectSectionButtons";
+
+const createSkillsList = (skills: string[]) => {
+  const data = _.chain(skills).groupBy("type").value();
+  console.log(data);
+  return data;
+};
 
 const ProjectSection = ({
   project,
   token,
+  setNewProject,
 }: {
-  project: Project;
+  project: Partial<Project>;
   token: string;
+  setNewProject: (a: boolean) => void;
 }) => {
-  const [size, setSize] = React.useState<string>(project.size);
-  // const [endDate, setEndDate] = React.useState<string | null>("");
-  // const [startDate, setStartDate] = React.useState<string | null>("");
+  const [size, setSize] = React.useState<string>(project.size || "");
+  const [cloud, setCloud] = useState<string>(project.cloud || "");
+  const [languages, setLanguages] = useState<ISkills[]>([]);
+  const [tools, setTools] = useState<ISkills[]>([]);
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
+    {}
+  );
 
-  const deleteProject = () => {};
+  useEffect(() => {
+    const skillsList = createSkillsList(project.skills);
+    if (skillsList.language) setLanguages(skillsList.language);
+  }, []);
+
+  const createNewProject = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const apiUrl = `${server}/api/portfolios/${project.portfolioId}/project`;
+    const data = new FormData(event.currentTarget);
+    const object = createObjectFromForm(data);
+    const projectSkills = [...languages];
+
+    object.skills = projectSkills;
+
+    console.log("createNewProject", object);
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(object),
+    };
+
+    const response = await fetch(apiUrl, requestOptions);
+    if (response.ok) {
+      Router.push(`/portfolio/${project.portfolioId}`);
+      setNewProject(false);
+    } else {
+      const {
+        error: { errors },
+      } = await response.json();
+      const errorsToDisplay = createErrors(errors);
+      setValidationErrors(errorsToDisplay);
+      console.log(errorsToDisplay);
+    }
+  };
+
   const handleSelectChange = (event: SelectChangeEvent) => {
     setSize(event.target.value as string);
   };
+
+  const handleSelectCloudChange = (event: SelectChangeEvent) => {
+    setCloud(event.target.value as string);
+  };
+
   const handleUpdateProject = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
     const apiUrl = `${server}/api/projects/${project.id}`;
+    const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
+    const projectSkills = [...languages];
 
-    console.log(object);
+    object.skills = projectSkills;
+
+    console.log("handleUpdateProject", object);
 
     const requestOptions = {
       method: "PUT",
@@ -57,16 +122,21 @@ const ProjectSection = ({
     if (response.ok) {
       Router.push(`/portfolio/${project.portfolioId}`);
     } else {
-      const { error } = await response.json();
-      console.log(error);
+      const {
+        error: { errors },
+      } = await response.json();
+      const errorsToDisplay = createErrors(errors);
+      setValidationErrors(errorsToDisplay);
+      console.log(errorsToDisplay);
     }
   };
+
   return (
     <Box
       component="form"
-      onSubmit={handleUpdateProject}
+      onSubmit={project.id ? handleUpdateProject : createNewProject}
       sx={{
-        my: 8,
+        my: 4,
         px: 1,
         py: 2,
         border: "ridge 1px #9C27B0",
@@ -74,24 +144,21 @@ const ProjectSection = ({
       }}
     >
       <>
-        <TextField
-          sx={{
-            mb: 2,
-          }}
-          fullWidth
-          color="secondary"
-          id="clientName"
-          label="Project client name"
-          defaultValue={project.clientName}
-          name="clientName"
-        />
-        <Stack
-          sx={{
-            mb: 2,
-          }}
-          direction="row"
-          spacing={1}
-        >
+        <Box>
+          <TextField
+            fullWidth
+            color="secondary"
+            id="clientName"
+            label="Project client name"
+            defaultValue={project.clientName}
+            name="clientName"
+            error={Boolean(validationErrors.clientName)}
+            helperText={
+              validationErrors.clientName ? validationErrors.clientName : " "
+            }
+          />
+        </Box>
+        <Stack direction="row" spacing={1}>
           <TextField
             fullWidth
             color="secondary"
@@ -99,6 +166,10 @@ const ProjectSection = ({
             label="Project name"
             defaultValue={project.projectName}
             name="projectName"
+            error={Boolean(validationErrors.projectName)}
+            helperText={
+              validationErrors.projectName ? validationErrors.projectName : " "
+            }
           />
           <TextField
             fullWidth
@@ -107,12 +178,15 @@ const ProjectSection = ({
             label="Client industry"
             defaultValue={project.clientIndustry}
             name="clientIndustry"
+            error={Boolean(validationErrors.clientIndustry)}
+            helperText={
+              validationErrors.clientIndustry
+                ? validationErrors.clientIndustry
+                : " "
+            }
           />
         </Stack>
         <TextField
-          sx={{
-            mb: 2,
-          }}
           fullWidth
           color="secondary"
           id="clientDescription"
@@ -121,49 +195,42 @@ const ProjectSection = ({
           rows={2}
           defaultValue={project.clientDescription}
           name="clientDescription"
+          error={Boolean(validationErrors.clientDescription)}
+          helperText={
+            validationErrors.clientDescription
+              ? validationErrors.clientDescription
+              : " "
+          }
         />
         <TextField
-          sx={{
-            mb: 2,
-          }}
           fullWidth
           color="secondary"
           id="projectDescription"
           label="Project description"
           multiline
           rows={3}
-          defaultValue={project.clientDescription}
+          defaultValue={project.projectDescription}
           name="projectDescription"
+          error={Boolean(validationErrors.projectDescription)}
+          helperText={
+            validationErrors.projectDescription
+              ? validationErrors.projectDescription
+              : " "
+          }
         />
-        <Stack direction="row" justifyContent="space-around">
-          <Box
-            sx={{
-              mb: 2,
-            }}
-          >
-            <InputLabel id="size-label">Select size</InputLabel>
-            <Select
-              sx={{ minWidth: 140 }}
-              labelId="size-label"
-              id="size"
-              name="size"
-              required
-              color="secondary"
-              onChange={handleSelectChange}
-              value={size}
-            >
-              <MenuItem value="Small">Small</MenuItem>
-              <MenuItem value="Medium">Medium</MenuItem>
-              <MenuItem value="Large">Large</MenuItem>
-            </Select>
-          </Box>
+        <Stack direction="row" alignItems="center" justifyContent="flex-start">
           <Box>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateField
                 required
                 name="startDate"
                 label="Start date"
-                defaultValue={dayjs(project.startDate)}
+                defaultValue={dayjs(project.startDate || "")}
+                helperText={
+                  validationErrors.startDate ? validationErrors.startDate : " "
+                }
+                sx={{ minWidth: 140 }}
+                format="YYYY-MM-DD"
               />
             </LocalizationProvider>
           </Box>
@@ -173,22 +240,105 @@ const ProjectSection = ({
                 required
                 name="endDate"
                 label="End date"
-                defaultValue={dayjs(project.endDate)}
+                defaultValue={dayjs(project.endDate || "")}
+                helperText={
+                  validationErrors.endDate ? validationErrors.endDate : " "
+                }
+                format="YYYY-MM-DD"
+                sx={{ minWidth: 140, ml: 3 }}
               />
             </LocalizationProvider>
           </Box>
         </Stack>
-        <Button type="submit" sx={{ mr: 2 }} variant="contained" size="large">
-          update project
-        </Button>
-        <Button
-          onClick={deleteProject}
-          sx={{ mr: 10 }}
-          variant="contained"
-          size="large"
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            mb: 2,
+          }}
         >
-          delete project
-        </Button>
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              mr: 2,
+            }}
+          >
+            <InputLabel id="size-label">Select project size</InputLabel>
+            <Select
+              sx={{ minWidth: 160, ml: 2 }}
+              labelId="size-label"
+              id="size"
+              name="size"
+              required
+              color="secondary"
+              onChange={handleSelectChange}
+              value={size}
+              error={Boolean(validationErrors.size)}
+            >
+              <MenuItem value="small">Small</MenuItem>
+              <MenuItem value="medium">Medium</MenuItem>
+              <MenuItem value="large">Large</MenuItem>
+            </Select>
+          </Stack>
+          <Stack direction="row" alignItems="center">
+            <InputLabel id="cloud-label">Select cloud</InputLabel>
+            <Select
+              sx={{ minWidth: 160, ml: 2 }}
+              labelId="cloud-label"
+              id="cloud"
+              name="cloud"
+              required
+              color="secondary"
+              onChange={handleSelectCloudChange}
+              value={cloud}
+              error={Boolean(validationErrors.cloud)}
+            >
+              <MenuItem value="AWS">AWS</MenuItem>
+              <MenuItem value="azure">Azure</MenuItem>
+              <MenuItem value="other">Other</MenuItem>
+            </Select>
+          </Stack>
+        </Stack>
+        <TextField
+          fullWidth
+          color="secondary"
+          id="actions"
+          label="Actions"
+          multiline
+          rows={3}
+          defaultValue={project.actions}
+          name="actions"
+          error={Boolean(validationErrors.actions)}
+          helperText={validationErrors.actions ? validationErrors.actions : " "}
+        />
+        <TextField
+          fullWidth
+          color="secondary"
+          id="outcome"
+          label="Outcome"
+          multiline
+          rows={3}
+          defaultValue={project.outcome}
+          name="outcome"
+          error={Boolean(validationErrors.outcome)}
+          helperText={validationErrors.outcome ? validationErrors.outcome : " "}
+        />
+        <Typography variant="h5" sx={{ ml: 1, mt: 1 }}>
+          Skills
+        </Typography>
+        <Box>
+          <Skills
+            // key={value}
+            setFunction={setLanguages}
+            name="Language"
+            defaultValue={languages}
+          />
+        </Box>
+        <ProjectSectionButtons
+          setNewProject={setNewProject}
+          projectId={project.id}
+        />
       </>
     </Box>
   );

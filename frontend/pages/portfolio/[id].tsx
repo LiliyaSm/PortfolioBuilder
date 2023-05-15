@@ -1,8 +1,8 @@
+import React, { useState } from "react";
 import { server } from "../../config";
 import { Portfolio } from "../../types";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -12,7 +12,21 @@ import { createObjectFromForm } from "../../utils";
 import Router from "next/router";
 import ProjectSection from "../../components/ProjectSection";
 import { withAuthSync, redirectOnError } from "../../utils";
-import { getCookie } from "cookies-next";
+import AddIcon from "@mui/icons-material/Add";
+
+const theme = createTheme({
+  palette: {
+    secondary: {
+      main: purple[500],
+    },
+    primary: {
+      light: "#faf9bb",
+      main: "#fdee00",
+      dark: "#f7f402",
+      contrastText: "#9C27B0",
+    },
+  },
+});
 
 export default function Portfolios({
   portfolio,
@@ -21,7 +35,7 @@ export default function Portfolios({
   portfolio: Portfolio;
   token: string;
 }) {
-
+  const [newProject, setNewProject] = useState<boolean>(false);
 
   const handleSubmitPortfolio = async (
     event: React.FormEvent<HTMLFormElement>
@@ -40,27 +54,34 @@ export default function Portfolios({
       },
       body: JSON.stringify(object),
     };
-
     const response = await fetch(apiUrl, requestOptions);
-
     if (response.ok) {
       Router.push(`/portfolio/${portfolio.id}`);
     }
   };
 
-  const theme = createTheme({
-    palette: {
-      secondary: {
-        main: purple[500],
-      },
-      primary: {
-        light: "#faf9bb",
-        main: "#fdee00",
-        dark: "#f7f402",
-        contrastText: "#9C27B0",
-      },
-    },
-  });
+  const renderAddNewIcon = () => {
+    if (newProject) {
+      return (
+        <Typography color="secondary">
+          <h4>Save existing project to add a new one</h4>
+        </Typography>
+      );
+    } else {
+      return (
+        <Stack
+          onClick={createNewProject}
+          direction="row"
+          sx={{ cursor: "pointer" }}
+        >
+          <AddIcon />
+          <Typography>Add new project</Typography>
+        </Stack>
+      );
+    }
+  };
+
+  const createNewProject = () => setNewProject(true);
 
   return (
     <ThemeProvider theme={theme}>
@@ -72,7 +93,7 @@ export default function Portfolios({
         component="form"
         onSubmit={handleSubmitPortfolio}
         noValidate
-        sx={{ mt: 1 }}
+        sx={{ mt: 1, mb: 2 }}
       >
         <TextField
           fullWidth
@@ -91,10 +112,22 @@ export default function Portfolios({
         </Button>
       </Box>
       <div>{/* <p>{post.content}</p> */}</div>
-
+      {renderAddNewIcon()}
       <div>
+        {newProject && (
+          <ProjectSection
+            token={token}
+            project={{ portfolioId: portfolio.id }}
+            setNewProject={setNewProject}
+          />
+        )}
         {portfolio.projects.map((project) => (
-          <ProjectSection key={project.id} token={token} project={project} />
+          <ProjectSection
+            key={project.id}
+            token={token}
+            project={project}
+            setNewProject={setNewProject}
+          />
         ))}
       </div>
     </ThemeProvider>
@@ -103,21 +136,21 @@ export default function Portfolios({
 
 export async function getServerSideProps(context) {
   const { id } = context.query;
+  const token = context.req.cookies["token"];
   const apiUrl = `${server}/api/portfolios/${id}`;
-
-  const token = getCookie("token");
 
   const headers = { Authorization: `Bearer ${token}` };
   const response = await fetch(apiUrl, {
     headers,
   });
 
-
   if (response.ok) {
     const portfolio = await response.json();
     return {
-      portfolio,
-      token,
+      props: {
+        portfolio,
+        token,
+      },
     };
   } else {
     return await redirectOnError(context);

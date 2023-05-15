@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import Router from "next/router";
 import { deleteCookie } from "cookies-next";
 import { setCookie, getCookie } from "cookies-next";
+import { ValidationErrors } from "../types";
 
 export const login = (token: string) => {
   setCookie("token", token);
@@ -9,10 +10,8 @@ export const login = (token: string) => {
 };
 
 export const createObjectFromForm = (data) => {
-  const object: { [key: string]: FormDataEntryValue } = {};
-  data.forEach(
-    (value: FormDataEntryValue, key: string) => (object[key] = value)
-  );
+  const object: { [key: string]: string } = {};
+  data.forEach((value: string, key: string) => (object[key] = value));
   return object;
 };
 
@@ -33,13 +32,11 @@ export const auth = (ctx) => {
       Router.push("/login");
     }
   }
-
   return token;
 };
 
 export const logout = () => {
   deleteCookie("token");
-
   // to support logging out from all windows
   window.localStorage.setItem("logout", Date.now().toString());
   Router.push("/login");
@@ -62,19 +59,23 @@ export const withAuthSync = (WrappedComponent) => {
         window.localStorage.removeItem("logout");
       };
     }, []);
-
     return <WrappedComponent {...props} />;
   };
 
   Wrapper.getInitialProps = async (ctx) => {
     const token = auth(ctx);
-
     const componentProps =
       WrappedComponent.getInitialProps &&
       (await WrappedComponent.getInitialProps(ctx));
-
     return { ...componentProps, token };
   };
-
   return Wrapper;
+};
+
+export const createErrors = (errors): ValidationErrors => {
+  const obj: ValidationErrors = {};
+  errors.forEach(({ message, field }: { message: string; field: string }) => {
+    obj[field] = message;
+  });
+  return obj;
 };
