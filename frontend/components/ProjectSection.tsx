@@ -7,6 +7,7 @@ import {
   redirectOnError,
   createErrors,
   createObjectFromForm,
+  generateDropDownFields,
 } from "../utils";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -15,11 +16,8 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Router from "next/router";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateField } from "@mui/x-date-pickers/DateField";
-import dayjs from "dayjs";
+import ProjectDates from "./ProjectDates";
+import { cloudValues, projectSizesValues } from "../constants";
 import Skills from "./Skills";
 import _ from "lodash";
 import ProjectSectionButtons from "./ProjectSectionButtons";
@@ -40,7 +38,7 @@ const ProjectSection = ({
   token: string;
   setNewProject: (a: boolean) => void;
 }) => {
-  const [size, setSize] = React.useState<string>(project.size || "");
+  const [size, setSize] = useState<string>(project.size || "");
   const [cloud, setCloud] = useState<string>(project.cloud || "");
   const [languages, setLanguages] = useState<ISkills[]>([]);
   const [tools, setTools] = useState<ISkills[]>([]);
@@ -123,6 +121,7 @@ const ProjectSection = ({
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
+    setValidationErrors({});
     const apiUrl = `${server}/api/projects/${project.id}`;
     const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
@@ -154,7 +153,7 @@ const ProjectSection = ({
     }
   };
 
-  console.log("project", project);
+  console.log("dayjs(project.endDate) ", project.endDate);
 
   return (
     <Box
@@ -179,13 +178,11 @@ const ProjectSection = ({
           fullWidth
           color="secondary"
           id="clientName"
-          label="Project client name"
+          label="Client name"
           defaultValue={project.clientName}
           name="clientName"
           error={Boolean(validationErrors.clientName)}
-          helperText={
-            validationErrors.clientName ? validationErrors.clientName : " "
-          }
+          helperText={validationErrors.clientName ?? " "}
         />
       </Box>
       <Stack direction="row" spacing={1}>
@@ -197,9 +194,7 @@ const ProjectSection = ({
           defaultValue={project.projectName}
           name="projectName"
           error={Boolean(validationErrors.projectName)}
-          helperText={
-            validationErrors.projectName ? validationErrors.projectName : " "
-          }
+          helperText={validationErrors.projectName ?? " "}
         />
         <TextField
           fullWidth
@@ -209,11 +204,7 @@ const ProjectSection = ({
           defaultValue={project.clientIndustry}
           name="clientIndustry"
           error={Boolean(validationErrors.clientIndustry)}
-          helperText={
-            validationErrors.clientIndustry
-              ? validationErrors.clientIndustry
-              : " "
-          }
+          helperText={validationErrors.clientIndustry ?? " "}
         />
       </Stack>
       <TextField
@@ -226,11 +217,7 @@ const ProjectSection = ({
         defaultValue={project.clientDescription}
         name="clientDescription"
         error={Boolean(validationErrors.clientDescription)}
-        helperText={
-          validationErrors.clientDescription
-            ? validationErrors.clientDescription
-            : " "
-        }
+        helperText={validationErrors.clientDescription ?? " "}
       />
       <TextField
         fullWidth
@@ -242,44 +229,9 @@ const ProjectSection = ({
         defaultValue={project.projectDescription}
         name="projectDescription"
         error={Boolean(validationErrors.projectDescription)}
-        helperText={
-          validationErrors.projectDescription
-            ? validationErrors.projectDescription
-            : " "
-        }
+        helperText={validationErrors.projectDescription ?? " "}
       />
-      <Stack direction="row" alignItems="center" justifyContent="flex-start">
-        <Box>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateField
-              required
-              name="startDate"
-              label="Start date"
-              defaultValue={dayjs(project.startDate || "")}
-              helperText={
-                validationErrors.startDate ? validationErrors.startDate : " "
-              }
-              sx={{ minWidth: 140 }}
-              format="YYYY-MM-DD"
-            />
-          </LocalizationProvider>
-        </Box>
-        <Box>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateField
-              required
-              name="endDate"
-              label="End date"
-              defaultValue={dayjs(project.endDate || "")}
-              helperText={
-                validationErrors.endDate ? validationErrors.endDate : " "
-              }
-              format="YYYY-MM-DD"
-              sx={{ minWidth: 140, ml: 3 }}
-            />
-          </LocalizationProvider>
-        </Box>
-      </Stack>
+      <ProjectDates validationErrors={validationErrors} project={project} />
       <Stack
         direction="row"
         alignItems="center"
@@ -292,6 +244,7 @@ const ProjectSection = ({
           alignItems="center"
           sx={{
             mr: 2,
+            flexWrap: "wrap",
           }}
         >
           <InputLabel id="size-label">Select project size</InputLabel>
@@ -306,9 +259,7 @@ const ProjectSection = ({
             value={size}
             error={Boolean(validationErrors.size)}
           >
-            <MenuItem value="small">Small</MenuItem>
-            <MenuItem value="medium">Medium</MenuItem>
-            <MenuItem value="large">Large</MenuItem>
+            {generateDropDownFields(projectSizesValues)}
           </Select>
         </Stack>
         <Stack direction="row" alignItems="center">
@@ -324,9 +275,7 @@ const ProjectSection = ({
             value={cloud}
             error={Boolean(validationErrors.cloud)}
           >
-            <MenuItem value="AWS">AWS</MenuItem>
-            <MenuItem value="azure">Azure</MenuItem>
-            <MenuItem value="other">Other</MenuItem>
+            {generateDropDownFields(cloudValues)}
           </Select>
         </Stack>
       </Stack>
@@ -340,7 +289,7 @@ const ProjectSection = ({
         defaultValue={project.actions}
         name="actions"
         error={Boolean(validationErrors.actions)}
-        helperText={validationErrors.actions ? validationErrors.actions : " "}
+        helperText={validationErrors.actions ?? " "}
       />
       <TextField
         fullWidth
@@ -352,12 +301,12 @@ const ProjectSection = ({
         defaultValue={project.outcome}
         name="outcome"
         error={Boolean(validationErrors.outcome)}
-        helperText={validationErrors.outcome ? validationErrors.outcome : " "}
+        helperText={validationErrors.outcome ?? " "}
       />
       <Typography variant="h5" sx={{ ml: 1, mt: 1 }}>
         Skills
       </Typography>
-      <Box>
+      <Stack direction="row" sx={{ flexWrap: "wrap" }}>
         {skills.map(({ setFunction, name, value }) => {
           return (
             <Skills
@@ -368,7 +317,7 @@ const ProjectSection = ({
             />
           );
         })}
-      </Box>
+      </Stack>
       <Box>
         <FormControlLabel
           control={<Checkbox name="isDraft" />}

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import Router from "next/router";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
 import { ValidationErrors } from "../types";
+import MenuItem from "@mui/material/MenuItem";
 
 export const login = (token: string) => {
   setCookie("token", token);
@@ -69,4 +70,14 @@ export const createErrors = (errors): ValidationErrors => {
     obj[field] = message;
   });
   return obj;
+};
+
+export const generateDropDownFields = (arr) => {
+  return arr.map(({ value, label }) => {
+    return (
+      <MenuItem key={value} value={value}>
+        {label}
+      </MenuItem>
+    );
+  });
 };

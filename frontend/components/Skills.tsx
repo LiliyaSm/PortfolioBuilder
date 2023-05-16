@@ -1,71 +1,122 @@
-import TextField from "@mui/material/TextField";
 import React, { useState } from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Button from "@mui/material/Button";
 import HighlightOff from "@mui/icons-material/HighlightOff";
 import Stack from "@mui/material/Stack";
 import { ISkills } from "../types";
+import Box from "@mui/material/Box";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
 
-const Skills = ({ defaultValue, name, setFunction }) => {
-  const [inputValue, setInputValue] = useState<string>("");
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
+  },
+};
 
-  const addNewSkill = () => {
-    if (inputValue) {
-      setFunction((prevValue: ISkills[]) => [
-        ...prevValue,
-        { type: name.toLowerCase(), value: inputValue },
-      ]);
-      setInputValue("");
-    }
+const names = [
+  "Oliver Hansen",
+  "Van Henry",
+  "April Tucker",
+  "Ralph Hubbard",
+  "Omar Alexander",
+  "Carlos Abbott",
+  "Miriam Wagner",
+  "Bradley Wilkerson",
+  "Virginia Andrews",
+  "Kelly Snyder",
+];
+
+const createMultiSelectValue = (defaultValue: ISkills[]): string[] => {
+  return defaultValue.map(({ value }) => value);
+};
+
+const Skills = ({
+  defaultValue,
+  name,
+  setFunction,
+}: {
+  defaultValue: ISkills[];
+  name: string;
+  setFunction: (arg: ISkills[]) => void;
+}) => {
+  const handleChange = (event: SelectChangeEvent<typeof defaultValue>) => {
+    const {
+      target: { value },
+    } = event;
+
+    const skills: ISkills[] = [];
+
+    value.forEach((el: string) => {
+      const found = defaultValue.find(({ value }) => value === el);
+      if (found) {
+        skills.push(found);
+      } else {
+        skills.push({ type: name.toLowerCase(), value: el });
+      }
+    });
+    console.log("skills", skills);
+    setFunction(skills);
   };
 
-  const deleteSkill = (valueToDelete: string) => {
+  const deleteSkill = (event: any, valueToDelete: string) => {
     setFunction((prevValue: ISkills[]) => {
       return prevValue.filter(({ value }) => value !== valueToDelete);
     });
   };
   return (
-    <>
-      <List>
-        <Stack direction="row" sx={{ flexWrap: "wrap" }}>
-          {defaultValue.map(({ value }) => (
-            <Stack
-              key={value}
-              direction="row"
-              spacing={1}
-              justifyContent="flex-start"
-            >
-              <ListItem sx={{ fontSize: "20px" }}>
-                {value}{" "}
-                <HighlightOff
-                  sx={{ ml: 1 }}
-                  onClick={() => deleteSkill(value)}
-                />
-              </ListItem>
-            </Stack>
-          ))}
-        </Stack>
-      </List>
-
-      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
-        <TextField
-          sx={{ flexDirection: "row" }}
+    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+      <FormControl sx={{ m: 1, width: "350px" }}>
+        <InputLabel color="secondary" id={`multiple-chip-label-${name}`}>
+          {name}
+        </InputLabel>
+        <Select
+          labelId="multiple-chip-label"
+          id={`multiple-chip-${name}`}
+          fullWidth
+          multiple
           color="secondary"
-          label={name}
-          multiline
-          value={inputValue}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setInputValue(event.target.value);
-          }}
-        ></TextField>
-        <Button
-          variant="contained"
-          size="small"
-          onClick={addNewSkill}
-        >{`Add new`}</Button>
-      </Stack>
-    </>
+          value={createMultiSelectValue(defaultValue)}
+          onChange={handleChange}
+          input={<OutlinedInput id="select-multiple-chip" label={name} />}
+          renderValue={(selected) => (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              {selected.map((value: string) => (
+                <Chip
+                  key={value}
+                  label={value}
+                  clickable
+                  deleteIcon={
+                    <HighlightOff
+                      onMouseDown={(event) => event.stopPropagation()}
+                    />
+                  }
+                  onDelete={(e) => deleteSkill(e, value)}
+                  onClick={() => console.log("clicked chip")}
+                />
+              ))}
+            </Box>
+          )}
+          MenuProps={MenuProps}
+        >
+          {names.map((name) => (
+            <MenuItem
+              key={name}
+              value={name}
+              // style={getStyles(name, inputValue, theme)}
+            >
+              {name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Stack>
   );
 };
 
