@@ -8,6 +8,7 @@ export interface Portfolio {
 }
 export interface Project {
   id: number;
+  isDraft: boolean;
   portfolioId: number;
   clientName: string;
   clientDescription: string;
@@ -22,7 +23,7 @@ export interface Project {
   outcome: string;
   createdAt: string;
   updatedAt: string;
-  skills: [];
+  skills: ISkills[];
 }
 
 export interface ValidationErrors {

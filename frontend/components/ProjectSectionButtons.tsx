@@ -5,6 +5,7 @@ export const ProjectSectionButtons = ({
   setNewProject,
 }: {
   projectId: number | undefined;
+  setNewProject: (arg0: boolean) => void;
 }) => {
   const deleteNewProject = () => {
     setNewProject(false);

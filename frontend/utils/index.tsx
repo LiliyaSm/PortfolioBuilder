@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import Router from "next/router";
-import { deleteCookie } from "cookies-next";
-import { setCookie, getCookie } from "cookies-next";
+import { setCookie, getCookie, deleteCookie } from "cookies-next";
 import { ValidationErrors } from "../types";
 
 export const login = (token: string) => {

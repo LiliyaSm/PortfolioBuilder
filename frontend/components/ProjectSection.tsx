@@ -23,8 +23,11 @@ import dayjs from "dayjs";
 import Skills from "./Skills";
 import _ from "lodash";
 import ProjectSectionButtons from "./ProjectSectionButtons";
+import Chip from "@mui/material/Chip";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
-const createSkillsList = (skills: string[]) => {
+const createSkillsList = (skills: ISkills[]) => {
   return _.chain(skills).groupBy("type").value();
 };
 
@@ -33,7 +36,7 @@ const ProjectSection = ({
   token,
   setNewProject,
 }: {
-  project: Partial<Project>;
+  project: Project;
   token: string;
   setNewProject: (a: boolean) => void;
 }) => {
@@ -41,13 +44,37 @@ const ProjectSection = ({
   const [cloud, setCloud] = useState<string>(project.cloud || "");
   const [languages, setLanguages] = useState<ISkills[]>([]);
   const [tools, setTools] = useState<ISkills[]>([]);
+  const [frameworks, setFrameworks] = useState<ISkills[]>([]);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {}
   );
 
+  const skills = [
+    {
+      setFunction: setLanguages,
+      name: "Language",
+      value: languages,
+    },
+    {
+      setFunction: setTools,
+      name: "Tool",
+      value: tools,
+    },
+    {
+      setFunction: setFrameworks,
+      name: "Framework",
+      value: frameworks,
+    },
+  ];
+
   useEffect(() => {
     const skillsList = createSkillsList(project.skills);
-    if (skillsList.language) setLanguages(skillsList.language);
+    skills.forEach(({ name, setFunction }) => {
+      if (skillsList[name.toLowerCase()]) {
+        const skillValue = skillsList[name.toLowerCase()];
+        setFunction(skillValue);
+      }
+    });
   }, []);
 
   const createNewProject = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -55,11 +82,11 @@ const ProjectSection = ({
     const apiUrl = `${server}/api/portfolios/${project.portfolioId}/project`;
     const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
-    const projectSkills = [...languages];
+    const projectSkills = skills.reduce((acc, { value }) => {
+      return [...acc, ...value];
+    }, []);
 
     object.skills = projectSkills;
-
-    console.log("createNewProject", object);
 
     const requestOptions = {
       method: "POST",
@@ -99,12 +126,11 @@ const ProjectSection = ({
     const apiUrl = `${server}/api/projects/${project.id}`;
     const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
-    const projectSkills = [...languages];
+    const projectSkills = skills.reduce((acc, { value }) => {
+      return [...acc, ...value];
+    }, []);
 
     object.skills = projectSkills;
-
-    console.log("handleUpdateProject", object);
-
     const requestOptions = {
       method: "PUT",
       headers: {
@@ -128,6 +154,8 @@ const ProjectSection = ({
     }
   };
 
+  console.log("project", project);
+
   return (
     <Box
       component="form"
@@ -140,6 +168,12 @@ const ProjectSection = ({
         borderRadius: "8px",
       }}
     >
+      <Stack flexDirection="row" justifyContent="flex-start">
+        {project.isDraft && (
+          <Chip sx={{ mt: -4, mb: 2, ml: 2 }} color="primary" label="Draft" />
+        )}
+      </Stack>
+
       <Box>
         <TextField
           fullWidth
@@ -324,11 +358,21 @@ const ProjectSection = ({
         Skills
       </Typography>
       <Box>
-        <Skills
-          // key={value}
-          setFunction={setLanguages}
-          name="Language"
-          defaultValue={languages}
+        {skills.map(({ setFunction, name, value }) => {
+          return (
+            <Skills
+              key={name}
+              setFunction={setFunction}
+              name={name}
+              defaultValue={value}
+            />
+          );
+        })}
+      </Box>
+      <Box>
+        <FormControlLabel
+          control={<Checkbox name="isDraft" />}
+          label="Save as draft"
         />
       </Box>
       <ProjectSectionButtons

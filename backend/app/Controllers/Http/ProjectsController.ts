@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Project from 'App/Models/Project'
 import { PORTFOLIO_NOT_FOUND, PROJECT_NOT_FOUND, UNAUTHORIZED_ACCESS } from 'App/constants'
 import ProjectValidator from 'App/Validators/ProjectValidator'
+import DraftProjectValidator from 'App/Validators/DraftProjectValidator'
 
 export default class ProjectsController {
   public async view({ params, response, auth }: HttpContextContract) {
@@ -18,7 +19,10 @@ export default class ProjectsController {
   }
 
   public async store({ response, request, params, auth }: HttpContextContract) {
-    const data = await request.validate(ProjectValidator)
+    let data = request.body()
+    const validator = data.isDraft ? DraftProjectValidator : ProjectValidator
+    data = await request.validate(validator)
+
     const { skills, ...project } = data
 
     //check the portfolio exists
@@ -40,8 +44,10 @@ export default class ProjectsController {
   }
 
   public async update({ request, params, response, auth }: HttpContextContract) {
-    const updatedProject = await request.validate(ProjectValidator)
-    // const updatedProject = request.body()
+    let updatedProject = request.body()
+    const validator = updatedProject.isDraft ? DraftProjectValidator : ProjectValidator
+    updatedProject = await request.validate(validator)
+
     const project = await Project.query()
       .preload('portfolio')
       .preload('skills')

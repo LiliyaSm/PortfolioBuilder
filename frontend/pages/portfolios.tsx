@@ -7,7 +7,6 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Container from "@mui/material/Container";
-import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -70,7 +69,6 @@ function Portfolios({
                     >
                       {portfolio.name}
                     </Link>
-                    <Chip sx={{ ml: 2 }} color="primary" label="Draft" />
                   </Typography>
                   <Typography color="text.secondary" variant="body2">
                     Created at:{new Date(portfolio.createdAt).toLocaleString()}

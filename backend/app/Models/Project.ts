@@ -15,7 +15,7 @@ export default class Project extends BaseModel {
   @column({ columnName: 'portfolioId', serializeAs: 'portfolioId' })
   public portfolioId: number
 
-  @column()
+  @column({ columnName: 'isDraft', serializeAs: 'isDraft' })
   public isDraft: boolean
 
   //

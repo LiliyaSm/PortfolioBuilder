@@ -1,6 +1,6 @@
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
-// const type = ['Framework', 'Method', 'Language', 'Tool']
+// const type = ['Framework', 'Method -dropdown', 'Language', 'Tool']
 
 export default class Skill extends BaseModel {
   @column({ isPrimary: true })
