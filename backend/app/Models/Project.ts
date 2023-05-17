@@ -41,7 +41,7 @@ export default class Project extends BaseModel {
   public startDate: DateTime
 
   @column.dateTime({ columnName: 'endDate', serializeAs: 'endDate' })
-  public endDate: DateTime
+  public endDate: DateTime | null
 
   @column()
   public cloud: string

@@ -1,145 +1,131 @@
-import React, { useState } from "react";
-import { server } from "../../config";
-import { Portfolio } from "../../types";
-import TextField from "@mui/material/TextField";
+import List from "@mui/material/List";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import ListItem from "@mui/material/ListItem";
+import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { purple } from "@mui/material/colors";
-import { createObjectFromForm } from "../../utils";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import { Portfolio } from "../../types";
+import { server } from "../../config";
 import Router from "next/router";
-import ProjectSection from "../../components/ProjectSection";
-import { withAuthSync, redirectOnError } from "../../utils";
-import AddIcon from "@mui/icons-material/Add";
+import { withAuthSync, redirectOnError, createSkillsList } from "../../utils";
 import { GetServerSidePropsContext } from "next";
+import { roles } from "../../constants";
+import upperFirst from "lodash/capitalize";
 
-const theme = createTheme({
-  palette: {
-    secondary: {
-      main: purple[500],
-    },
-    primary: {
-      light: "#faf9bb",
-      main: "#fdee00",
-      dark: "#f7f402",
-      contrastText: "#9C27B0",
-    },
-  },
-});
-
-export default function Portfolios({
-  portfolio,
-  token,
-}: {
-  portfolio: Portfolio;
-  token: string;
-}) {
-  const [newProject, setNewProject] = useState<boolean>(false);
+const dateOptions = {
+  year: "numeric",
+  month: "2-digit",
+  day: "numeric",
+};
+function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
+  const firstName = localStorage.getItem("firstName");
 
   const sortedProjects = portfolio.projects.sort((a, b) => {
     return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
   });
-
-  const handleSubmitPortfolio = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const object = createObjectFromForm(data);
-
-    const apiUrl = `${server}/api/portfolios/${portfolio.id}`;
-
-    const requestOptions = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(object),
-    };
-    const response = await fetch(apiUrl, requestOptions);
-    if (response.ok) {
-      Router.push(`/portfolio/${portfolio.id}`);
-    }
-  };
-
-  const renderAddNewIcon = () => {
-    if (newProject) {
-      return (
-        <Typography color="secondary">
-          <h4>Save existing project to add a new one</h4>
-        </Typography>
-      );
-    } else {
-      return (
-        <Stack
-          onClick={createNewProject}
-          direction="row"
-          sx={{ cursor: "pointer" }}
-        >
-          <AddIcon />
-          <Typography>Add new project</Typography>
-        </Stack>
-      );
-    }
-  };
-
-  const createNewProject = () => setNewProject(true);
-
   return (
-    <ThemeProvider theme={theme}>
-      <h2>Edit the Portfolio: {portfolio.name}</h2>
-      <hr />
-      <Typography sx={{ my: 2, textAlign: "center" }} variant="h5"></Typography>
-      {/* <Typography>Portfolio name</Typography> */}
-      <Box
-        component="form"
-        onSubmit={handleSubmitPortfolio}
-        noValidate
-        sx={{ mt: 1, mb: 2 }}
-      >
-        <TextField
-          fullWidth
-          required
-          color="secondary"
-          id="outlined-required"
-          label="Portfolio name"
-          name="name"
-          defaultValue={portfolio.name}
-          sx={{
-            mb: 2,
-          }}
-        />
-        <Button type="submit" sx={{ mr: 10 }} variant="contained" size="large">
-          update name
-        </Button>
-      </Box>
-      <div>{/* <p>{post.content}</p> */}</div>
-      {renderAddNewIcon()}
-      <div>
-        {newProject && (
-          <ProjectSection
-            token={token}
-            project={{ portfolioId: portfolio.id }}
-            setNewProject={setNewProject}
-          />
-        )}
-        {sortedProjects.map((project) => (
-          <ProjectSection
-            key={project.id}
-            token={token}
-            project={project}
-            setNewProject={setNewProject}
-          />
-        ))}
-      </div>
-    </ThemeProvider>
+    <Container component="div" maxWidth="md">
+      <Typography variant="h4">{firstName} SecondName</Typography>
+      <Divider />
+      {sortedProjects.map((project) => {
+        const skillsList = createSkillsList(project.skills);
+        console.log(skillsList);
+        return (
+          !project.isDraft && (
+            <Box key={project.id}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                sx={{ mt: 3 }}
+              >
+                <Typography sx={{ textAlign: "left" }} variant="h6">
+                  {roles
+                    .find(({ value }) => value === project.role)
+                    .label.toUpperCase()}
+                </Typography>
+                <Typography sx={{ textAlign: "center" }} variant="subtitle1">
+                  {new Date(project.startDate).toLocaleDateString(
+                    "en",
+                    dateOptions
+                  )}{" "}
+                  -{" "}
+                  {project.endDate
+                    ? new Date(project.endDate).toLocaleDateString(
+                        "en",
+                        dateOptions
+                      )
+                    : "Till now"}
+                </Typography>
+              </Stack>
+              <Box key={project.id}>
+                <Typography sx={{ mt: 1.5 }} variant="h4">
+                  <i>{project.clientName}</i>
+                </Typography>
+                <Box sx={{ mt: 0.5, fontSize: "18px" }}>
+                  Industry: {project.clientIndustry}
+                </Box>
+                {project.clientDescription && (
+                  <Box key={project.id} sx={{ mt: 0.5, color: "#2F4F4F" }}>
+                    {project.clientDescription}
+                  </Box>
+                )}
+              </Box>
+              <Box>
+                <Typography variant="h5" sx={{ mt: 3, mb: 2 }}>
+                  {project.projectName}
+                </Typography>
+                {project.projectDescription}
+              </Box>
+              <Box sx={{ mt: 0.7 }}>
+                {`Project type: ${project.projectType};   Project size:
+                ${project.size};   Team size: ${project.teamSize};   Cloud: 
+                ${project.cloud}`}
+              </Box>
+              <Box>
+                <Typography sx={{ mt: 3 }} variant="h5">
+                  Actions
+                </Typography>
+                {project.actions}
+              </Box>
+              <Box>
+                <Typography sx={{ mt: 3 }} variant="h5">
+                  Outcome
+                </Typography>
+                {project.outcome}
+              </Box>
+              <Typography sx={{ mt: 3 }} variant="h5">
+                Skills
+              </Typography>
+              {Object.keys(skillsList).map((key) => {
+                return (
+                  <Box sx={{ mb: 1 }} key={key}>
+                    <Typography variant="subtitle1">
+                      {upperFirst(`${key}s`)}:
+                    </Typography>
+                    {skillsList[key].map(({ value }) => {
+                      return (
+                        <ListItem
+                          sx={{ display: "list-item", pt: 0.2, pb: 0.2 }}
+                        >
+                          {value}
+                        </ListItem>
+                      );
+                    })}
+                  </Box>
+                );
+              })}
+            </Box>
+          )
+        );
+      })}
+      <List></List>
+    </Container>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  console.log(context);
   const { id } = context.query;
   const token = context.req.cookies["token"];
   const apiUrl = `${server}/api/portfolios/${id}`;
@@ -161,3 +147,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return await redirectOnError(context);
   }
 }
+
+export default withAuthSync(View);

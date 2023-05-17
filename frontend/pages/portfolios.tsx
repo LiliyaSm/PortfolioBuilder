@@ -82,10 +82,18 @@ function Portfolios({
                     sx={{ mb: 2, textDecoration: "none" }}
                     href={`/portfolio/${portfolio.id}`}
                   >
-                    <PreviewIcon />
+                    <PreviewIcon color="secondary" />
                   </Link>
-                  <EditIcon color="primary" />
-                  <DeleteIcon color="primary" onClick={() => deletePortfolio(portfolio.id)} />
+                  <Link
+                    sx={{ mb: 2, color: "#9C27B0", textDecoration: "none" }}
+                    href={`/portfolio/edit/${portfolio.id}`}
+                  >
+                    <EditIcon color="secondary" />
+                  </Link>
+                  <DeleteIcon
+                    color="secondary"
+                    onClick={() => deletePortfolio(portfolio.id)}
+                  />
                 </Stack>
               </ListItem>
               <Divider />

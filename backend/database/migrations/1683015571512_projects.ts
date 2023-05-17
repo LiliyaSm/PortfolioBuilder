@@ -16,7 +16,7 @@ export default class extends BaseSchema {
       table.text('projectDescription')
       table.string('size')
       table.timestamp('startDate', { useTz: true })
-      table.timestamp('endDate', { useTz: true })
+      table.timestamp('endDate', { useTz: true }).nullable
       table.string('cloud')
       table.text('actions')
       table.text('outcome')

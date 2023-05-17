@@ -16,9 +16,12 @@ export default class ProjectValidator extends BaseValidator {
     projectName: schema.string(),
     projectDescription: schema.string(),
     size: schema.string(),
+    teamSize: schema.string(),
+    role: schema.string(),
+    projectType: schema.string(),
     cloud: schema.string(),
     startDate: schema.date(),
-    endDate: schema.date(),
+    endDate: schema.date.optional(),
     actions: schema.string(),
     outcome: schema.string(),
     skills: schema.array().members(

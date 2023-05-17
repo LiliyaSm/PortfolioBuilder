@@ -60,6 +60,8 @@ export default class ProjectsController {
       return response.status(401).send(UNAUTHORIZED_ACCESS)
     }
 
+    if (!updatedProject.endDate) project.endDate = null
+
     // update project entity fields
     await project.merge(updatedProject).save()
 

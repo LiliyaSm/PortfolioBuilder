@@ -21,6 +21,9 @@ export default class DraftProjectValidator extends BaseValidator {
     endDate: schema.date.optional(),
     actions: schema.string.optional(),
     outcome: schema.string.optional(),
+    teamSize: schema.string.optional(),
+    role: schema.string.optional(),
+    projectType: schema.string.optional(),
     skills: schema.array().members(
       schema.object().members({
         value: schema.string(),

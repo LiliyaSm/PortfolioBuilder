@@ -4,7 +4,7 @@ import { server } from "../config";
 import { Project, ValidationErrors, ISkills } from "../types";
 import {
   withAuthSync,
-  redirectOnError,
+  createSkillsList,
   createErrors,
   createObjectFromForm,
   generateDropDownFields,
@@ -29,15 +29,11 @@ import {
   programmingFrameworks,
 } from "../constants";
 import Skills from "./Skills";
-import _ from "lodash";
+
 import ProjectSectionButtons from "./ProjectSectionButtons";
 import Chip from "@mui/material/Chip";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-
-const createSkillsList = (skills: ISkills[]) => {
-  return _.chain(skills).groupBy("type").value();
-};
 
 const ProjectSection = ({
   project,
@@ -167,6 +163,8 @@ const ProjectSection = ({
     }, []);
 
     object.skills = projectSkills;
+    object.isDraft = object.isDraft ? true : false;
+    object.endDate = object.endDate ?? null;
     console.log("handleUpdateProject", object);
     const requestOptions = {
       method: "PUT",
@@ -190,8 +188,6 @@ const ProjectSection = ({
       console.log(errorsToDisplay);
     }
   };
-
-  console.log("dayjs(project.endDate) ", project.endDate);
 
   return (
     <Box

@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import Router from "next/router";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
-import { ValidationErrors } from "../types";
+import { ValidationErrors, ISkills } from "../types";
 import MenuItem from "@mui/material/MenuItem";
+import _ from "lodash";
 
 export const login = (token: string) => {
   setCookie("token", token);
@@ -80,4 +81,8 @@ export const generateDropDownFields = (arr) => {
       </MenuItem>
     );
   });
+};
+
+export const createSkillsList = (skills: ISkills[]) => {
+  return _.chain(skills).groupBy("type").value();
 };
