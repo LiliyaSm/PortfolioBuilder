@@ -51,8 +51,16 @@ export default class Project extends BaseModel {
 
   @column()
   public outcome: string
-  //
 
+  @column({ columnName: 'teamSize', serializeAs: 'teamSize' })
+  public teamSize: string
+
+  @column()
+  public role: string
+
+  @column({ columnName: 'projectType', serializeAs: 'projectType' })
+  public projectType: string
+  //
   @column.dateTime({ columnName: 'createdAt', autoCreate: true, serializeAs: 'createdAt' })
   public createdAt: DateTime
 

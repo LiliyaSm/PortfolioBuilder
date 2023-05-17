@@ -20,6 +20,9 @@ export default class extends BaseSchema {
       table.string('cloud')
       table.text('actions')
       table.text('outcome')
+      table.text('teamSize')
+      table.text('role')
+      table.text('projectType')
       //
       table.timestamp('createdAt', { useTz: true })
       table.timestamp('updatedAt', { useTz: true })

@@ -59,6 +59,7 @@ const ProjectDates = ({
         sx={{ ml: 2, mb: 2 }}
         control={
           <Checkbox
+            color="secondary"
             name="isCurrentlyWorking"
             checked={isCurrentlyWorking}
             onChange={(

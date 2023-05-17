@@ -37,7 +37,7 @@ export default function MenuAppBar( ) {
     const response = await fetch(apiUrl, requestOptions);
     const portfolio = await response.json();
     if (response.ok) {
-      Router.push(`/portfolio/${portfolio.id}`);}
+      Router.push(`/portfolio/edit/${portfolio.id}`);}
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

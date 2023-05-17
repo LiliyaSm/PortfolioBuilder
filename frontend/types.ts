@@ -24,6 +24,9 @@ export interface Project {
   createdAt: string;
   updatedAt: string;
   skills: ISkills[];
+  teamSize: string;
+  role: string,
+  projectType: string
 }
 
 export interface ValidationErrors {
@@ -39,6 +42,9 @@ export interface ValidationErrors {
   cloud?: string;
   actions?: string;
   outcome?: string;
+  teamSize?: string;
+  role?: string;
+  projectType?: string;
 }
 
 export interface ISkills {

@@ -17,7 +17,17 @@ import Stack from "@mui/material/Stack";
 import Router from "next/router";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ProjectDates from "./ProjectDates";
-import { cloudValues, projectSizesValues } from "../constants";
+import {
+  cloudValues,
+  projectSizesValues,
+  projectTeamSizeValues,
+  roles,
+  projectTypes,
+  companyIndustries,
+  programmingTools,
+  programmingLanguages,
+  programmingFrameworks,
+} from "../constants";
 import Skills from "./Skills";
 import _ from "lodash";
 import ProjectSectionButtons from "./ProjectSectionButtons";
@@ -40,6 +50,14 @@ const ProjectSection = ({
 }) => {
   const [size, setSize] = useState<string>(project.size || "");
   const [cloud, setCloud] = useState<string>(project.cloud || "");
+  const [role, setRole] = useState<string>(project.role || "");
+  const [clientIndustry, setClientIndustry] = useState<string>(
+    project.clientIndustry || ""
+  );
+  const [projectType, setProjectType] = useState<string>(
+    project.projectType || ""
+  );
+  const [teamSize, setTeamSize] = useState<string>(project.teamSize || "");
   const [languages, setLanguages] = useState<ISkills[]>([]);
   const [tools, setTools] = useState<ISkills[]>([]);
   const [frameworks, setFrameworks] = useState<ISkills[]>([]);
@@ -52,16 +70,19 @@ const ProjectSection = ({
       setFunction: setLanguages,
       name: "Language",
       value: languages,
+      entities: programmingLanguages,
     },
     {
       setFunction: setTools,
       name: "Tool",
       value: tools,
+      entities: programmingTools,
     },
     {
       setFunction: setFrameworks,
       name: "Framework",
       value: frameworks,
+      entities: programmingFrameworks,
     },
   ];
 
@@ -97,7 +118,7 @@ const ProjectSection = ({
 
     const response = await fetch(apiUrl, requestOptions);
     if (response.ok) {
-      Router.push(`/portfolio/${project.portfolioId}`);
+      Router.push(`/portfolio/edit/${project.portfolioId}`);
       setNewProject(false);
     } else {
       const {
@@ -117,6 +138,22 @@ const ProjectSection = ({
     setCloud(event.target.value as string);
   };
 
+  const handleSelectTeamSizeChange = (event: SelectChangeEvent) => {
+    setTeamSize(event.target.value as string);
+  };
+
+  const handleSelectRoleChange = (event: SelectChangeEvent) => {
+    setRole(event.target.value as string);
+  };
+
+  const handleSelectProjectTypeChange = (event: SelectChangeEvent) => {
+    setProjectType(event.target.value as string);
+  };
+
+  const handleSelectClientIndustryChange = (event: SelectChangeEvent) => {
+    setClientIndustry(event.target.value as string);
+  };
+
   const handleUpdateProject = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -130,6 +167,7 @@ const ProjectSection = ({
     }, []);
 
     object.skills = projectSkills;
+    console.log("handleUpdateProject", object);
     const requestOptions = {
       method: "PUT",
       headers: {
@@ -142,7 +180,7 @@ const ProjectSection = ({
     const response = await fetch(apiUrl, requestOptions);
 
     if (response.ok) {
-      Router.push(`/portfolio/${project.portfolioId}`);
+      Router.push(`/portfolio/edit/${project.portfolioId}`);
     } else {
       const {
         error: { errors },
@@ -173,7 +211,7 @@ const ProjectSection = ({
         )}
       </Stack>
 
-      <Box>
+      <Stack direction="row" spacing={1}>
         <TextField
           fullWidth
           color="secondary"
@@ -184,8 +222,31 @@ const ProjectSection = ({
           error={Boolean(validationErrors.clientName)}
           helperText={validationErrors.clientName ?? " "}
         />
-      </Box>
-      <Stack direction="row" spacing={1}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            mr: 2,
+            pb: 3,
+            minWidth: "400px",
+          }}
+        >
+          <InputLabel id="client-industry-label">Client industry</InputLabel>
+          <Select
+            sx={{ minWidth: 280, ml: 2 }}
+            labelId="client-industry-label"
+            id="client-industry"
+            name="clientIndustry"
+            color="secondary"
+            onChange={handleSelectClientIndustryChange}
+            value={clientIndustry}
+            error={Boolean(validationErrors.clientIndustry)}
+          >
+            {generateDropDownFields(companyIndustries)}
+          </Select>
+        </Stack>
+      </Stack>
+      <Stack direction="row" alignContent="center" spacing={1}>
         <TextField
           fullWidth
           color="secondary"
@@ -196,22 +257,36 @@ const ProjectSection = ({
           error={Boolean(validationErrors.projectName)}
           helperText={validationErrors.projectName ?? " "}
         />
-        <TextField
-          fullWidth
-          color="secondary"
-          id="clientIndustry"
-          label="Client industry"
-          defaultValue={project.clientIndustry}
-          name="clientIndustry"
-          error={Boolean(validationErrors.clientIndustry)}
-          helperText={validationErrors.clientIndustry ?? " "}
-        />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="flex-end"
+          sx={{
+            mr: 2,
+            pb: 3,
+            minWidth: "400px",
+          }}
+        >
+          <InputLabel id="project-type-label">Project type</InputLabel>
+          <Select
+            sx={{ minWidth: 280, ml: 2 }}
+            labelId="project-type-label"
+            id="project-type"
+            name="projectType"
+            color="secondary"
+            onChange={handleSelectProjectTypeChange}
+            value={projectType}
+            error={Boolean(validationErrors.projectType)}
+          >
+            {generateDropDownFields(projectTypes)}
+          </Select>
+        </Stack>
       </Stack>
       <TextField
         fullWidth
         color="secondary"
         id="clientDescription"
-        label="Client description"
+        label="Client description (optional)"
         multiline
         rows={2}
         defaultValue={project.clientDescription}
@@ -237,8 +312,31 @@ const ProjectSection = ({
         alignItems="center"
         sx={{
           mb: 2,
+          flexWrap: "wrap",
         }}
       >
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            mr: 2,
+            // flexWrap: "wrap",
+          }}
+        >
+          <InputLabel id="role-label">Role</InputLabel>
+          <Select
+            sx={{ minWidth: 190, ml: 2 }}
+            labelId="role-label"
+            id="role-size"
+            name="role"
+            color="secondary"
+            onChange={handleSelectRoleChange}
+            value={role}
+            error={Boolean(validationErrors.role)}
+          >
+            {generateDropDownFields(roles)}
+          </Select>
+        </Stack>
         <Stack
           direction="row"
           alignItems="center"
@@ -247,13 +345,12 @@ const ProjectSection = ({
             flexWrap: "wrap",
           }}
         >
-          <InputLabel id="size-label">Select project size</InputLabel>
+          <InputLabel id="size-label">Project size</InputLabel>
           <Select
             sx={{ minWidth: 160, ml: 2 }}
             labelId="size-label"
             id="size"
             name="size"
-            required
             color="secondary"
             onChange={handleSelectChange}
             value={size}
@@ -262,20 +359,48 @@ const ProjectSection = ({
             {generateDropDownFields(projectSizesValues)}
           </Select>
         </Stack>
-        <Stack direction="row" alignItems="center">
-          <InputLabel id="cloud-label">Select cloud</InputLabel>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            mr: 2,
+            flexWrap: "wrap",
+          }}
+        >
+          <InputLabel id="cloud-label">Cloud</InputLabel>
           <Select
             sx={{ minWidth: 160, ml: 2 }}
             labelId="cloud-label"
             id="cloud"
             name="cloud"
-            required
             color="secondary"
             onChange={handleSelectCloudChange}
             value={cloud}
             error={Boolean(validationErrors.cloud)}
           >
             {generateDropDownFields(cloudValues)}
+          </Select>
+        </Stack>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            mr: 2,
+            flexWrap: "wrap",
+          }}
+        >
+          <InputLabel id="team-size-label">Team size</InputLabel>
+          <Select
+            sx={{ minWidth: 230, ml: 2 }}
+            labelId="team-size-label"
+            id="team-size"
+            name="teamSize"
+            color="secondary"
+            onChange={handleSelectTeamSizeChange}
+            value={teamSize}
+            error={Boolean(validationErrors.teamSize)}
+          >
+            {generateDropDownFields(projectTeamSizeValues)}
           </Select>
         </Stack>
       </Stack>
@@ -307,20 +432,21 @@ const ProjectSection = ({
         Skills
       </Typography>
       <Stack direction="row" sx={{ flexWrap: "wrap" }}>
-        {skills.map(({ setFunction, name, value }) => {
+        {skills.map(({ setFunction, name, value, entities }) => {
           return (
             <Skills
               key={name}
               setFunction={setFunction}
               name={name}
               defaultValue={value}
+              entities={entities}
             />
           );
         })}
       </Stack>
       <Box>
         <FormControlLabel
-          control={<Checkbox name="isDraft" />}
+          control={<Checkbox color="secondary" name="isDraft" />}
           label="Save as draft"
         />
       </Box>

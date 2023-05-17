@@ -20,19 +20,6 @@ const MenuProps = {
   },
 };
 
-const names = [
-  "Oliver Hansen",
-  "Van Henry",
-  "April Tucker",
-  "Ralph Hubbard",
-  "Omar Alexander",
-  "Carlos Abbott",
-  "Miriam Wagner",
-  "Bradley Wilkerson",
-  "Virginia Andrews",
-  "Kelly Snyder",
-];
-
 const createMultiSelectValue = (defaultValue: ISkills[]): string[] => {
   return defaultValue.map(({ value }) => value);
 };
@@ -41,10 +28,12 @@ const Skills = ({
   defaultValue,
   name,
   setFunction,
+  entities
 }: {
   defaultValue: ISkills[];
   name: string;
   setFunction: (arg: ISkills[]) => void;
+  entities: string[];
 }) => {
   const handleChange = (event: SelectChangeEvent<typeof defaultValue>) => {
     const {
@@ -105,7 +94,7 @@ const Skills = ({
           )}
           MenuProps={MenuProps}
         >
-          {names.map((name) => (
+          {entities.map((name) => (
             <MenuItem
               key={name}
               value={name}

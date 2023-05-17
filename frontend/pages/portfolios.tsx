@@ -65,7 +65,7 @@ function Portfolios({
                   <Typography variant="h5" sx={{ mb: 2 }}>
                     <Link
                       sx={{ mb: 2, color: "#9C27B0", textDecoration: "none" }}
-                      href={`/portfolio/${portfolio.id}`}
+                      href={`/portfolio/edit/${portfolio.id}`}
                     >
                       {portfolio.name}
                     </Link>
@@ -78,9 +78,14 @@ function Portfolios({
                   </Typography>
                 </ListItemText>
                 <Stack direction="row" spacing={1}>
-                  <PreviewIcon />
-                  <EditIcon />
-                  <DeleteIcon onClick={() => deletePortfolio(portfolio.id)} />
+                  <Link
+                    sx={{ mb: 2, textDecoration: "none" }}
+                    href={`/portfolio/${portfolio.id}`}
+                  >
+                    <PreviewIcon />
+                  </Link>
+                  <EditIcon color="primary" />
+                  <DeleteIcon color="primary" onClick={() => deletePortfolio(portfolio.id)} />
                 </Stack>
               </ListItem>
               <Divider />
@@ -120,6 +125,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     // Implementation or Network error
     return redirectOnError(context);
   }
-};
+}
 
 export default withAuthSync(Portfolios);
