@@ -14,6 +14,9 @@ import ProjectSection from "../../../components/ProjectSection";
 import { withAuthSync, redirectOnError } from "../../../utils";
 import AddIcon from "@mui/icons-material/Add";
 import { GetServerSidePropsContext } from "next";
+import Alert from "@mui/material/Alert";
+import Link from "../../../src/app/Link";
+import PreviewIcon from "@mui/icons-material/Preview";
 
 const theme = createTheme({
   palette: {
@@ -29,7 +32,7 @@ const theme = createTheme({
   },
 });
 
-export default function Portfolios({
+function EditPortfolio({
   portfolio,
   token,
 }: {
@@ -37,6 +40,7 @@ export default function Portfolios({
   token: string;
 }) {
   const [newProject, setNewProject] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<string>("");
 
   const sortedProjects = portfolio.projects.sort((a, b) => {
     return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
@@ -90,10 +94,20 @@ export default function Portfolios({
 
   return (
     <ThemeProvider theme={theme}>
-      <h2>Edit the Portfolio: {portfolio.name}</h2>
+      <Stack direction="row" justifyContent="space-between">
+        <Typography variant="h5">
+          Edit the Portfolio: {portfolio.name}
+        </Typography>
+        <Link
+          title="Go to view"
+          sx={{ mr: 2, textDecoration: "none" }}
+          href={`/portfolio/${portfolio.id}`}
+        >
+          <PreviewIcon color="secondary" />
+        </Link>
+      </Stack>
       <hr />
       <Typography sx={{ my: 2, textAlign: "center" }} variant="h5"></Typography>
-      {/* <Typography>Portfolio name</Typography> */}
       <Box
         component="form"
         onSubmit={handleSubmitPortfolio}
@@ -116,14 +130,23 @@ export default function Portfolios({
           update name
         </Button>
       </Box>
-      <div>{/* <p>{post.content}</p> */}</div>
       {renderAddNewIcon()}
+      {showAlert && (
+        <Alert
+          sx={{ my: 2 }}
+          severity="success"
+          onClose={() => setShowAlert("")}
+        >
+          {showAlert}
+        </Alert>
+      )}
       <div>
         {newProject && (
           <ProjectSection
             token={token}
             project={{ portfolioId: portfolio.id }}
             setNewProject={setNewProject}
+            setShowAlert={setShowAlert}
           />
         )}
         {sortedProjects.map((project) => (
@@ -132,6 +155,7 @@ export default function Portfolios({
             token={token}
             project={project}
             setNewProject={setNewProject}
+            setShowAlert={setShowAlert}
           />
         ))}
       </div>
@@ -161,3 +185,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return await redirectOnError(context);
   }
 }
+
+export default withAuthSync(EditPortfolio);

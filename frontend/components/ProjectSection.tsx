@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { server } from "../config";
 import { Project, ValidationErrors, ISkills } from "../types";
 import {
-  withAuthSync,
   createSkillsList,
   createErrors,
   createObjectFromForm,
@@ -18,10 +17,6 @@ import Router from "next/router";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ProjectDates from "./ProjectDates";
 import {
-  cloudValues,
-  projectSizesValues,
-  projectTeamSizeValues,
-  roles,
   projectTypes,
   companyIndustries,
   programmingTools,
@@ -33,26 +28,26 @@ import ProjectSectionButtons from "./ProjectSectionButtons";
 import Chip from "@mui/material/Chip";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import ProjectSectionDropdowns from "../components/ProjectSectionDropdowns";
+import _ from "lodash"
 
 const ProjectSection = ({
   project,
   token,
   setNewProject,
+  setShowAlert,
 }: {
-  project: Project;
+  project: Partial<Project>;
   token: string;
   setNewProject: (a: boolean) => void;
+  setShowAlert: (a: string) => void;
 }) => {
-  const [size, setSize] = useState<string>(project.size || "");
-  const [cloud, setCloud] = useState<string>(project.cloud || "");
-  const [role, setRole] = useState<string>(project.role || "");
   const [clientIndustry, setClientIndustry] = useState<string>(
     project.clientIndustry || ""
   );
   const [projectType, setProjectType] = useState<string>(
     project.projectType || ""
   );
-  const [teamSize, setTeamSize] = useState<string>(project.teamSize || "");
   const [languages, setLanguages] = useState<ISkills[]>([]);
   const [tools, setTools] = useState<ISkills[]>([]);
   const [frameworks, setFrameworks] = useState<ISkills[]>([]);
@@ -82,13 +77,15 @@ const ProjectSection = ({
   ];
 
   useEffect(() => {
-    const skillsList = createSkillsList(project.skills);
-    skills.forEach(({ name, setFunction }) => {
-      if (skillsList[name.toLowerCase()]) {
-        const skillValue = skillsList[name.toLowerCase()];
-        setFunction(skillValue);
-      }
-    });
+    if (project.skills) {
+      const skillsList = createSkillsList(project.skills);
+      skills.forEach(({ name, setFunction }) => {
+        if (skillsList[name.toLowerCase()]) {
+          const skillValue = skillsList[name.toLowerCase()];
+          setFunction(skillValue);
+        }
+      });
+    }
   }, []);
 
   const createNewProject = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -96,9 +93,7 @@ const ProjectSection = ({
     const apiUrl = `${server}/api/portfolios/${project.portfolioId}/project`;
     const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
-    const projectSkills = skills.reduce((acc, { value }) => {
-      return [...acc, ...value];
-    }, []);
+    const projectSkills = _(skills).map((x) => x.value).flatten();
 
     object.skills = projectSkills;
 
@@ -115,6 +110,7 @@ const ProjectSection = ({
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
       setNewProject(false);
+      setShowAlert("Created");
     } else {
       const {
         error: { errors },
@@ -123,22 +119,6 @@ const ProjectSection = ({
       setValidationErrors(errorsToDisplay);
       console.log(errorsToDisplay);
     }
-  };
-
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    setSize(event.target.value as string);
-  };
-
-  const handleSelectCloudChange = (event: SelectChangeEvent) => {
-    setCloud(event.target.value as string);
-  };
-
-  const handleSelectTeamSizeChange = (event: SelectChangeEvent) => {
-    setTeamSize(event.target.value as string);
-  };
-
-  const handleSelectRoleChange = (event: SelectChangeEvent) => {
-    setRole(event.target.value as string);
   };
 
   const handleSelectProjectTypeChange = (event: SelectChangeEvent) => {
@@ -157,9 +137,7 @@ const ProjectSection = ({
     const apiUrl = `${server}/api/projects/${project.id}`;
     const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
-    const projectSkills = skills.reduce((acc, { value }) => {
-      return [...acc, ...value];
-    }, []);
+    const projectSkills = _(skills).map((x) => x.value).flatten();
 
     object.skills = projectSkills;
     object.isDraft = object.isDraft ? true : false;
@@ -178,6 +156,7 @@ const ProjectSection = ({
 
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
+      setShowAlert("Updated");
     } else {
       const {
         error: { errors },
@@ -202,7 +181,12 @@ const ProjectSection = ({
     >
       <Stack flexDirection="row" justifyContent="flex-start">
         {project.isDraft && (
-          <Chip sx={{ mt: -4, mb: 2, ml: 2 }} color="primary" label="Draft" />
+          <Chip
+            sx={{ mt: -4, mb: 2, ml: 2 }}
+            color="primary"
+            label="Draft"
+            title="Draft portfolios are not available in the view"
+          />
         )}
       </Stack>
 
@@ -310,94 +294,10 @@ const ProjectSection = ({
           flexWrap: "wrap",
         }}
       >
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{
-            mr: 2,
-            // flexWrap: "wrap",
-          }}
-        >
-          <InputLabel id="role-label">Role</InputLabel>
-          <Select
-            sx={{ minWidth: 190, ml: 2 }}
-            labelId="role-label"
-            id="role-size"
-            name="role"
-            color="secondary"
-            onChange={handleSelectRoleChange}
-            value={role}
-            error={Boolean(validationErrors.role)}
-          >
-            {generateDropDownFields(roles)}
-          </Select>
-        </Stack>
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{
-            mr: 2,
-            flexWrap: "wrap",
-          }}
-        >
-          <InputLabel id="size-label">Project size</InputLabel>
-          <Select
-            sx={{ minWidth: 160, ml: 2 }}
-            labelId="size-label"
-            id="size"
-            name="size"
-            color="secondary"
-            onChange={handleSelectChange}
-            value={size}
-            error={Boolean(validationErrors.size)}
-          >
-            {generateDropDownFields(projectSizesValues)}
-          </Select>
-        </Stack>
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{
-            mr: 2,
-            flexWrap: "wrap",
-          }}
-        >
-          <InputLabel id="cloud-label">Cloud</InputLabel>
-          <Select
-            sx={{ minWidth: 160, ml: 2 }}
-            labelId="cloud-label"
-            id="cloud"
-            name="cloud"
-            color="secondary"
-            onChange={handleSelectCloudChange}
-            value={cloud}
-            error={Boolean(validationErrors.cloud)}
-          >
-            {generateDropDownFields(cloudValues)}
-          </Select>
-        </Stack>
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{
-            mr: 2,
-            flexWrap: "wrap",
-          }}
-        >
-          <InputLabel id="team-size-label">Team size</InputLabel>
-          <Select
-            sx={{ minWidth: 230, ml: 2 }}
-            labelId="team-size-label"
-            id="team-size"
-            name="teamSize"
-            color="secondary"
-            onChange={handleSelectTeamSizeChange}
-            value={teamSize}
-            error={Boolean(validationErrors.teamSize)}
-          >
-            {generateDropDownFields(projectTeamSizeValues)}
-          </Select>
-        </Stack>
+        <ProjectSectionDropdowns
+          project={project}
+          validationErrors={validationErrors}
+        />
       </Stack>
       <TextField
         fullWidth
@@ -442,13 +342,14 @@ const ProjectSection = ({
       <Box>
         <FormControlLabel
           control={<Checkbox color="secondary" name="isDraft" />}
-          label="Save as draft"
+          label="Save as draft (will not be available in the view)"
         />
       </Box>
       <ProjectSectionButtons
         setNewProject={setNewProject}
         project={project}
         token={token}
+        setShowAlert={setShowAlert}
       />
     </Box>
   );

@@ -4,31 +4,36 @@ import { setCookie, getCookie, deleteCookie } from "cookies-next";
 import { ValidationErrors, ISkills } from "../types";
 import MenuItem from "@mui/material/MenuItem";
 import _ from "lodash";
+import { GetServerSidePropsContext } from "next";
 
 export const login = (token: string) => {
   setCookie("token", token);
   Router.push("/portfolios");
 };
 
-export const createObjectFromForm = (data) => {
-  const object: { [key: string]: string } = {};
-  data.forEach((value: string, key: string) => (object[key] = value));
+export const createObjectFromForm = (
+  data: FormData
+): { [key: string]: any } => {
+  const object: { [key: string]: any } = {};
+  data.forEach(
+    (value: FormDataEntryValue, key: string) => (object[key] = value as string)
+  );
   return object;
 };
 
-export const redirectOnError = (ctx) =>
+export const redirectOnError = (context: GetServerSidePropsContext) =>
   typeof window !== "undefined"
     ? Router.push("/login")
-    : ctx.res.writeHead(302, { Location: "/login" }).end();
+    : context.res.writeHead(302, { Location: "/login" }).end();
 
-export const auth = (ctx) => {
+export const auth = (context: GetServerSidePropsContext) => {
   const token = getCookie("token");
 
   // If there's no token, it means the user is not logged in.
   if (!token) {
     if (typeof window === "undefined") {
-      ctx.res.writeHead(302, { Location: "/login" });
-      ctx.res.end();
+      context.res.writeHead(302, { Location: "/login" });
+      context.res.end();
     } else {
       Router.push("/login");
     }
@@ -43,9 +48,9 @@ export const logout = () => {
   Router.push("/login");
 };
 
-export const withAuthSync = (WrappedComponent) => {
-  const Wrapper = (props) => {
-    const syncLogout = (event) => {
+export const withAuthSync = (WrappedComponent: React.ComponentType<any>) => {
+  const Wrapper = (props: any) => {
+    const syncLogout = (event: StorageEvent) => {
       if (event.key === "logout") {
         console.log("logged out from storage!");
         Router.push("/login");
@@ -65,15 +70,21 @@ export const withAuthSync = (WrappedComponent) => {
   return Wrapper;
 };
 
-export const createErrors = (errors): ValidationErrors => {
-  const obj: ValidationErrors = {};
+export const createErrors = (
+  errors: { message: string; field: string }[]
+): ValidationErrors => {
+  const obj: {
+    [key: string]: any;
+  } = {};
   errors.forEach(({ message, field }: { message: string; field: string }) => {
     obj[field] = message;
   });
   return obj;
 };
 
-export const generateDropDownFields = (arr) => {
+export const generateDropDownFields = (
+  arr: { value: string; label: string }[]
+) => {
   return arr.map(({ value, label }) => {
     return (
       <MenuItem key={value} value={value}>

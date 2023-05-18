@@ -13,7 +13,7 @@ const ProjectDates = ({
   validationErrors,
   project,
 }: {
-  project: Project;
+  project: Partial<Project>;
   validationErrors: ValidationErrors;
 }) => {
   const [isCurrentlyWorking, setIsCurrentlyWorking] = useState<boolean>(

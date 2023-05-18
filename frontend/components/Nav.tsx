@@ -83,15 +83,6 @@ export default function MenuAppBar() {
         </FormGroup>
         <AppBar sx={{ minHeight: 85 }} position="fixed" color="secondary">
           <Toolbar sx={{ mt: 1.3 }}>
-            {/* <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton> */}
             <Typography
               onClick={() => Router.push("/portfolios")}
               variant="h6"

@@ -28,21 +28,21 @@ const Skills = ({
   defaultValue,
   name,
   setFunction,
-  entities
+  entities,
 }: {
   defaultValue: ISkills[];
   name: string;
-  setFunction: (arg: ISkills[]) => void;
+  setFunction: React.Dispatch<React.SetStateAction<ISkills[]>>
   entities: string[];
 }) => {
-  const handleChange = (event: SelectChangeEvent<typeof defaultValue>) => {
+  const handleChange = (event: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
     } = event;
 
     const skills: ISkills[] = [];
 
-    value.forEach((el: string) => {
+    (value as string[]).forEach((el: string) => {
       const found = defaultValue.find(({ value }) => value === el);
       if (found) {
         skills.push(found);
@@ -54,7 +54,7 @@ const Skills = ({
     setFunction(skills);
   };
 
-  const deleteSkill = (event: any, valueToDelete: string) => {
+  const deleteSkill = (_: any, valueToDelete: string) => {
     setFunction((prevValue: ISkills[]) => {
       return prevValue.filter(({ value }) => value !== valueToDelete);
     });
@@ -98,7 +98,6 @@ const Skills = ({
             <MenuItem
               key={name}
               value={name}
-              // style={getStyles(name, inputValue, theme)}
             >
               {name}
             </MenuItem>

@@ -7,10 +7,12 @@ export const ProjectSectionButtons = ({
   project,
   setNewProject,
   token,
+  setShowAlert
 }: {
-  project: Project;
+  project: Partial<Project>;
   setNewProject: (arg0: boolean) => void;
   token: string;
+  setShowAlert:(arg0: string) => void;
 }) => {
   const deleteNewProject = () => {
     setNewProject(false);
@@ -28,6 +30,7 @@ export const ProjectSectionButtons = ({
     const response = await fetch(apiUrl, requestOptions);
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
+      setShowAlert("Deleted")
     }
   };
 

@@ -17,7 +17,8 @@ const dateOptions = {
   year: "numeric",
   month: "2-digit",
   day: "numeric",
-};
+} as const;
+
 function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
   const [firstName, setFirstName] = useState<string | null>("");
   const [lastName, setLastName] = useState<string | null>("");
@@ -37,6 +38,7 @@ function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
       <Divider />
       {sortedProjects.map((project) => {
         const skillsList = createSkillsList(project.skills);
+        const role = roles.find(({ value }) => value === project.role);
         return (
           !project.isDraft && (
             <Box key={project.id}>
@@ -46,9 +48,7 @@ function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
                 sx={{ mt: 3 }}
               >
                 <Typography sx={{ textAlign: "left" }} variant="h6">
-                  {roles
-                    .find(({ value }) => value === project.role)
-                    .label.toUpperCase()}
+                  {role && role.label.toUpperCase()}
                 </Typography>
                 <Typography sx={{ textAlign: "center" }} variant="subtitle1">
                   {new Date(project.startDate).toLocaleDateString(
