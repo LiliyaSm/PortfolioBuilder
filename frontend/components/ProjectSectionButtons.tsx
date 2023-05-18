@@ -1,18 +1,37 @@
 import Button from "@mui/material/Button";
+import { server } from "../config";
+import { Project } from "../types";
+import Router from "next/router";
 
 export const ProjectSectionButtons = ({
-  projectId,
+  project,
   setNewProject,
+  token,
 }: {
-  projectId: number | undefined;
+  project: Project;
   setNewProject: (arg0: boolean) => void;
+  token: string;
 }) => {
   const deleteNewProject = () => {
     setNewProject(false);
   };
 
-  const deleteProject = () => {};
-  if (!projectId) {
+  const deleteProject = async () => {
+    const apiUrl = `${server}/api/projects/${project.id}`;
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const response = await fetch(apiUrl, requestOptions);
+    if (response.ok) {
+      Router.push(`/portfolio/edit/${project.portfolioId}`);
+    }
+  };
+
+  if (!project.id) {
     return (
       <>
         <Button type="submit" sx={{ mr: 2 }} variant="contained" size="large">

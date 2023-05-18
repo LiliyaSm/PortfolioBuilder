@@ -1,5 +1,5 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
-import { Project, ValidationErrors, ISkills } from "../types";
+import React, { useState, ChangeEvent } from "react";
+import { Project, ValidationErrors } from "../types";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -21,7 +21,7 @@ const ProjectDates = ({
   );
   return (
     <Stack
-      sx={{ mb: 2 }}
+      sx={{ my: 1 }}
       direction="row"
       alignItems="center"
       justifyContent="flex-start"

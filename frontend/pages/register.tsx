@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { setCookie } from "cookies-next";
+import { server } from "../config";
 
 function Copyright(props: any) {
   return (
@@ -24,7 +25,7 @@ function Copyright(props: any) {
       {"Copyright © "}
       <Link color="inherit" href="https://github.com/LiliyaSm">
         LiliyaSm
-      </Link>{" "}
+      </Link>
       {new Date().getFullYear()}
       {"."}
     </Typography>
@@ -52,14 +53,13 @@ export default function SignUp() {
       body: JSON.stringify(object),
     };
 
-    const response = await fetch(
-      "http://127.0.0.1:3333/api/register",
-      requestOptions
-    );
+    const response = await fetch(`${server}/api/register`, requestOptions);
 
     if (response.status === 200) {
-      const { token } = await response.json();
+      const { token, firstName, lastName } = await response.json();
       setCookie("token", token);
+      localStorage.setItem("firstName", firstName);
+      localStorage.setItem("lastName", lastName);
       Router.push("/portfolios");
     } else {
       const { error } = await response.json();

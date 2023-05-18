@@ -18,8 +18,7 @@ import { logout } from "../utils";
 import { server } from "../config";
 import { getCookie } from "cookies-next";
 
-
-export default function MenuAppBar( ) {
+export default function MenuAppBar() {
   const token = getCookie("token");
 
   const [auth, setAuth] = React.useState(true);
@@ -37,7 +36,8 @@ export default function MenuAppBar( ) {
     const response = await fetch(apiUrl, requestOptions);
     const portfolio = await response.json();
     if (response.ok) {
-      Router.push(`/portfolio/edit/${portfolio.id}`);}
+      Router.push(`/portfolio/edit/${portfolio.id}`);
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +110,9 @@ export default function MenuAppBar( ) {
                 >
                   Create new portfolio
                 </Button>
-                {/* <span> Hello, user!</span> */}
+                {/* {localStorage && (
+                  <span> Hello, {localStorage.getItem("firstName")}!</span>
+                )} */}
                 <IconButton
                   size="large"
                   aria-label="account of current user"

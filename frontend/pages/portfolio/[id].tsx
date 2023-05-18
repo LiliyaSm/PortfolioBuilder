@@ -1,3 +1,4 @@
+import React, { useState, useEffect, ChangeEvent } from "react";
 import List from "@mui/material/List";
 import Box from "@mui/material/Box";
 import ListItem from "@mui/material/ListItem";
@@ -7,7 +8,6 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { Portfolio } from "../../types";
 import { server } from "../../config";
-import Router from "next/router";
 import { withAuthSync, redirectOnError, createSkillsList } from "../../utils";
 import { GetServerSidePropsContext } from "next";
 import { roles } from "../../constants";
@@ -19,18 +19,24 @@ const dateOptions = {
   day: "numeric",
 };
 function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
-  const firstName = localStorage.getItem("firstName");
+  const [firstName, setFirstName] = useState<string | null>("");
+  const [lastName, setLastName] = useState<string | null>("");
 
+  useEffect(() => {
+    setFirstName(localStorage.getItem("firstName"));
+    setLastName(localStorage.getItem("lastName"));
+  }, []);
   const sortedProjects = portfolio.projects.sort((a, b) => {
     return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
   });
   return (
     <Container component="div" maxWidth="md">
-      <Typography variant="h4">{firstName} SecondName</Typography>
+      <Typography variant="h4">
+        {firstName} {lastName}
+      </Typography>
       <Divider />
       {sortedProjects.map((project) => {
         const skillsList = createSkillsList(project.skills);
-        console.log(skillsList);
         return (
           !project.isDraft && (
             <Box key={project.id}>
@@ -71,7 +77,7 @@ function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
                   </Box>
                 )}
               </Box>
-              <Box>
+              <Box sx={{ textAlign: "justify" }}>
                 <Typography variant="h5" sx={{ mt: 3, mb: 2 }}>
                   {project.projectName}
                 </Typography>
@@ -82,13 +88,13 @@ function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
                 ${project.size};   Team size: ${project.teamSize};   Cloud: 
                 ${project.cloud}`}
               </Box>
-              <Box>
+              <Box sx={{ textAlign: "justify" }}>
                 <Typography sx={{ mt: 3 }} variant="h5">
                   Actions
                 </Typography>
                 {project.actions}
               </Box>
-              <Box>
+              <Box sx={{ textAlign: "justify" }}>
                 <Typography sx={{ mt: 3 }} variant="h5">
                   Outcome
                 </Typography>
@@ -107,6 +113,7 @@ function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
                       return (
                         <ListItem
                           sx={{ display: "list-item", pt: 0.2, pb: 0.2 }}
+                          key={value}
                         >
                           {value}
                         </ListItem>
@@ -115,6 +122,7 @@ function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
                   </Box>
                 );
               })}
+              <Divider sx={{ pt: 2, pb: 0.2 }} />
             </Box>
           )
         );
@@ -125,7 +133,6 @@ function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  console.log(context);
   const { id } = context.query;
   const token = context.req.cookies["token"];
   const apiUrl = `${server}/api/portfolios/${id}`;

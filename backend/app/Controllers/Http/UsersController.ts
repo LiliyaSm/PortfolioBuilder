@@ -16,7 +16,11 @@ export default class UsersController {
     const { email, password } = request.body()
     try {
       const token = await auth.use('api').attempt(email, password)
-      return token
+      return {
+        token,
+        firstName: auth.user ? auth.user.firstName : '',
+        lastName: auth.user ? auth.user.lastName : '',
+      }
     } catch {
       return response.unauthorized({
         status: 'unauthorized',

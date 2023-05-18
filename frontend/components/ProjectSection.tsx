@@ -29,7 +29,6 @@ import {
   programmingFrameworks,
 } from "../constants";
 import Skills from "./Skills";
-
 import ProjectSectionButtons from "./ProjectSectionButtons";
 import Chip from "@mui/material/Chip";
 import Checkbox from "@mui/material/Checkbox";
@@ -448,7 +447,8 @@ const ProjectSection = ({
       </Box>
       <ProjectSectionButtons
         setNewProject={setNewProject}
-        projectId={project.id}
+        project={project}
+        token={token}
       />
     </Box>
   );

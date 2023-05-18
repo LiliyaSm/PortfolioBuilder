@@ -9,7 +9,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Container from "@mui/material/Container";
-import { createObjectFromForm, login } from "../utils"
+import { createObjectFromForm, login } from "../utils";
+import { server } from "../config";
 
 function Copyright(props: any) {
   return (
@@ -38,7 +39,7 @@ export default function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    const object = createObjectFromForm(data)
+    const object = createObjectFromForm(data);
 
     const requestOptions = {
       method: "POST",
@@ -46,14 +47,13 @@ export default function SignIn() {
       body: JSON.stringify(object),
     };
 
-    const response = await fetch(
-      "http://127.0.0.1:3333/api/login",
-      requestOptions
-    );
+    const response = await fetch(`${server}/api/login`, requestOptions);
 
     if (response.status === 200) {
-      const { token } = await response.json();
-      login(token)
+      const { token, firstName, lastName } = await response.json();
+      login(token.token);
+      localStorage.setItem("firstName", firstName);
+      localStorage.setItem("lastName", lastName);
     } else {
       const { error } = await response.json();
       setError(error);
