@@ -15,4 +15,9 @@ This is a portfolio builder application that uses Adonis for API and React (Next
 - View individual portfolios
 
 Database schema
-![Database schema](./images/database.jpg) 
+![Database schema](./images/database.jpg)
+
+UI:
+![Database schema](./images/main.jpg)
+![Database schema](./images/form.jpg)
+![Database schema](./images/view.jpg)
