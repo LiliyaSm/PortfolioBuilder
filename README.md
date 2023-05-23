@@ -13,6 +13,7 @@ This is a portfolio builder application that uses Adonis for API and React (Next
 - Store portfolios
 - Delete portfolios
 - View individual portfolios
+- Authentication using tokens
 
 Database schema
 ![Database schema](./backend/images/database.jpg)
