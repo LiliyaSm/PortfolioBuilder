@@ -18,7 +18,7 @@ import { logout } from "../utils";
 import { server } from "../config";
 import { getCookie } from "cookies-next";
 
-export default function MenuAppBar() {
+const MenuAppBar = (): React.ReactElement => {
   const token = getCookie("token");
 
   const [auth, setAuth] = React.useState(true);
@@ -139,4 +139,6 @@ export default function MenuAppBar() {
       </Box>
     </ThemeProvider>
   );
-}
+};
+
+export default MenuAppBar;

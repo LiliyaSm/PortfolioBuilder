@@ -19,7 +19,7 @@ const dateOptions = {
   day: "numeric",
 } as const;
 
-function View({ portfolio, token }: { portfolio: Portfolio; token: string }) {
+const View = ({ portfolio, token }: { portfolio: Portfolio; token: string }): React.ReactElement => {
   const [firstName, setFirstName] = useState<string | null>("");
   const [lastName, setLastName] = useState<string | null>("");
 

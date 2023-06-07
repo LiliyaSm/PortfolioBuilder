@@ -9,6 +9,8 @@ import dayjs from "dayjs";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
+export const CHECKBOX_LABEL = "I am currently working in this role";
+
 const ProjectDates = ({
   validationErrors,
   project,
@@ -68,7 +70,7 @@ const ProjectDates = ({
             ) => setIsCurrentlyWorking(checked)}
           />
         }
-        label="I am currently working in this role"
+        label={CHECKBOX_LABEL}
       />
     </Stack>
   );

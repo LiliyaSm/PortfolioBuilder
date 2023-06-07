@@ -13,28 +13,12 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { setCookie } from "cookies-next";
 import { server } from "../config";
+import Copyright from "../components/Copyright";
 
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://github.com/LiliyaSm">
-        LiliyaSm
-      </Link>
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
 
 const theme = createTheme();
 
-export default function SignUp() {
+const SignUp = (): React.ReactElement => {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -169,3 +153,5 @@ export default function SignUp() {
     </ThemeProvider>
   );
 }
+
+export default SignUp

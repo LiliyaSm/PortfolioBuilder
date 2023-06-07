@@ -32,13 +32,13 @@ const theme = createTheme({
   },
 });
 
-function EditPortfolio({
+const EditPortfolio = ({
   portfolio,
   token,
 }: {
   portfolio: Portfolio;
   token: string;
-}) {
+}) => {
   const [newProject, setNewProject] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<string>("");
 
@@ -73,7 +73,7 @@ function EditPortfolio({
     if (newProject) {
       return (
         <Typography color="secondary">
-          <h4>Save existing project to add a new one</h4>
+          <h4>Save an existing project to add a new one</h4>
         </Typography>
       );
     } else {

@@ -16,13 +16,13 @@ import Router from "next/router";
 import { withAuthSync, redirectOnError } from "../utils";
 import { GetServerSidePropsContext } from "next";
 
-function Portfolios({
+const Portfolios = ({
   portfolios,
   token,
 }: {
   portfolios: Portfolio[];
   token: string;
-}) {
+}): React.ReactElement => {
   const sortedPortfolios = portfolios.sort((a, b) => {
     return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
   });
@@ -103,7 +103,7 @@ function Portfolios({
       </List>
     </Container>
   );
-}
+};
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const token = context.req.cookies["token"];
