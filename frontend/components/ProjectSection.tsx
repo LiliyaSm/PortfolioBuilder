@@ -140,7 +140,7 @@ const ProjectSection = ({
     const projectSkills = _(skills).map((x) => x.value).flatten();
 
     object.skills = projectSkills;
-    object.isDraft = object.isDraft ? true : false;
+    object.isDraft = object.isDraft === "on" ? true : false;
     object.endDate = object.endDate ?? null;
     console.log("handleUpdateProject", object);
     const requestOptions = {

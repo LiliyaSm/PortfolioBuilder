@@ -6,11 +6,6 @@ import MenuItem from "@mui/material/MenuItem";
 import _ from "lodash";
 import { GetServerSidePropsContext } from "next";
 
-export const login = (token: string) => {
-  setCookie("token", token);
-  Router.push("/portfolios");
-};
-
 export const createObjectFromForm = (
   data: FormData
 ): { [key: string]: any } => {
@@ -21,10 +16,43 @@ export const createObjectFromForm = (
   return object;
 };
 
+export const createErrors = (
+  errors: { message: string; field: string }[]
+): ValidationErrors => {
+  const obj: {
+    [key: string]: any;
+  } = {};
+  errors.forEach(({ message, field }: { message: string; field: string }) => {
+    obj[field] = message;
+  });
+  return obj;
+};
+
+export const generateDropDownFields = (
+  arr: { value: string; label: string }[]
+) => {
+  return arr.map(({ value, label }) => {
+    return (
+      <MenuItem key={value} value={value}>
+        {label}
+      </MenuItem>
+    );
+  });
+};
+
+export const createSkillsList = (skills: ISkills[]) => {
+  return _.chain(skills).groupBy("type").value();
+};
+
 export const redirectOnError = (context: GetServerSidePropsContext) =>
   typeof window !== "undefined"
     ? Router.push("/login")
     : context.res.writeHead(302, { Location: "/login" }).end();
+
+
+
+
+// authorization
 
 export const auth = (context: GetServerSidePropsContext) => {
   const token = getCookie("token");
@@ -39,6 +67,11 @@ export const auth = (context: GetServerSidePropsContext) => {
     }
   }
   return token;
+};
+
+export const login = (token: string) => {
+  setCookie("token", token);
+  Router.push("/portfolios");
 };
 
 export const logout = () => {
@@ -68,32 +101,4 @@ export const withAuthSync = (WrappedComponent: React.ComponentType<any>) => {
     return <WrappedComponent {...props} />;
   };
   return Wrapper;
-};
-
-export const createErrors = (
-  errors: { message: string; field: string }[]
-): ValidationErrors => {
-  const obj: {
-    [key: string]: any;
-  } = {};
-  errors.forEach(({ message, field }: { message: string; field: string }) => {
-    obj[field] = message;
-  });
-  return obj;
-};
-
-export const generateDropDownFields = (
-  arr: { value: string; label: string }[]
-) => {
-  return arr.map(({ value, label }) => {
-    return (
-      <MenuItem key={value} value={value}>
-        {label}
-      </MenuItem>
-    );
-  });
-};
-
-export const createSkillsList = (skills: ISkills[]) => {
-  return _.chain(skills).groupBy("type").value();
 };
