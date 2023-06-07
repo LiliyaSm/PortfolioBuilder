@@ -33,8 +33,18 @@
     "redux": "^4.2.1",
     "typescript": "5.0.4"
   },
+
   "devDependencies": {
+    "@babel/preset-env": "^7.22.4",
+    "@babel/preset-react": "^7.22.3",
+    "@babel/preset-typescript": "^7.21.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
+    "@types/enzyme": "^3.10.13",
     "@types/js-cookie": "^3.0.3",
-    "@types/lodash": "^4.14.194"
+    "@types/lodash": "^4.14.194",
+    "enzyme": "^3.11.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0"
   }
 }
