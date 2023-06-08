@@ -20,21 +20,18 @@ const MenuProps = {
   },
 };
 
+type SkillsProps = {
+  defaultValue: ISkills[];
+  name: string;
+  setFunction: React.Dispatch<React.SetStateAction<ISkills[]>>;
+  entities: string[];
+};
+
 const createMultiSelectValue = (defaultValue: ISkills[]): string[] => {
   return defaultValue.map(({ value }) => value);
 };
 
-const Skills = ({
-  defaultValue,
-  name,
-  setFunction,
-  entities,
-}: {
-  defaultValue: ISkills[];
-  name: string;
-  setFunction: React.Dispatch<React.SetStateAction<ISkills[]>>
-  entities: string[];
-}) => {
+const Skills = ({ defaultValue, name, setFunction, entities }: SkillsProps) => {
   const handleChange = (event: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
@@ -95,10 +92,7 @@ const Skills = ({
           MenuProps={MenuProps}
         >
           {entities.map((name) => (
-            <MenuItem
-              key={name}
-              value={name}
-            >
+            <MenuItem key={name} value={name}>
               {name}
             </MenuItem>
           ))}

@@ -9,7 +9,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       {/* <Meta /> */}
       <Nav />
       <div>
-        <Container sx={{ mt: 10 }} component="main" maxWidth="lg">
+        <Container sx={{ mt: 18 }} component="main" maxWidth="lg">
           {children}
         </Container>
       </div>

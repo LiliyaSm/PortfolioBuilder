@@ -7,9 +7,6 @@ import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import Router from "next/router";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { purple } from "@mui/material/colors";
@@ -40,9 +37,6 @@ const MenuAppBar = (): React.ReactElement => {
     }
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAuth(event.target.checked);
-  };
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -69,18 +63,6 @@ const MenuAppBar = (): React.ReactElement => {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1 }}>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={auth}
-                onChange={handleChange}
-                aria-label="login switch"
-              />
-            }
-            label={auth ? "Logout" : "Login"}
-          />
-        </FormGroup>
         <AppBar sx={{ minHeight: 85 }} position="fixed" color="secondary">
           <Toolbar sx={{ mt: 1.3 }}>
             <Typography

@@ -139,18 +139,25 @@ const ProjectSection = ({
     const object = createObjectFromForm(data);
     const projectSkills = _(skills).map((x) => x.value).flatten();
 
-    object.skills = projectSkills;
-    object.isDraft = object.isDraft === "on" ? true : false;
-    object.endDate = object.endDate ?? null;
+    const updatedFields = {
+      skills: projectSkills,
+      isDraft: object.isDraft === "on" ? true : false,
+      endDate: object.endDate ?? null,
+    }
     console.log("handleUpdateProject", object);
+
+    const updatedObject = {object, ...updatedFields}
     const requestOptions = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(object),
+      body: JSON.stringify(updatedObject),
     };
+
+    console.log("updatedObject", updatedObject);
+
 
     const response = await fetch(apiUrl, requestOptions);
 
