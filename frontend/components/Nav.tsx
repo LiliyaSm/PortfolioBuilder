@@ -11,15 +11,16 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { purple } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { logout } from "../utils";
 import { server } from "../config";
 import { getCookie } from "cookies-next";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const MenuAppBar = (): React.ReactElement => {
   const token = getCookie("token");
 
-  const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const { data: session } = useSession();
 
   const createNewPortfolio = async () => {
     const apiUrl = `${server}/api/portfolios`;
@@ -36,7 +37,6 @@ const MenuAppBar = (): React.ReactElement => {
       Router.push(`/portfolio/edit/${portfolio.id}`);
     }
   };
-
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -62,7 +62,7 @@ const MenuAppBar = (): React.ReactElement => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1, mb: 18 }}>
         <AppBar sx={{ minHeight: 85 }} position="fixed" color="secondary">
           <Toolbar sx={{ mt: 1.3 }}>
             <Typography
@@ -73,7 +73,7 @@ const MenuAppBar = (): React.ReactElement => {
             >
               Portfolio builder
             </Typography>
-            {auth && (
+            {session?.user && (
               <div>
                 <Button
                   sx={{ mr: 10 }}
@@ -83,9 +83,9 @@ const MenuAppBar = (): React.ReactElement => {
                 >
                   Create new portfolio
                 </Button>
-                {/* {localStorage && (
-                  <span> Hello, {localStorage.getItem("firstName")}!</span>
-                )} */}
+                {(
+                  <span> Hello, {session?.user.name}!</span>
+                )}
                 <IconButton
                   size="large"
                   aria-label="account of current user"
@@ -112,7 +112,7 @@ const MenuAppBar = (): React.ReactElement => {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={logout}>Log out</MenuItem>
+                  <MenuItem onClick={() => signOut()}>Log out</MenuItem>
                 </Menu>
               </div>
             )}

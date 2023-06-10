@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React from "react";
 import Router from "next/router";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
 import { ValidationErrors, ISkills } from "../types";
@@ -79,7 +78,7 @@ export const logout = () => {
   deleteCookie("token");
   // to support logging out from all windows
   window.localStorage.setItem("logout", Date.now().toString());
-  Router.push("/login");
+  // Router.push("/login");
 };
 
 export const withAuthSync = (WrappedComponent: React.ComponentType<any>) => {
@@ -91,14 +90,14 @@ export const withAuthSync = (WrappedComponent: React.ComponentType<any>) => {
       }
     };
 
-    useEffect(() => {
-      window.addEventListener("storage", syncLogout);
+    // useEffect(() => {
+    //   window.addEventListener("storage", syncLogout);
 
-      return () => {
-        window.removeEventListener("storage", syncLogout);
-        window.localStorage.removeItem("logout");
-      };
-    }, []);
+    //   return () => {
+    //     window.removeEventListener("storage", syncLogout);
+    //     window.localStorage.removeItem("logout");
+    //   };
+    // }, []);
     return <WrappedComponent {...props} />;
   };
   return Wrapper;

@@ -1,0 +1,163 @@
+import React from "react";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  CardMedia,
+  CssBaseline,
+} from "@mui/material";
+// import Image from "next/image";
+import { signIn } from "next-auth/react";
+export default function LoginContainer({
+  email,
+  setEmail,
+  password,
+  setPassword,
+  error,
+  handleLogin,
+}) {
+
+  return (
+    <Box
+      style={{
+        flex: 1,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#FBF9FB",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          maxWidth: 400,
+          p: 3,
+        }}
+      >
+        <Typography style={{ color: "black", fontSize: 20, fontWeight: 600 }}>
+          Sign in to your account
+        </Typography>
+        <Box
+          sx={{
+            mt: 2,
+          }}
+        >
+          <Box style={{ flex: 1 }}>
+            <Box sx={{ my: 2 }}>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                sx={{
+                  backgroundColor: "rgba(28, 117, 188, 0.09)",
+                }}
+              />
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Password"
+                variant="outlined"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                sx={{
+                  backgroundColor: "rgba(28, 117, 188, 0.09)",
+                  mt: 2,
+                }}
+              />
+              <Typography style={{ color: "red" }}>{error}</Typography>
+
+              <Box sx={{ display: "flex" }}>
+                <Typography
+                  sx={{
+                    ml: "auto",
+                    color: "#151127",
+                    fontSize: 12,
+                    mt: 1,
+                    cursor: "pointer",
+                  }}
+                >
+                  forgot password?
+                </Typography>
+              </Box>
+            </Box>
+            <Box
+              onClick={handleLogin}
+              sx={{
+                flex: 1,
+                "&:hover": { opacity: 0.7 },
+                borderRadius: 2,
+                display: "flex",
+                backgroundColor: "#151127",
+                cursor: "pointer",
+                justifyContent: "center",
+                alignItems: "center",
+                p: 1,
+              }}
+            >
+              <Typography
+                variant="body1"
+                noWrap
+                sx={{ color: "white", fontWeight: 500 }}
+              >
+                Sign in
+              </Typography>
+            </Box>
+            <Box
+              onClick={() => {
+                signIn("google");
+              }}
+              sx={{
+                mt: 1,
+                flex: 1,
+                "&:hover": { opacity: 0.7 },
+                borderRadius: 2,
+                display: "flex",
+                backgroundColor: "white",
+                cursor: "pointer",
+                justifyContent: "center",
+                alignItems: "center",
+                p: 1,
+                border: 1,
+                borderColor: "#DADADA",
+              }}
+            >
+              <img style={{ marginRight: 10 }} src="/google.png" />
+              <Typography
+                variant="body1"
+                noWrap
+                sx={{ color: "#151127", fontWeight: 500 }}
+              >
+                Continue with Google
+              </Typography>
+            </Box>
+            <Box
+              sx={{ fontSize: 13, textAlign: "center", mt: 1, fontWeight: 700 }}
+            >
+              Dont have an account?
+              <Typography
+                onClick={() => {}}
+                display="inline"
+                sx={{
+                  fontSize: 13,
+                  ml: 1,
+                  color: "#151127",
+                  cursor: "pointer",
+                }}
+              >
+                Sign Up
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+}

@@ -16,6 +16,7 @@ import { server } from "../config";
 import Router from "next/router";
 import { withAuthSync, redirectOnError } from "../utils";
 import { GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react"
 
 const Portfolios = ({
   portfolios,
@@ -106,10 +107,12 @@ const Portfolios = ({
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const token = context.req.cookies["token"];
+export async function getServerSideProps(context: GetServerSidePropsContext, req: any) {
+  // const token = context.req.cookies["token"];
   const apiUrl = `${server}/api/portfolios`;
-
+  
+  const session = await getSession({ req: context.req });
+  const token = session?.user?.token;
   try {
     const response = await fetch(apiUrl, {
       credentials: "include",
