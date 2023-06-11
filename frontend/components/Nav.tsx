@@ -5,22 +5,22 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { purple } from "@mui/material/colors";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { server } from "../config";
-import { getCookie } from "cookies-next";
 import { signIn, signOut, useSession } from "next-auth/react";
 
-const MenuAppBar = (): React.ReactElement => {
-  const token = getCookie("token");
-
+const MenuAppBar = (): React.ReactElement => {  
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+  
   const { data: session } = useSession();
+  const token = session?.user?.token;
+
+  const router = useRouter();
 
   const createNewPortfolio = async () => {
     const apiUrl = `${server}/api/portfolios`;
@@ -34,7 +34,7 @@ const MenuAppBar = (): React.ReactElement => {
     const response = await fetch(apiUrl, requestOptions);
     const portfolio = await response.json();
     if (response.ok) {
-      Router.push(`/portfolio/edit/${portfolio.id}`);
+      router.push(`/portfolio/edit/${portfolio.id}`);
     }
   };
 

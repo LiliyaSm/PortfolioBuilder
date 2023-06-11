@@ -2,7 +2,7 @@ import React from "react";
 import Button from "@mui/material/Button";
 import { server } from "../config";
 import { Project } from "../types";
-import Router from "next/router";
+import { useRouter } from "next/router";
 
 export const ProjectSectionButtons = ({
   project,
@@ -19,6 +19,8 @@ export const ProjectSectionButtons = ({
     setNewProject(false);
   };
 
+  const router = useRouter();
+
   const deleteProject = async () => {
     const apiUrl = `${server}/api/projects/${project.id}`;
     const requestOptions = {
@@ -30,7 +32,7 @@ export const ProjectSectionButtons = ({
     };
     const response = await fetch(apiUrl, requestOptions);
     if (response.ok) {
-      Router.push(`/portfolio/edit/${project.portfolioId}`);
+      router.push(`/portfolio/edit/${project.portfolioId}`);
       setShowAlert("Deleted");
     }
   };

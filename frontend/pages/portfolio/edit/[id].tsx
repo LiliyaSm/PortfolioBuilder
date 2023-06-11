@@ -17,6 +17,9 @@ import { GetServerSidePropsContext } from "next";
 import Alert from "@mui/material/Alert";
 import Link from "../../../src/app/Link";
 import PreviewIcon from "@mui/icons-material/Preview";
+// import { signIn, signOut, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react"
+
 
 const theme = createTheme({
   palette: {
@@ -165,7 +168,10 @@ const EditPortfolio = ({
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { id } = context.query;
-  const token = context.req.cookies["token"];
+
+  const session = await getSession({ req: context.req });
+  const token = session?.user?.token;
+
   const apiUrl = `${server}/api/portfolios/${id}`;
 
   const headers = { Authorization: `Bearer ${token}` };
@@ -186,4 +192,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-export default withAuthSync(EditPortfolio);
+export default EditPortfolio;

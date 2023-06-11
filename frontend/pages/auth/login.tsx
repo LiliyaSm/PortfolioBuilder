@@ -3,7 +3,7 @@ import React from "react";
 import { Box, CssBaseline } from "@mui/material";
 import { useState } from "react";
 import Image from "next/image";
-import LoginContainer from "../../../../components/LoginContainer";
+import LoginContainer from "@/components/LoginContainer";
 import { signOut, signIn, useSession, getSession } from "next-auth/react";
 // import { toast } from "react-toastify";
 

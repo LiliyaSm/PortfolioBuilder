@@ -1,5 +1,5 @@
 import React from "react";
-import Router from "next/router";
+// import Router from "next/router";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
 import { ValidationErrors, ISkills } from "../types";
 import MenuItem from "@mui/material/MenuItem";
@@ -44,10 +44,10 @@ export const createSkillsList = (skills: ISkills[]) => {
   return _.chain(skills).groupBy("type").value();
 };
 
-export const redirectOnError = (context: GetServerSidePropsContext) =>
-  typeof window !== "undefined"
-    ? Router.push("/login")
-    : context.res.writeHead(302, { Location: "/login" }).end();
+export const redirectOnError = (context: GetServerSidePropsContext) => {}
+  // typeof window !== "undefined"
+  //   ? Router.push("/login")
+  //   : context.res.writeHead(302, { Location: "/login" }).end();
 
 
 
@@ -55,23 +55,23 @@ export const redirectOnError = (context: GetServerSidePropsContext) =>
 // authorization
 
 export const auth = (context: GetServerSidePropsContext) => {
-  const token = getCookie("token");
+  // const token = getCookie("token");
 
-  // If there's no token, it means the user is not logged in.
-  if (!token) {
-    if (typeof window === "undefined") {
-      context.res.writeHead(302, { Location: "/login" });
-      context.res.end();
-    } else {
-      Router.push("/login");
-    }
-  }
-  return token;
+  // // If there's no token, it means the user is not logged in.
+  // if (!token) {
+  //   if (typeof window === "undefined") {
+  //     context.res.writeHead(302, { Location: "/login" });
+  //     context.res.end();
+  //   } else {
+  //     Router.push("/login");
+  //   }
+  // }
+  // return token;
 };
 
 export const login = (token: string) => {
-  setCookie("token", token);
-  Router.push("/portfolios");
+  // setCookie("token", token);
+  // Router.push("/portfolios");
 };
 
 export const logout = () => {
@@ -86,7 +86,7 @@ export const withAuthSync = (WrappedComponent: React.ComponentType<any>) => {
     const syncLogout = (event: StorageEvent) => {
       if (event.key === "logout") {
         console.log("logged out from storage!");
-        Router.push("/login");
+        // Router.push("/login");
       }
     };
 
