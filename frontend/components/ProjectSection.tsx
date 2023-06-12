@@ -7,7 +7,7 @@ import {
   createErrors,
   createObjectFromForm,
   generateDropDownFields,
-} from "../utils";
+} from "@/utils";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
@@ -29,16 +29,15 @@ import Chip from "@mui/material/Chip";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ProjectSectionDropdowns from "../components/ProjectSectionDropdowns";
-import _ from "lodash"
+import _ from "lodash";
+import { useSession } from "next-auth/react";
 
 const ProjectSection = ({
   project,
-  token,
   setNewProject,
   setShowAlert,
 }: {
   project: Partial<Project>;
-  token: string;
   setNewProject: (a: boolean) => void;
   setShowAlert: (a: string) => void;
 }) => {
@@ -54,6 +53,9 @@ const ProjectSection = ({
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {}
   );
+
+  const { data: session } = useSession();
+  const token = session?.user?.token;
 
   const skills = [
     {
@@ -93,7 +95,9 @@ const ProjectSection = ({
     const apiUrl = `${server}/api/portfolios/${project.portfolioId}/project`;
     const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
-    const projectSkills = _(skills).map((x) => x.value).flatten();
+    const projectSkills = _(skills)
+      .map((x) => x.value)
+      .flatten();
 
     object.skills = projectSkills;
 
@@ -117,7 +121,6 @@ const ProjectSection = ({
       } = await response.json();
       const errorsToDisplay = createErrors(errors);
       setValidationErrors(errorsToDisplay);
-      console.log(errorsToDisplay);
     }
   };
 
@@ -137,16 +140,18 @@ const ProjectSection = ({
     const apiUrl = `${server}/api/projects/${project.id}`;
     const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
-    const projectSkills = _(skills).map((x) => x.value).flatten();
+    const projectSkills = _(skills)
+      .map((x) => x.value)
+      .flatten();
 
     const updatedFields = {
       skills: projectSkills,
       isDraft: object.isDraft === "on" ? true : false,
       endDate: object.endDate ?? null,
-    }
+    };
     console.log("handleUpdateProject", object);
 
-    const updatedObject = {object, ...updatedFields}
+    const updatedObject = { object, ...updatedFields };
     const requestOptions = {
       method: "PUT",
       headers: {
@@ -157,7 +162,6 @@ const ProjectSection = ({
     };
 
     console.log("updatedObject", updatedObject);
-
 
     const response = await fetch(apiUrl, requestOptions);
 
@@ -355,7 +359,6 @@ const ProjectSection = ({
       <ProjectSectionButtons
         setNewProject={setNewProject}
         project={project}
-        token={token}
         setShowAlert={setShowAlert}
       />
     </Box>

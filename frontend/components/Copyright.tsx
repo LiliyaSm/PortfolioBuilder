@@ -1,6 +1,6 @@
 import React from "react"
 import Typography from "@mui/material/Typography";
-import Link from "../src/app/Link";
+import Link from "./Link";
 
 const Copyright = (props: any) => {
   return (

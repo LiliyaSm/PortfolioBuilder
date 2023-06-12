@@ -1,7 +1,5 @@
 import React from "react";
-// import Router from "next/router";
-import { setCookie, getCookie, deleteCookie } from "cookies-next";
-import { ValidationErrors, ISkills } from "../types";
+import { ValidationErrors, ISkills } from "@/types";
 import MenuItem from "@mui/material/MenuItem";
 import _ from "lodash";
 import { GetServerSidePropsContext } from "next";
@@ -45,60 +43,3 @@ export const createSkillsList = (skills: ISkills[]) => {
 };
 
 export const redirectOnError = (context: GetServerSidePropsContext) => {}
-  // typeof window !== "undefined"
-  //   ? Router.push("/login")
-  //   : context.res.writeHead(302, { Location: "/login" }).end();
-
-
-
-
-// authorization
-
-export const auth = (context: GetServerSidePropsContext) => {
-  // const token = getCookie("token");
-
-  // // If there's no token, it means the user is not logged in.
-  // if (!token) {
-  //   if (typeof window === "undefined") {
-  //     context.res.writeHead(302, { Location: "/login" });
-  //     context.res.end();
-  //   } else {
-  //     Router.push("/login");
-  //   }
-  // }
-  // return token;
-};
-
-export const login = (token: string) => {
-  // setCookie("token", token);
-  // Router.push("/portfolios");
-};
-
-export const logout = () => {
-  deleteCookie("token");
-  // to support logging out from all windows
-  window.localStorage.setItem("logout", Date.now().toString());
-  // Router.push("/login");
-};
-
-export const withAuthSync = (WrappedComponent: React.ComponentType<any>) => {
-  const Wrapper = (props: any) => {
-    const syncLogout = (event: StorageEvent) => {
-      if (event.key === "logout") {
-        console.log("logged out from storage!");
-        // Router.push("/login");
-      }
-    };
-
-    // useEffect(() => {
-    //   window.addEventListener("storage", syncLogout);
-
-    //   return () => {
-    //     window.removeEventListener("storage", syncLogout);
-    //     window.localStorage.removeItem("logout");
-    //   };
-    // }, []);
-    return <WrappedComponent {...props} />;
-  };
-  return Wrapper;
-};

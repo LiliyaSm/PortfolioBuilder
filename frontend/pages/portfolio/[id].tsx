@@ -8,10 +8,11 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { Portfolio } from "../../types";
 import { server } from "../../config";
-import { withAuthSync, redirectOnError, createSkillsList } from "../../utils";
+import { redirectOnError, createSkillsList } from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import { roles } from "../../constants";
 import upperFirst from "lodash/capitalize";
+import { getSession } from "next-auth/react";
 
 const dateOptions = {
   year: "numeric",
@@ -134,8 +135,10 @@ const View = ({ portfolio, token }: { portfolio: Portfolio; token: string }): Re
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { id } = context.query;
-  const token = context.req.cookies["token"];
   const apiUrl = `${server}/api/portfolios/${id}`;
+
+  const session = await getSession({ req: context.req });
+  const token = session?.user?.token;
 
   const headers = { Authorization: `Bearer ${token}` };
   const response = await fetch(apiUrl, {
@@ -155,4 +158,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-export default withAuthSync(View);
+export default View;

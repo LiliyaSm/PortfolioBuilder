@@ -2,21 +2,21 @@ import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+import Link from "@/components/Link";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import { useRouter } from "next/navigation";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import { purple } from "@mui/material/colors";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { server } from "../config";
 import { signIn, signOut, useSession } from "next-auth/react";
+import theme from "@/src/themes/defaultTheme";
 
-const MenuAppBar = (): React.ReactElement => {  
+const MenuAppBar = (): React.ReactElement => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  
+
   const { data: session } = useSession();
   const token = session?.user?.token;
 
@@ -46,33 +46,21 @@ const MenuAppBar = (): React.ReactElement => {
     setAnchorEl(null);
   };
 
-  const theme = createTheme({
-    palette: {
-      secondary: {
-        main: purple[500],
-      },
-      primary: {
-        light: "#faf9bb",
-        main: "#fdee00",
-        dark: "#f7f402",
-        contrastText: "#9C27B0",
-      },
-    },
-  });
-
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1, mb: 18 }}>
         <AppBar sx={{ minHeight: 85 }} position="fixed" color="secondary">
           <Toolbar sx={{ mt: 1.3 }}>
-            <Typography
-              onClick={() => Router.push("/portfolios")}
-              variant="h6"
-              component="div"
-              sx={{ flexGrow: 1, cursor: "pointer" }}
+            <Link
+              href={session?.user ? "/portfolios" : "/"}
+              sx={{
+                flexGrow: 1,
+                cursor: "pointer",
+                textTransform: "UpperCase",
+              }}
             >
               Portfolio builder
-            </Typography>
+            </Link>
             {session?.user && (
               <div>
                 <Button
@@ -83,9 +71,7 @@ const MenuAppBar = (): React.ReactElement => {
                 >
                   Create new portfolio
                 </Button>
-                {(
-                  <span> Hello, {session?.user.name}!</span>
-                )}
+                {<span> Hello, {session?.user.name}!</span>}
                 <IconButton
                   size="large"
                   aria-label="account of current user"
@@ -112,7 +98,9 @@ const MenuAppBar = (): React.ReactElement => {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={() => signOut()}>Log out</MenuItem>
+                  <MenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+                    Log out
+                  </MenuItem>
                 </Menu>
               </div>
             )}

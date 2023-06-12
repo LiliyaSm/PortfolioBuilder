@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState } from "react";
-import Link from "../src/app/Link";
+import Link from "../components/Link";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import PreviewIcon from "@mui/icons-material/Preview";
@@ -14,9 +14,9 @@ import Divider from "@mui/material/Divider";
 import { Portfolio } from "../types";
 import { server } from "../config";
 import Router from "next/router";
-import { withAuthSync, redirectOnError } from "../utils";
+import { redirectOnError } from "../utils";
 import { GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react"
+import { getSession } from "next-auth/react";
 
 const Portfolios = ({
   portfolios,
@@ -107,10 +107,9 @@ const Portfolios = ({
   );
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext, req: any) {
-  // const token = context.req.cookies["token"];
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const apiUrl = `${server}/api/portfolios`;
-  
+
   const session = await getSession({ req: context.req });
   const token = session?.user?.token;
   try {
@@ -130,7 +129,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext, req
         },
       };
     } else if (response.status == 401) {
-      return Router.push("/login");
+      return { redirect: { destination: "/auth/login" } };
     }
     return redirectOnError(context);
   } catch (error) {
@@ -139,4 +138,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext, req
   }
 }
 
-export default withAuthSync(Portfolios);
+export default Portfolios;

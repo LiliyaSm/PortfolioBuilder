@@ -15,7 +15,7 @@ export default class UsersController {
   public async login({ request, auth, response }: HttpContextContract) {
     const { email, password } = request.body()
     try {
-      const token = await auth.use('api').attempt(email, password)
+      const token = await auth.use('api').attempt(email.toLowerCase(), password)
       return {
         id: auth.user ? auth.user.id : '',
         token,

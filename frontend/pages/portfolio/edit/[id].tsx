@@ -1,25 +1,24 @@
 import React, { useState } from "react";
 import { server } from "../../../config";
-import { Portfolio } from "../../../types";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
+import { Portfolio } from "@/types";
+import {
+  TextField,
+  Box,
+  Typography,
+  Stack,
+  Button,
+  Alert,
+} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { purple } from "@mui/material/colors";
-import { createObjectFromForm } from "../../../utils";
 import Router from "next/router";
-import ProjectSection from "../../../components/ProjectSection";
-import { withAuthSync, redirectOnError } from "../../../utils";
+import ProjectSection from "@/components/ProjectSection";
+import { createObjectFromForm, redirectOnError } from "@/utils";
 import AddIcon from "@mui/icons-material/Add";
 import { GetServerSidePropsContext } from "next";
-import Alert from "@mui/material/Alert";
-import Link from "../../../src/app/Link";
+import Link from "@/components/Link";
 import PreviewIcon from "@mui/icons-material/Preview";
-// import { signIn, signOut, useSession } from "next-auth/react";
-import { getSession } from "next-auth/react"
-
+import { useSession, getSession } from "next-auth/react";
 
 const theme = createTheme({
   palette: {
@@ -35,15 +34,12 @@ const theme = createTheme({
   },
 });
 
-const EditPortfolio = ({
-  portfolio,
-  token,
-}: {
-  portfolio: Portfolio;
-  token: string;
-}) => {
+const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   const [newProject, setNewProject] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<string>("");
+
+  const { data: session } = useSession();
+  const token = session?.user?.token;
 
   const sortedProjects = portfolio.projects.sort((a, b) => {
     return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
@@ -146,7 +142,6 @@ const EditPortfolio = ({
       <div>
         {newProject && (
           <ProjectSection
-            token={token}
             project={{ portfolioId: portfolio.id }}
             setNewProject={setNewProject}
             setShowAlert={setShowAlert}
@@ -155,7 +150,6 @@ const EditPortfolio = ({
         {sortedProjects.map((project) => (
           <ProjectSection
             key={project.id}
-            token={token}
             project={project}
             setNewProject={setNewProject}
             setShowAlert={setShowAlert}
@@ -164,7 +158,7 @@ const EditPortfolio = ({
       </div>
     </ThemeProvider>
   );
-}
+};
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { id } = context.query;
@@ -184,7 +178,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
       props: {
         portfolio,
-        token,
       },
     };
   } else {

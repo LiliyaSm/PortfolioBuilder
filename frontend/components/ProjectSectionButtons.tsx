@@ -1,18 +1,17 @@
 import React from "react";
 import Button from "@mui/material/Button";
 import { server } from "../config";
-import { Project } from "../types";
+import { Project } from "@/types";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 export const ProjectSectionButtons = ({
   project,
   setNewProject,
-  token,
   setShowAlert,
 }: {
   project: Partial<Project>;
   setNewProject: (arg0: boolean) => void;
-  token: string;
   setShowAlert: (arg0: string) => void;
 }) => {
   const deleteNewProject = () => {
@@ -20,6 +19,9 @@ export const ProjectSectionButtons = ({
   };
 
   const router = useRouter();
+  
+  const { data: session } = useSession();
+  const token = session?.user?.token;
 
   const deleteProject = async () => {
     const apiUrl = `${server}/api/projects/${project.id}`;

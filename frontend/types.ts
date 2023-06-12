@@ -45,6 +45,10 @@ export interface ValidationErrors {
   teamSize?: string;
   role?: string;
   projectType?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
 }
 
 export interface ISkills {
