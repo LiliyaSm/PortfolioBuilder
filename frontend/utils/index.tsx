@@ -2,7 +2,7 @@ import React from "react";
 import { ValidationErrors, ISkills } from "@/types";
 import MenuItem from "@mui/material/MenuItem";
 import _ from "lodash";
-import { GetServerSidePropsContext } from "next";
+import { toast } from "react-toastify";
 
 export const createObjectFromForm = (
   data: FormData
@@ -42,4 +42,11 @@ export const createSkillsList = (skills: ISkills[]) => {
   return _.chain(skills).groupBy("type").value();
 };
 
-export const redirectOnError = (context: GetServerSidePropsContext) => {}
+export const warningOnError = (msg = "Can't fetch the data") => {
+  toast.error(msg);
+};
+
+export const displayToastSuccess = (msg: string) =>
+  toast.success(msg, {
+    icon: "⚡",
+  });

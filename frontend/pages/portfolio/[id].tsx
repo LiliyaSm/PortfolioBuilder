@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { Portfolio } from "../../types";
 import { server } from "../../config";
-import { redirectOnError, createSkillsList } from "@/utils";
+import { warningOnError, createSkillsList } from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import { roles } from "../../constants";
 import upperFirst from "lodash/capitalize";
@@ -153,8 +153,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         token,
       },
     };
-  } else {
-    return await redirectOnError(context);
+  } else if (response.status == 401) {
+    return { redirect: { destination: "/auth/login" } };
   }
 }
 

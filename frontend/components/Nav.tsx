@@ -61,7 +61,7 @@ const MenuAppBar = (): React.ReactElement => {
             >
               Portfolio builder
             </Link>
-            {session?.user && (
+            {session?.user ? (
               <div>
                 <Button
                   sx={{ mr: 10 }}
@@ -97,12 +97,17 @@ const MenuAppBar = (): React.ReactElement => {
                   }}
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
+                  disableScrollLock
                 >
                   <MenuItem onClick={() => signOut({ callbackUrl: "/" })}>
                     Log out
                   </MenuItem>
                 </Menu>
               </div>
+            ) : (
+              <Button variant="outlined" className="text-green-600" onClick={() => signIn()}>
+                Sign In
+              </Button>
             )}
           </Toolbar>
         </AppBar>

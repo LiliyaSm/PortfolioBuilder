@@ -4,15 +4,14 @@ import { server } from "../config";
 import { Project } from "@/types";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { displayToastSuccess } from "@/utils";
 
 export const ProjectSectionButtons = ({
   project,
   setNewProject,
-  setShowAlert,
 }: {
   project: Partial<Project>;
   setNewProject: (arg0: boolean) => void;
-  setShowAlert: (arg0: string) => void;
 }) => {
   const deleteNewProject = () => {
     setNewProject(false);
@@ -35,7 +34,7 @@ export const ProjectSectionButtons = ({
     const response = await fetch(apiUrl, requestOptions);
     if (response.ok) {
       router.push(`/portfolio/edit/${project.portfolioId}`);
-      setShowAlert("Deleted");
+      displayToastSuccess("Deleted");
     }
   };
 

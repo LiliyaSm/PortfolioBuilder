@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Box, CssBaseline, Grid } from "@mui/material";
 import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
-// import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import {
   Avatar,
@@ -116,11 +115,11 @@ const Login = (): React.ReactElement => {
               {loading ? "loading..." : "Sign In"}
             </Button>
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
+              {/* <Grid item xs> */}
+                {/* <Link href="#" variant="body2">
                   Forgot password?
-                </Link>
-              </Grid>
+                </Link> */}
+              {/* </Grid> */}
               <Grid item>
                 <Link href="/auth/register" variant="body2">
                   {"Don't have an account? Sign Up"}

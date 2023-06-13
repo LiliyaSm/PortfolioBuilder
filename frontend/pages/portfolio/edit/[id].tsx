@@ -7,13 +7,13 @@ import {
   Typography,
   Stack,
   Button,
-  Alert,
+  Tooltip,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { purple } from "@mui/material/colors";
 import Router from "next/router";
 import ProjectSection from "@/components/ProjectSection";
-import { createObjectFromForm, redirectOnError } from "@/utils";
+import { createObjectFromForm, warningOnError } from "@/utils";
 import AddIcon from "@mui/icons-material/Add";
 import { GetServerSidePropsContext } from "next";
 import Link from "@/components/Link";
@@ -36,7 +36,6 @@ const theme = createTheme({
 
 const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   const [newProject, setNewProject] = useState<boolean>(false);
-  const [showAlert, setShowAlert] = useState<string>("");
 
   const { data: session } = useSession();
   const token = session?.user?.token;
@@ -97,13 +96,14 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
         <Typography variant="h5">
           Edit the Portfolio: {portfolio.name}
         </Typography>
-        <Link
-          title="Go to view"
-          sx={{ mr: 2, textDecoration: "none" }}
-          href={`/portfolio/${portfolio.id}`}
-        >
-          <PreviewIcon color="secondary" />
-        </Link>
+        <Tooltip title="Go to view">
+          <Link
+            sx={{ mr: 2, textDecoration: "none" }}
+            href={`/portfolio/${portfolio.id}`}
+          >
+            <PreviewIcon color="secondary" />
+          </Link>
+        </Tooltip>
       </Stack>
       <hr />
       <Typography sx={{ my: 2, textAlign: "center" }} variant="h5"></Typography>
@@ -130,21 +130,11 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
         </Button>
       </Box>
       {renderAddNewIcon()}
-      {showAlert && (
-        <Alert
-          sx={{ my: 2 }}
-          severity="success"
-          onClose={() => setShowAlert("")}
-        >
-          {showAlert}
-        </Alert>
-      )}
       <div>
         {newProject && (
           <ProjectSection
             project={{ portfolioId: portfolio.id }}
             setNewProject={setNewProject}
-            setShowAlert={setShowAlert}
           />
         )}
         {sortedProjects.map((project) => (
@@ -152,7 +142,6 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
             key={project.id}
             project={project}
             setNewProject={setNewProject}
-            setShowAlert={setShowAlert}
           />
         ))}
       </div>
@@ -180,8 +169,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         portfolio,
       },
     };
-  } else {
-    return await redirectOnError(context);
+  } else if (response.status == 401) {
+    return { redirect: { destination: "/auth/login" } };
   }
 }
 

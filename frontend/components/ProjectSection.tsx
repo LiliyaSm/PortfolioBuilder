@@ -7,12 +7,13 @@ import {
   createErrors,
   createObjectFromForm,
   generateDropDownFields,
+  displayToastSuccess,
 } from "@/utils";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
+import { Stack, Tooltip } from "@mui/material";
 import Router from "next/router";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ProjectDates from "./ProjectDates";
@@ -35,11 +36,9 @@ import { useSession } from "next-auth/react";
 const ProjectSection = ({
   project,
   setNewProject,
-  setShowAlert,
 }: {
   project: Partial<Project>;
   setNewProject: (a: boolean) => void;
-  setShowAlert: (a: string) => void;
 }) => {
   const [clientIndustry, setClientIndustry] = useState<string>(
     project.clientIndustry || ""
@@ -114,7 +113,7 @@ const ProjectSection = ({
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
       setNewProject(false);
-      setShowAlert("Created");
+      displayToastSuccess("Created");
     } else {
       const {
         error: { errors },
@@ -167,7 +166,7 @@ const ProjectSection = ({
 
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
-      setShowAlert("Updated");
+      displayToastSuccess("Updated");
     } else {
       const {
         error: { errors },
@@ -192,12 +191,13 @@ const ProjectSection = ({
     >
       <Stack flexDirection="row" justifyContent="flex-start">
         {project.isDraft && (
-          <Chip
-            sx={{ mt: -4, mb: 2, ml: 2 }}
-            color="primary"
-            label="Draft"
-            title="Draft portfolios are not available in the view"
-          />
+          <Tooltip title="Draft portfolios are not available in the view">
+            <Chip
+              sx={{ mt: -4, mb: 2, ml: 2 }}
+              color="primary"
+              label="Draft project"
+            />
+          </Tooltip>
         )}
       </Stack>
 
@@ -356,11 +356,7 @@ const ProjectSection = ({
           label="Save as draft (will not be available in the view)"
         />
       </Box>
-      <ProjectSectionButtons
-        setNewProject={setNewProject}
-        project={project}
-        setShowAlert={setShowAlert}
-      />
+      <ProjectSectionButtons setNewProject={setNewProject} project={project} />
     </Box>
   );
 };

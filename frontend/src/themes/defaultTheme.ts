@@ -13,6 +13,16 @@ const theme = createTheme({
       contrastText: "#9C27B0",
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "6px",
+          // textTransform: 'none',
+        },
+      },
+    },
+  },
 });
 
 export default theme;

@@ -8,13 +8,13 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Container from "@mui/material/Container";
-import Stack from "@mui/material/Stack";
+import { Tooltip, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { Portfolio } from "../types";
 import { server } from "../config";
 import Router from "next/router";
-import { redirectOnError } from "../utils";
+import { displayToastSuccess } from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 
@@ -40,6 +40,7 @@ const Portfolios = ({
     });
 
     if (response.ok) {
+      displayToastSuccess("Portfolio successfully deleted");
       Router.push("/portfolios");
     }
   };
@@ -80,22 +81,28 @@ const Portfolios = ({
                   </Typography>
                 </ListItemText>
                 <Stack direction="row" spacing={1}>
-                  <Link
-                    sx={{ mb: 2, textDecoration: "none" }}
-                    href={`/portfolio/${portfolio.id}`}
-                  >
-                    <PreviewIcon color="secondary" />
-                  </Link>
+                  <Tooltip title="Preview portfolio">
+                    <Link
+                      sx={{ mb: 2, textDecoration: "none" }}
+                      href={`/portfolio/${portfolio.id}`}
+                    >
+                      <PreviewIcon color="secondary" />
+                    </Link>
+                  </Tooltip>
                   <Link
                     sx={{ mb: 2, color: "#9C27B0", textDecoration: "none" }}
                     href={`/portfolio/edit/${portfolio.id}`}
                   >
-                    <EditIcon color="secondary" />
+                    <Tooltip title="Edit portfolio">
+                      <EditIcon color="secondary" />
+                    </Tooltip>
                   </Link>
-                  <DeleteIcon
-                    color="secondary"
-                    onClick={() => deletePortfolio(portfolio.id)}
-                  />
+                  <Tooltip title="Delete portfolio">
+                    <DeleteIcon
+                      color="secondary"
+                      onClick={() => deletePortfolio(portfolio.id)}
+                    />
+                  </Tooltip>
                 </Stack>
               </ListItem>
               <Divider />
@@ -112,29 +119,24 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const session = await getSession({ req: context.req });
   const token = session?.user?.token;
-  try {
-    const response = await fetch(apiUrl, {
-      credentials: "include",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
 
-    if (response.ok) {
-      const portfolios = await response.json();
-      return {
-        props: {
-          portfolios,
-          token,
-        },
-      };
-    } else if (response.status == 401) {
-      return { redirect: { destination: "/auth/login" } };
-    }
-    return redirectOnError(context);
-  } catch (error) {
-    // Implementation or Network error
-    return redirectOnError(context);
+  const response = await fetch(apiUrl, {
+    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.ok) {
+    const portfolios = await response.json();
+    return {
+      props: {
+        portfolios,
+        token,
+      },
+    };
+  } else if (response.status == 401) {
+    return { redirect: { destination: "/auth/login" } };
   }
 }
 

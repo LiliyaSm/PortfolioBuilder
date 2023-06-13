@@ -14,7 +14,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { ThemeProvider } from "@mui/material/styles";
 import { server } from "@/config";
 import Copyright from "@/components/Copyright";
-import { createErrors } from "@/utils";
+import { createErrors, warningOnError } from "@/utils";
 import { ValidationErrors } from "@/types";
 import theme from "@/src/themes/defaultTheme";
 import { signIn } from "next-auth/react";
@@ -60,6 +60,7 @@ const SignUp = (): React.ReactElement => {
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
+      warningOnError()
     }
   };
 

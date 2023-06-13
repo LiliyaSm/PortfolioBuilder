@@ -71,6 +71,7 @@ const Skills = ({ defaultValue, name, setFunction, entities }: SkillsProps) => {
           value={createMultiSelectValue(defaultValue)}
           onChange={handleChange}
           input={<OutlinedInput id="select-multiple-chip" label={name} />}
+          inputProps={{MenuProps: {disableScrollLock: true}}}
           renderValue={(selected) => (
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
               {selected.map((value: string) => (
