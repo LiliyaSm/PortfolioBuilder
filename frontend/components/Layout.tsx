@@ -4,27 +4,29 @@ import "@/src/app/globals.css";
 import Nav from "./Nav";
 import Container from "@mui/material/Container";
 import { usePathname } from "next/navigation";
-import Head from "@/components/Head ";
+import GuestFooter from "@/components/GuestFooter";
 
 export const metadata = {
   title: "Portfolio builder",
   description: "Portfolio builder",
 };
 
+const paths = ["/auth/login", "/auth/register"];
+
 interface ILayoutProps {
   children: ReactNode;
 }
 
 const Layout = ({ children }: ILayoutProps) => {
-  const pathname = usePathname();
-  const showHeader = pathname === "/login" ? false : true;
+  const pathname = usePathname() || "";
+  const showFooter = paths.includes(pathname);
   return (
     <div>
-      <Head />
-      {showHeader && <Nav />}
+      <Nav />
       <Container component="main" maxWidth="lg">
         {children}
       </Container>
+      {showFooter && <GuestFooter />}
     </div>
   );
 };

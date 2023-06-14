@@ -3,11 +3,20 @@ import { createTheme } from "@mui/material/styles";
 import { contrastText, light, dark, main } from "@/constants";
 
 const theme = createTheme({
+  typography: {
+    fontFamily: [
+      "Lora",
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+    ].join(","),
+  },
   palette: {
     secondary: {
       // main: "#232323",
-      main: '#31aab7',
-      contrastText: '#232323'  ,
+      main: "#31aab7",
+      contrastText: "#232323",
     },
     primary: {
       light,
@@ -28,6 +37,14 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "6px",
+          // textTransform: 'none',
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          color: "black",
           // textTransform: 'none',
         },
       },

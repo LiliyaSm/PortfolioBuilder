@@ -13,7 +13,6 @@ import Link from "@/components/Link";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { ThemeProvider } from "@mui/material/styles";
 import { server } from "@/config";
-import Copyright from "@/components/Copyright";
 import { createErrors, warningOnError } from "@/utils";
 import { ValidationErrors } from "@/types";
 import theme from "@/src/themes/defaultTheme";
@@ -70,6 +69,10 @@ const SignUp = (): React.ReactElement => {
         <CssBaseline />
         <Box
           sx={{
+            backgroundColor: "white",
+            p:2,
+            pb: 4,
+            borderRadius: "10px",
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
@@ -146,7 +149,6 @@ const SignUp = (): React.ReactElement => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              color="secondary"
             >
               {loading ? "loading..." : "Sign Up"}
             </Button>
@@ -159,7 +161,6 @@ const SignUp = (): React.ReactElement => {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </ThemeProvider>
   );

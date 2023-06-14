@@ -118,7 +118,7 @@ const ProjectSectionDropdowns = ({
       >
         <InputLabel id="team-size-label">Team size</InputLabel>
         <Select
-          sx={{ minWidth: 230, ml: 2 }}
+          sx={{ minWidth: 200, ml: 2 }}
           labelId="team-size-label"
           id="team-size"
           name="teamSize"

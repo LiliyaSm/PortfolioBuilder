@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Box, CssBaseline, Grid } from "@mui/material";
-import Image from "next/image";
+import theme from "@/src/themes/defaultTheme";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {
@@ -12,8 +12,8 @@ import {
   Container,
 } from "@mui/material";
 import Link from "@/components/Link";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Copyright from "@/components/Copyright";
+import { ThemeProvider } from "@mui/material/styles";
+import LoginIcon from "@mui/icons-material/Login";
 
 const Login = (): React.ReactElement => {
   const router = useRouter();
@@ -53,7 +53,6 @@ const Login = (): React.ReactElement => {
     }
   };
 
-  const theme = createTheme();
   return (
     <ThemeProvider theme={theme}>
       <Container
@@ -61,19 +60,23 @@ const Login = (): React.ReactElement => {
         maxWidth="xs"
         sx={{
           backgroundColor: "white",
-          // height: "100vh",
+          borderRadius: "10px",
+          p: 2,
+          pb: 4,
         }}
       >
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 2,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar>
+          <Avatar sx={{ mb: 2, bgcolor: "secondary.main" }}>
+            <LoginIcon />
+          </Avatar>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
@@ -114,9 +117,9 @@ const Login = (): React.ReactElement => {
             >
               {loading ? "loading..." : "Sign In"}
             </Button>
-            <Grid container>
+            <Grid container justifyContent="flex-end">
               {/* <Grid item xs> */}
-                {/* <Link href="#" variant="body2">
+              {/* <Link href="#" variant="body2">
                   Forgot password?
                 </Link> */}
               {/* </Grid> */}
@@ -128,7 +131,6 @@ const Login = (): React.ReactElement => {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );

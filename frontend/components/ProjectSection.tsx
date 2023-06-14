@@ -158,7 +158,7 @@ const ProjectSection = ({
       isDraft: object.isDraft === "on" ? true : false,
       endDate: object.endDate ?? null,
     };
-    const updatedObject = { object, ...updatedFields };
+    const updatedObject = { ...object, ...updatedFields };
     const requestOptions = {
       method: "PUT",
       headers: {
@@ -222,14 +222,14 @@ const ProjectSection = ({
           direction="row"
           alignItems="center"
           sx={{
-            mr: 2,
+            mr: 1,
             pb: 3,
             minWidth: "400px",
           }}
         >
-          <InputLabel id="client-industry-label">Client industry</InputLabel>
+          <InputLabel color="secondary" id="client-industry-label">Client industry</InputLabel>
           <Select
-            sx={{ minWidth: 280, ml: 2 }}
+            sx={{ minWidth: 270, ml: 2 }}
             labelId="client-industry-label"
             id="client-industry"
             name="clientIndustry"
@@ -266,7 +266,7 @@ const ProjectSection = ({
         >
           <InputLabel id="project-type-label">Project type</InputLabel>
           <Select
-            sx={{ minWidth: 280, ml: 2 }}
+            sx={{ minWidth: 275, ml: 2 }}
             labelId="project-type-label"
             id="project-type"
             name="projectType"

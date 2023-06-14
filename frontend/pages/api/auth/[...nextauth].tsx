@@ -29,21 +29,21 @@ export const authOptions: NextAuthOptions = {
 
         const response = await fetch(`${server}/api/login`, requestOptions);
 
-        const user = await response.json();  
+        const user = await response.json();
 
         if (response.ok && user) {
           const token = user.token.token;
           // Any object returned will be saved in `user` property of the JWT
           return {
             id: user.id,
-            name: user.firstName,
+            name: `${user.firstName} ${user.lastName}`,
             token,
           };
         } else {
-          return null
+          return null;
           // If you return null then an error will be displayed advising the user to check their details.
           // throw new Error( JSON.stringify({ error: user.error, status: false }))
-          
+
           // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
       },

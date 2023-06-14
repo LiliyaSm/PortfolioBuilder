@@ -3,22 +3,18 @@ import "react-toastify/dist/ReactToastify.css";
 import Layout from "@/components/Layout";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
-// import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
 import NextNProgress from "nextjs-progressbar";
 import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
-import { dark } from '@/constants';
+import { dark } from "@/constants";
+import Head from "next/head";
 
 const StyledContainer = styled(ToastContainer)`
   .Toastify__progress-bar {
     background-color: ${dark};
     icon: ${"⚡"};
   }
-  // .Toastify__toast-icon {
-  //   color: purple;
-
-  // }
 `;
 
 const MyApp = ({
@@ -31,7 +27,10 @@ const MyApp = ({
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
   return (
     <SessionProvider session={pageProps.session}>
-      <NextNProgress startPosition={0.5} color={ dark } />
+      <Head>
+        <title>Portfolio builder</title>
+      </Head>
+      <NextNProgress startPosition={0.5} color={dark} />
       {getLayout(<Component {...pageProps} />)}
       <StyledContainer
         style={{ zIndex: 100000 }}

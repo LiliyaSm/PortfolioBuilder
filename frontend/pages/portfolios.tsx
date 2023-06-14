@@ -59,10 +59,14 @@ const Portfolios = ({
   }
   return (
     <ThemeProvider theme={theme}>
-      <Container component="div" maxWidth="lg">
-        <Typography sx={{ textAlign: "center" }} variant="h3">
+      <Container
+        component="div"
+        maxWidth="lg"
+        sx={{ backgroundColor: "white", py: 3, borderRadius: "14px" }}
+      >
+        {/* <Typography sx={{ textAlign: "center" }} variant="h3">
           Portfolios:
-        </Typography>
+        </Typography> */}
         <List>
           {sortedPortfolios.map((portfolio) => {
             return (
@@ -82,11 +86,11 @@ const Portfolios = ({
                       </Link>
                     </Typography>
                     <Typography color="text.secondary" variant="body2">
-                      Created at:
+                      Created at: {" "}
                       {new Date(portfolio.createdAt).toLocaleString()}
-                    </Typography>
+                    </Typography> 
                     <Typography color="text.secondary" variant="body2">
-                      Updated at:
+                      Updated at: {" "}
                       {new Date(portfolio.updatedAt).toLocaleString()}
                     </Typography>
                   </ListItemText>

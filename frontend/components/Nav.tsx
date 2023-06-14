@@ -2,8 +2,7 @@ import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Link from "@/components/Link";
-import { IconButton, Container, Toolbar } from "@mui/material";
-import Button from "@mui/material/Button";
+import { IconButton, Container, Toolbar, Stack, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { AccountCircle } from "@mui/icons-material";
 import MenuItem from "@mui/material/MenuItem";
@@ -65,24 +64,30 @@ const MenuAppBar = (): React.ReactElement => {
                   textTransform: "UpperCase",
                 }}
               >
-                <Box
-                  sx={{
-                    width: "45px",
-                    height: "45px",
-                    borderRadius: "50%",
-                    backgroundColor: main,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    cursor: "pointer",
-                  }}
-                >
-                  <FontAwesomeIcon
-                    size="lg"
-                    inverse
-                    icon={icon({ name: "briefcase" })}
-                  />
-                </Box>
+                <Stack direction="row" alignItems="center">
+                  <Box
+                    sx={{
+                      mr: 2,
+                      width: "45px",
+                      height: "45px",
+                      borderRadius: "50%",
+                      backgroundColor: main,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      size="lg"
+                      inverse
+                      icon={icon({ name: "briefcase" })}
+                    />
+                  </Box>
+                  <Box component="span" sx={{ color: "text.primary" }}>
+                    Portfolio builder
+                  </Box>
+                </Stack>
               </Link>
               {session?.user ? (
                 <div>
@@ -96,7 +101,7 @@ const MenuAppBar = (): React.ReactElement => {
                   </Button>
                   {
                     <Box component="span" sx={{ color: "text.primary" }}>
-                      Hello, {session?.user.name}!
+                      Hello, {session?.user?.name?.split(" ")[0]}!
                     </Box>
                   }
                   <IconButton
