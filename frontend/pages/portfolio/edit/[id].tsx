@@ -9,33 +9,22 @@ import {
   Button,
   Tooltip,
 } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { purple } from "@mui/material/colors";
-import Router from "next/router";
+import { ThemeProvider } from "@mui/material/styles";
 import ProjectSection from "@/components/ProjectSection";
-import { createObjectFromForm, warningOnError } from "@/utils";
+import { displayToastSuccess } from "@/utils";
 import AddIcon from "@mui/icons-material/Add";
 import { GetServerSidePropsContext } from "next";
 import Link from "@/components/Link";
 import PreviewIcon from "@mui/icons-material/Preview";
 import { useSession, getSession } from "next-auth/react";
-
-const theme = createTheme({
-  palette: {
-    secondary: {
-      main: purple[500],
-    },
-    primary: {
-      light: "#faf9bb",
-      main: "#fdee00",
-      dark: "#f7f402",
-      contrastText: "#9C27B0",
-    },
-  },
-});
+import theme from "@/src/themes/defaultTheme";
 
 const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   const [newProject, setNewProject] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const projectSectionRef = React.createRef();
 
   const { data: session } = useSession();
   const token = session?.user?.token;
@@ -44,97 +33,107 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
     return new Date(b.updatedAt).valueOf() - new Date(a.updatedAt).valueOf();
   });
 
-  const handleSubmitPortfolio = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const object = createObjectFromForm(data);
-
+  const handleSubmitPortfolio = async () => {
+    setIsLoading(true);
     const apiUrl = `${server}/api/portfolios/${portfolio.id}`;
-
     const requestOptions = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(object),
+      body: JSON.stringify({ name }),
     };
-    const response = await fetch(apiUrl, requestOptions);
-    if (response.ok) {
-      Router.push(`/portfolio/edit/${portfolio.id}`);
+    try {
+      const response = await fetch(apiUrl, requestOptions);
+      if (response.ok) {
+        displayToastSuccess("name successfully updated");
+      }
+      setIsLoading(false);
+    } catch (error: any) {
+      setIsLoading(false);
     }
   };
 
   const renderAddNewIcon = () => {
-    if (newProject) {
-      return (
-        <Typography color="secondary">
-          <h4>Save an existing project to add a new one</h4>
-        </Typography>
-      );
-    } else {
-      return (
-        <Stack
-          onClick={createNewProject}
-          direction="row"
-          sx={{ cursor: "pointer" }}
-        >
-          <AddIcon />
-          <Typography>Add new project</Typography>
-        </Stack>
-      );
-    }
+    return (
+      <Tooltip
+        title={newProject && "Save an existing project to add a new one"}
+      >
+        <span>
+          <Button
+            disabled={newProject}
+            variant="contained"
+            size="large"
+            onClick={createNewProject}
+          >
+            <AddIcon />
+            Add new project
+          </Button>
+        </span>
+      </Tooltip>
+    );
   };
 
-  const createNewProject = () => setNewProject(true);
+  const createNewProject = () => {
+
+
+    setNewProject(true);
+  };
 
   return (
     <ThemeProvider theme={theme}>
-      <Stack direction="row" justifyContent="space-between">
-        <Typography variant="h5">
-          Edit the Portfolio: {portfolio.name}
-        </Typography>
-        <Tooltip title="Go to view">
-          <Link
-            sx={{ mr: 2, textDecoration: "none" }}
-            href={`/portfolio/${portfolio.id}`}
+      <Box sx={{ backgroundColor: "white", p: 2, borderRadius: "14px" }}>
+        <Stack direction="row" justifyContent="space-between">
+          <Typography variant="h5">
+            Edit the Portfolio: {portfolio.name}
+          </Typography>
+          <Tooltip title="Go to view">
+            <Link
+              sx={{ mr: 2, textDecoration: "none" }}
+              href={`/portfolio/${portfolio.id}`}
+            >
+              <PreviewIcon color="secondary" />
+            </Link>
+          </Tooltip>
+        </Stack>
+        <hr />
+        <Typography
+          sx={{ my: 2, textAlign: "center" }}
+          variant="h5"
+        ></Typography>
+        <Box component="div" sx={{ mt: 1, mb: 2 }}>
+          <TextField
+            fullWidth
+            required
+            color="secondary"
+            id="outlined-required"
+            label="Portfolio name"
+            name="name"
+            defaultValue={portfolio.name}
+            onChange={(e) => setName(e.target.value)}
+            sx={{
+              mb: 2,
+            }}
+          />
+          <Button
+            sx={{ mr: 3 }}
+            onClick={handleSubmitPortfolio}
+            variant="contained"
+            size="large"
           >
-            <PreviewIcon color="secondary" />
-          </Link>
-        </Tooltip>
-      </Stack>
-      <hr />
-      <Typography sx={{ my: 2, textAlign: "center" }} variant="h5"></Typography>
-      <Box
-        component="form"
-        onSubmit={handleSubmitPortfolio}
-        noValidate
-        sx={{ mt: 1, mb: 2 }}
-      >
-        <TextField
-          fullWidth
-          required
-          color="secondary"
-          id="outlined-required"
-          label="Portfolio name"
-          name="name"
-          defaultValue={portfolio.name}
-          sx={{
-            mb: 2,
-          }}
-        />
-        <Button type="submit" sx={{ mr: 10 }} variant="contained" size="large">
-          update name
-        </Button>
+            {isLoading ? "Loading..." : "update name"}
+          </Button>
+          {renderAddNewIcon()}
+        </Box>
       </Box>
-      {renderAddNewIcon()}
       <div>
         {newProject && (
           <ProjectSection
+            ref={projectSectionRef}
             project={{ portfolioId: portfolio.id }}
             setNewProject={setNewProject}
+            isNewProject
           />
         )}
         {sortedProjects.map((project) => (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import Box from "@mui/material/Box";
 import ListItem from "@mui/material/ListItem";
@@ -6,11 +6,11 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import { Portfolio } from "../../types";
-import { server } from "../../config";
-import { warningOnError, createSkillsList } from "@/utils";
+import { Portfolio } from "@/types";
+import { server } from "@/config";
+import { createSkillsList } from "@/utils";
 import { GetServerSidePropsContext } from "next";
-import { roles } from "../../constants";
+import { roles, darkGrey } from "@/constants";
 import upperFirst from "lodash/capitalize";
 import { getSession } from "next-auth/react";
 
@@ -73,7 +73,7 @@ const View = ({ portfolio, token }: { portfolio: Portfolio; token: string }): Re
                   Industry: {project.clientIndustry}
                 </Box>
                 {project.clientDescription && (
-                  <Box key={project.id} sx={{ mt: 0.5, color: "#2F4F4F" }}>
+                  <Box key={project.id} sx={{ mt: 0.5, color: darkGrey }}>
                     {project.clientDescription}
                   </Box>
                 )}

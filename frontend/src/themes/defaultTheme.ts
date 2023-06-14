@@ -1,16 +1,26 @@
 import { purple } from "@mui/material/colors";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
+import { contrastText, light, dark, main } from "@/constants";
 
 const theme = createTheme({
   palette: {
     secondary: {
-      main: purple[500],
+      // main: "#232323",
+      main: '#31aab7',
+      contrastText: '#232323'  ,
     },
     primary: {
-      light: "#faf9bb",
-      main: "#fdee00",
-      dark: "#f7f402",
-      contrastText: "#9C27B0",
+      light,
+      main,
+      dark,
+      contrastText,
+    },
+    background: {
+      // default: "#303030",
+      // paper: "#424242",
+    },
+    text: {
+      // secondary: '#31aab7',
     },
   },
   components: {

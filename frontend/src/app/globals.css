@@ -78,8 +78,9 @@ body {
   overflow-x: hidden;
 }
 
-body {
+body, main {
   color: rgb(var(--foreground-rgb));
+  background-color: #edeef0;
 }
 
 a {

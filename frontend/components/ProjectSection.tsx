@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { server } from "../config";
-import { Project, ValidationErrors, ISkills } from "../types";
+import { Project, ValidationErrors, ISkills } from "@/types";
 import {
   createSkillsList,
   createErrors,
@@ -10,10 +10,7 @@ import {
   displayToastSuccess,
 } from "@/utils";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import Typography from "@mui/material/Typography";
-import { Stack, Tooltip } from "@mui/material";
+import { Stack, Typography, InputLabel, Box } from "@mui/material";
 import Router from "next/router";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ProjectDates from "./ProjectDates";
@@ -23,23 +20,30 @@ import {
   programmingTools,
   programmingLanguages,
   programmingFrameworks,
-} from "../constants";
-import Skills from "./Skills";
-import ProjectSectionButtons from "./ProjectSectionButtons";
-import Chip from "@mui/material/Chip";
+  PADDING_TOP,
+} from "@/constants";
+import Skills from "@/components/Skills";
+import ProjectChip from "@/components/ProjectChip";
+import ProjectSectionButtons from "@/components/ProjectSectionButtons";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import ProjectSectionDropdowns from "../components/ProjectSectionDropdowns";
+import ProjectSectionDropdowns from "@/components/ProjectSectionDropdowns";
 import _ from "lodash";
 import { useSession } from "next-auth/react";
+
+interface IProjectSection {
+  isNewProject: boolean;
+  project: Partial<Project>;
+  setNewProject: (a: boolean) => void;
+}
 
 const ProjectSection = ({
   project,
   setNewProject,
-}: {
-  project: Partial<Project>;
-  setNewProject: (a: boolean) => void;
-}) => {
+  isNewProject,
+}: IProjectSection) => {
+  const projectSectionRef = React.createRef();
+
   const [clientIndustry, setClientIndustry] = useState<string>(
     project.clientIndustry || ""
   );
@@ -78,6 +82,12 @@ const ProjectSection = ({
   ];
 
   useEffect(() => {
+    if (isNewProject) {
+      window.scrollTo({
+        top: projectSectionRef?.current.offsetTop - PADDING_TOP,
+        behavior: "smooth",
+      });
+    }
     if (project.skills) {
       const skillsList = createSkillsList(project.skills);
       skills.forEach(({ name, setFunction }) => {
@@ -148,8 +158,6 @@ const ProjectSection = ({
       isDraft: object.isDraft === "on" ? true : false,
       endDate: object.endDate ?? null,
     };
-    console.log("handleUpdateProject", object);
-
     const updatedObject = { object, ...updatedFields };
     const requestOptions = {
       method: "PUT",
@@ -159,8 +167,6 @@ const ProjectSection = ({
       },
       body: JSON.stringify(updatedObject),
     };
-
-    console.log("updatedObject", updatedObject);
 
     const response = await fetch(apiUrl, requestOptions);
 
@@ -173,31 +179,31 @@ const ProjectSection = ({
       } = await response.json();
       const errorsToDisplay = createErrors(errors);
       setValidationErrors(errorsToDisplay);
-      console.log(errorsToDisplay);
     }
   };
 
   return (
     <Box
       component="form"
+      ref={projectSectionRef}
       onSubmit={project.id ? handleUpdateProject : createNewProject}
       sx={{
         my: 4,
-        px: 1,
-        py: 2,
-        border: "ridge 1px #9C27B0",
-        borderRadius: "8px",
+        px: 2,
+        py: 3,
+        borderRadius: "14px",
+        backgroundColor: "white",
       }}
     >
       <Stack flexDirection="row" justifyContent="flex-start">
         {project.isDraft && (
-          <Tooltip title="Draft portfolios are not available in the view">
-            <Chip
-              sx={{ mt: -4, mb: 2, ml: 2 }}
-              color="primary"
-              label="Draft project"
-            />
-          </Tooltip>
+          <ProjectChip
+            label="Draft project"
+            title="Draft portfolios are not available in the view"
+          />
+        )}
+        {isNewProject && (
+          <ProjectChip label="New project"/>
         )}
       </Stack>
 
@@ -231,6 +237,7 @@ const ProjectSection = ({
             onChange={handleSelectClientIndustryChange}
             value={clientIndustry}
             error={Boolean(validationErrors.clientIndustry)}
+            inputProps={{ MenuProps: { disableScrollLock: true } }}
           >
             {generateDropDownFields(companyIndustries)}
           </Select>
@@ -266,6 +273,7 @@ const ProjectSection = ({
             color="secondary"
             onChange={handleSelectProjectTypeChange}
             value={projectType}
+            inputProps={{ MenuProps: { disableScrollLock: true } }}
             error={Boolean(validationErrors.projectType)}
           >
             {generateDropDownFields(projectTypes)}

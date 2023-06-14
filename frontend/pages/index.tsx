@@ -4,6 +4,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
+// import Spinner from "@/components/Spinner";
 
 const HomePage  = () => {
   const { push } = useRouter();
@@ -13,11 +14,7 @@ const HomePage  = () => {
   }, []);
   return (
     <p>
-      <button className="text-green-600" onClick={() => signIn()}>
-        Sign In
-      </button>
-        Sign In
-      {/* Main page */}
+      Main page
     </p>
   );
 };

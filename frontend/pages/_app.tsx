@@ -8,17 +8,15 @@ import { Session } from "next-auth";
 import NextNProgress from "nextjs-progressbar";
 import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
-
-const progressBarColor = "#f7f402";
+import { dark } from '@/constants';
 
 const StyledContainer = styled(ToastContainer)`
   .Toastify__progress-bar {
-    background-color: ${progressBarColor};
+    background-color: ${dark};
     icon: ${"⚡"};
   }
   // .Toastify__toast-icon {
   //   color: purple;
-  //   background-color: ${progressBarColor};
 
   // }
 `;
@@ -33,7 +31,7 @@ const MyApp = ({
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
   return (
     <SessionProvider session={pageProps.session}>
-      <NextNProgress startPosition={0.5} color="#f7f402" />
+      <NextNProgress startPosition={0.5} color={ dark } />
       {getLayout(<Component {...pageProps} />)}
       <StyledContainer
         style={{ zIndex: 100000 }}
