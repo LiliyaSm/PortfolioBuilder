@@ -23,7 +23,7 @@ const Layout = ({ children }: ILayoutProps) => {
   return (
     <div>
       <Nav />
-      <Container component="main" maxWidth="lg">
+      <Container component="main" maxWidth="lg" sx={{ mt: 18 }}>
         {children}
       </Container>
       {showFooter && <GuestFooter />}

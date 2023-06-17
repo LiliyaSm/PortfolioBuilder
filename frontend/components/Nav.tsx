@@ -49,7 +49,7 @@ const MenuAppBar = (): React.ReactElement => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ flexGrow: 1, mb: 18 }}>
+      <Box>
         <AppBar
           sx={{ minHeight: HEADER_HEIGHT, backgroundColor: "white" }}
           position="fixed"
