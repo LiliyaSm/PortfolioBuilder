@@ -14,6 +14,7 @@ import theme from "@/src/themes/defaultTheme";
 import { HEADER_HEIGHT, main } from "@/constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { icon } from "@fortawesome/fontawesome-svg-core/import.macro";
+import { usePathname } from "next/navigation";
 
 const MenuAppBar = (): React.ReactElement => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -22,6 +23,7 @@ const MenuAppBar = (): React.ReactElement => {
   const token = session?.user?.token;
 
   const router = useRouter();
+  const pathname = usePathname();
 
   const createNewPortfolio = async () => {
     const apiUrl = `${server}/api/portfolios`;
@@ -54,7 +56,7 @@ const MenuAppBar = (): React.ReactElement => {
           sx={{ minHeight: HEADER_HEIGHT, backgroundColor: "white" }}
           position="fixed"
         >
-          <Container component="div" maxWidth="lg">
+          <Container component="div" maxWidth={pathname === "/" ? "xl" : "lg"}>
             <Toolbar sx={{ mt: 1.3 }}>
               <Link
                 href={session?.user ? "/portfolios" : "/"}

@@ -10,8 +10,12 @@ import styled from "styled-components";
 import { dark } from "@/constants";
 import Head from "next/head";
 import { wrapper } from "../store/store";
+import {CategoryScale} from 'chart.js'; 
+import Chart from "chart.js/auto";
 
+Chart.register(CategoryScale);
 const StyledContainer = styled(ToastContainer)`
+
   .Toastify__progress-bar {
     background-color: ${dark};
     icon: ${"⚡"};

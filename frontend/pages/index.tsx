@@ -1,49 +1,43 @@
 "use client";
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-// import { Inter } from "@next/font/google";
-import { useState } from "react";
+// import Image from "next/image";
+import PieChart from "@/components/PieChart";
 import theme from "@/src/themes/defaultDarkTheme";
 import { ThemeProvider } from "@mui/material/styles";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import {
-  Box,
-  CssBaseline,
-  LinearProgress,
-  CircularProgress,
-  Skeleton,
-  Pagination,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  Stack,
-  Container,
-} from "@mui/material";
-// import { getPublicTrees } from "@/utils/api";
-// import MapSection from "@/components/MapSection";
+import { Box, Typography, Stack, Container, Button } from "@mui/material";
 import LandingLayout from "@/components/LandingLayout";
-import { motion } from "framer-motion";
-// import Sidebar from "@/components/Topbar";
-import Link from "next/link";
-// import Carousel from "react-material-ui-carousel";
-// const inter = Inter({ subsets: ["latin"] });
 import { lightGrey, main, dark, HEADER_HEIGHT } from "@/constants";
+import { useSelector } from "react-redux";
+import { selectStatisticsData } from "@/store/statisticsSlice";
+import { Box3Helper } from "three";
 
 const instructionsList = [
   "add your project to your work portfolio",
+  "enhance using artificial intelligence",
   "save as draft and work with it later",
-  "save as draft and work with it later",
+];
+
+const dataList = ["Languages", "Frameworks", "Tools"];
+const statistics = {
+  users: 10,
+  portfolios: 10,
+  projects: 20,
+  happiness: "100%",
+};
+const statisticsItems = [
+  { data: "users", text: "active users" },
+  { data: "portfolios", text: "portfolios" },
+  { data: "projects", text: "projects added" },
+  { data: "happiness", text: "happy users" },
 ];
 
 export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [dataId, setDataId] = useState("languages");
+  const statisticsData = useSelector(selectStatisticsData);
 
   useEffect(() => {
     // setLoading(true);
@@ -94,26 +88,23 @@ export default function Home() {
           display: "flex",
           justifyContent: "space-evenly",
 
-          // paddingTop: `${HEADER_HEIGHT}px`,
+          paddingTop: `${HEADER_HEIGHT}px`,
+          px: 8,
         }}
       >
         <Container maxWidth="xl">
-          <Stack
-            alignContent="center"
-            justifyContent="center"
-            flexDirection="row"
-          >
+          <Stack alignContent="center" flexDirection="row">
             <Stack
               color="text.primary"
               justifyContent="center"
-              alignContent="left"
               gap="24px"
+              maxWidth="490px"
             >
               <Typography sx={{ fontSize: "60px" }}>
                 <b>Create your ideal portfolio today</b>
               </Typography>
               <Typography sx={{ fontSize: "18px" }}>
-                Join over 14,000 learners gaining{" "}
+                Create your working portfolio simply and easily{" "}
                 <Box component="span" sx={{ color: main }}>
                   skills of the future!
                 </Box>
@@ -155,30 +146,60 @@ export default function Home() {
                 })}
               </List>
             </Stack>
-            <Box sx={{ display: "flex", width: 1050, mx: 2, py: 10 }}>
-              <Box
-                sx={{
-                  color: "black",
-                  flex: 1,
-                  justifyContent: "start",
-                  alignContent: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Image
-                  src={"/tree.png"}
-                  height={370}
-                  width={260}
-                  alt="diagram"
+            <Box
+              sx={{
+                display: "flex",
+                mx: 2,
+                py: 10,
+                justifyContent: "center",
+                alignItems: "center",
+                flexGrow: 1,
+              }}
+            >
+              {/* <Image src={"/tree.png"} height={370} width={260} alt="diagram" /> */}
+              <Box>
+                <PieChart
+                  data={statisticsData[dataId]}
+                  text={`Our most popular ${dataId}`}
                 />
+
+                <Stack
+                  direction="row"
+                  sx={{ justifyContent: "space-evenly", mt: 6 }}
+                >
+                  {dataList.map((el) => {
+                    const isActive = el.toLocaleLowerCase() === dataId;
+                    return (
+                      <Button
+                        key={el}
+                        onClick={() => setDataId(el.toLocaleLowerCase())}
+                        sx={{
+                          width: "120px",
+                          color: isActive ? "#000" : `#31aab7`,
+                          "&:hover": {
+                            backgroundColor: "#FFF",
+                            transform: isActive ? "" : "translateY(3px)",
+                            boxShadow:
+                              "inset 0px 10px 20px 2px rgba(0, 0, 0, 0.25)",
+                          },
+                          boxShadow: isActive
+                            ? `inset 0px 5px 10px 0px rgba(0, 0, 0, 0.5)`
+                            : `0px 5px 10px 0px rgba(0, 0, 0, 0.5)`,
+                          backgroundColor: "#fff",
+                        }}
+                      >
+                        <b>{el}</b>
+                      </Button>
+                    );
+                  })}
+                </Stack>
               </Box>
             </Box>
           </Stack>
         </Container>
         <Stack
           sx={{
-            height: "340px",
+            height: "250px",
             alignItems: "center",
             justifyContent: "center",
             background:
@@ -195,15 +216,22 @@ export default function Home() {
               px: 4,
               py: 2,
               borderRadius: "14px",
-              "&:hover p": { color: "#000" },
-              color: "#8892a7",
-              transition: "color 1s",
+              "&:hover p, &:hover h5": {
+                color: "black",
+              },
+              p: {
+                color: "grey",
+                // transition: "all 2s",
+              },
             }}
           >
             <Typography
               align="center"
+              variant="h5"
               sx={{
-                mb: 4,
+                mb: 2,
+                color: "grey",
+                transition: "all 0.3s",
               }}
             >
               <b>Our statistics</b>
@@ -216,18 +244,18 @@ export default function Home() {
               }}
               flexDirection="row"
             >
-              <Typography align="center">
-                10 <br /> active users
-              </Typography>
-              <Typography align="center">
-                10 <br /> portfolios
-              </Typography>
-              <Typography align="center">
-                10 <br /> projects added
-              </Typography>
-              <Typography align="center">
-                100% <br /> happy users
-              </Typography>
+              {statisticsItems.map(({ data, text }) => {
+                return(
+                  <Typography
+                    sx={{ transition: "all 0.3s ease-in" }}
+                    align="center"
+                  >
+                    <b>
+                      {statistics[data]} <br /> {text}
+                    </b>
+                  </Typography>
+                );
+              })}
             </Box>
           </Box>
         </Stack>
