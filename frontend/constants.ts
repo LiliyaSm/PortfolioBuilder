@@ -1,3 +1,15 @@
+export const contrastText = "#fff"; 
+export const light = "#00ffea"; 
+export const main = "#31aab7"; 
+export const dark = "#2e9aa6";
+
+export const darkGrey = "#2F4F4F";
+export const grey = "grey";
+export const lightGrey = "#edeef0"
+
+export const HEADER_HEIGHT = 85;
+export const PADDING_TOP = HEADER_HEIGHT + 15;
+
 export const cloudValues = [
   { value: "AWS", label: "AWS" },
   { value: "azure", label: "Azure" },

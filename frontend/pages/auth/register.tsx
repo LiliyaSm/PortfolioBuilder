@@ -1,59 +1,65 @@
 import React, { useState } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Router from "next/router";
-import Link from "../src/app/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import {
+  Box,
+  Grid,
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Typography,
+  Container,
+} from "@mui/material";
+import Link from "@/components/Link";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { setCookie } from "cookies-next";
-import { server } from "../config";
-import Copyright from "../components/Copyright";
-
-
-const theme = createTheme();
+import { ThemeProvider } from "@mui/material/styles";
+import { server } from "@/config";
+import { createErrors, warningOnError } from "@/utils";
+import { ValidationErrors } from "@/types";
+import theme from "@/src/themes/defaultTheme";
+import { signIn } from "next-auth/react";
 
 const SignUp = (): React.ReactElement => {
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
+    {}
+  );
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    const object: { [key: string]: FormDataEntryValue } = {};
+    const registerData: { [key: string]: FormDataEntryValue } = {};
 
     data.forEach(
-      (value: FormDataEntryValue, key: string) => (object[key] = value)
+      (value: FormDataEntryValue, key: string) => (registerData[key] = value)
     );
 
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(object),
+      body: JSON.stringify(registerData),
     };
 
-    const response = await fetch(`${server}/api/register`, requestOptions);
-
-    if (response.status === 200) {
-      const { token, firstName, lastName } = await response.json();
-      setCookie("token", token);
-      localStorage.setItem("firstName", firstName);
-      localStorage.setItem("lastName", lastName);
-      Router.push("/portfolios");
-    } else {
-      const { error } = await response.json();
-      const array: string[] = [];
-      if (Array.isArray(error.errors)) {
-        error.errors.forEach(({ message }: { message: string }) => {
-          array.push(message);
+    try {
+      setLoading(true);
+      const response = await fetch(`${server}/api/register`, requestOptions);
+      if (response.status === 200) {
+        const userData = await response.json();
+        await signIn("credentials", {
+          ...registerData,
+          callbackUrl: "/portfolios",
         });
+      } else {
+        const {
+          error: { errors },
+        } = await response.json();
+        const errorsToDisplay = createErrors(errors);
+        setValidationErrors(errorsToDisplay);
       }
-      setValidationErrors(array);
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      warningOnError()
     }
   };
 
@@ -63,6 +69,10 @@ const SignUp = (): React.ReactElement => {
         <CssBaseline />
         <Box
           sx={{
+            backgroundColor: "white",
+            p:2,
+            pb: 4,
+            borderRadius: "10px",
             marginTop: 8,
             display: "flex",
             flexDirection: "column",
@@ -73,7 +83,7 @@ const SignUp = (): React.ReactElement => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            Let&apos;s get started
           </Typography>
           <Box
             component="form"
@@ -91,6 +101,8 @@ const SignUp = (): React.ReactElement => {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  error={Boolean(validationErrors.firstName)}
+                  helperText={validationErrors.firstName ?? " "}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -101,6 +113,8 @@ const SignUp = (): React.ReactElement => {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  error={Boolean(validationErrors.lastName)}
+                  helperText={validationErrors.lastName ?? " "}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -111,6 +125,8 @@ const SignUp = (): React.ReactElement => {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  error={Boolean(validationErrors.email)}
+                  helperText={validationErrors.email ?? " "}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -122,6 +138,8 @@ const SignUp = (): React.ReactElement => {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  error={Boolean(validationErrors.password)}
+                  helperText={validationErrors.password ?? " "}
                 />
               </Grid>
               <Grid item xs={12}></Grid>
@@ -132,26 +150,20 @@ const SignUp = (): React.ReactElement => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign Up
+              {loading ? "loading..." : "Sign Up"}
             </Button>
-            {validationErrors.map((error) => (
-              <Typography key={error} sx={{ m: 1 }} color="error">
-                {error}
-              </Typography>
-            ))}
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="./login" variant="body2">
+                <Link href="./login" variant="body2" color="secondary">
                   Already have an account? Sign in
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </ThemeProvider>
   );
-}
+};
 
-export default SignUp
+export default SignUp;

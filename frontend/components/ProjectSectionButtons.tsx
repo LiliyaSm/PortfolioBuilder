@@ -1,23 +1,28 @@
 import React from "react";
 import Button from "@mui/material/Button";
 import { server } from "../config";
-import { Project } from "../types";
-import Router from "next/router";
+import { Project } from "@/types";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import { displayToastSuccess } from "@/utils";
 
 export const ProjectSectionButtons = ({
   project,
   setNewProject,
-  token,
-  setShowAlert,
+  isLoading = false,
 }: {
   project: Partial<Project>;
   setNewProject: (arg0: boolean) => void;
-  token: string;
-  setShowAlert: (arg0: string) => void;
+  isLoading: boolean;
 }) => {
   const deleteNewProject = () => {
     setNewProject(false);
   };
+
+  const router = useRouter();
+
+  const { data: session } = useSession();
+  const token = session?.user?.token;
 
   const deleteProject = async () => {
     const apiUrl = `${server}/api/projects/${project.id}`;
@@ -30,8 +35,8 @@ export const ProjectSectionButtons = ({
     };
     const response = await fetch(apiUrl, requestOptions);
     if (response.ok) {
-      Router.push(`/portfolio/edit/${project.portfolioId}`);
-      setShowAlert("Deleted");
+      router.push(`/portfolio/edit/${project.portfolioId}`);
+      displayToastSuccess("Deleted");
     }
   };
 
@@ -40,8 +45,13 @@ export const ProjectSectionButtons = ({
 
   return (
     <>
-      <Button type="submit" sx={{ mr: 2 }} variant="contained" size="large">
-        {buttonText}
+      <Button
+        type="submit"
+        sx={{ mr: 2, minWidth: "173px" }}
+        variant="contained"
+        size="large"
+      >
+        {isLoading ? "Loading..." : buttonText}
       </Button>
       <Button
         onClick={onClickDelete}

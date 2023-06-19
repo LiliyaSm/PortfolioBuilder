@@ -1,18 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { server } from "../config";
-import { Project, ValidationErrors, ISkills } from "../types";
+import { Project, ValidationErrors, ISkills } from "@/types";
 import {
   createSkillsList,
   createErrors,
   createObjectFromForm,
   generateDropDownFields,
-} from "../utils";
+  displayToastSuccess,
+} from "@/utils";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
+import { Stack, Typography, InputLabel, Box } from "@mui/material";
 import Router from "next/router";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import ProjectDates from "./ProjectDates";
@@ -22,26 +20,30 @@ import {
   programmingTools,
   programmingLanguages,
   programmingFrameworks,
-} from "../constants";
-import Skills from "./Skills";
-import ProjectSectionButtons from "./ProjectSectionButtons";
-import Chip from "@mui/material/Chip";
+  PADDING_TOP,
+} from "@/constants";
+import Skills from "@/components/Skills";
+import ProjectChip from "@/components/ProjectChip";
+import ProjectSectionButtons from "@/components/ProjectSectionButtons";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import ProjectSectionDropdowns from "../components/ProjectSectionDropdowns";
-import _ from "lodash"
+import ProjectSectionDropdowns from "@/components/ProjectSectionDropdowns";
+import _ from "lodash";
+import { useSession } from "next-auth/react";
+
+interface IProjectSection {
+  isNewProject?: boolean;
+  project: Partial<Project>;
+  setNewProject: (a: boolean) => void;
+}
 
 const ProjectSection = ({
   project,
-  token,
   setNewProject,
-  setShowAlert,
-}: {
-  project: Partial<Project>;
-  token: string;
-  setNewProject: (a: boolean) => void;
-  setShowAlert: (a: string) => void;
-}) => {
+  isNewProject = false,
+}: IProjectSection) => {
+  const projectSectionRef = React.createRef<HTMLDivElement>();
+
   const [clientIndustry, setClientIndustry] = useState<string>(
     project.clientIndustry || ""
   );
@@ -51,9 +53,13 @@ const ProjectSection = ({
   const [languages, setLanguages] = useState<ISkills[]>([]);
   const [tools, setTools] = useState<ISkills[]>([]);
   const [frameworks, setFrameworks] = useState<ISkills[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {}
   );
+
+  const { data: session } = useSession();
+  const token = session?.user?.token;
 
   const skills = [
     {
@@ -77,6 +83,14 @@ const ProjectSection = ({
   ];
 
   useEffect(() => {
+    if (isNewProject) {
+      if (projectSectionRef?.current !== null) {
+        window.scrollTo({
+          behavior: "smooth",
+          top: projectSectionRef?.current.offsetTop - PADDING_TOP,
+        });
+      }
+    }
     if (project.skills) {
       const skillsList = createSkillsList(project.skills);
       skills.forEach(({ name, setFunction }) => {
@@ -89,11 +103,15 @@ const ProjectSection = ({
   }, []);
 
   const createNewProject = async (event: React.FormEvent<HTMLFormElement>) => {
+    if (isLoading) return;
+    setIsLoading(true);
     event.preventDefault();
     const apiUrl = `${server}/api/portfolios/${project.portfolioId}/project`;
     const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
-    const projectSkills = _(skills).map((x) => x.value).flatten();
+    const projectSkills = _(skills)
+      .map((x) => x.value)
+      .flatten();
 
     object.skills = projectSkills;
 
@@ -110,14 +128,15 @@ const ProjectSection = ({
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
       setNewProject(false);
-      setShowAlert("Created");
+      displayToastSuccess("Successfully created");
+      setIsLoading(false);
     } else {
       const {
         error: { errors },
       } = await response.json();
       const errorsToDisplay = createErrors(errors);
       setValidationErrors(errorsToDisplay);
-      console.log(errorsToDisplay);
+      setIsLoading(false);
     }
   };
 
@@ -132,21 +151,23 @@ const ProjectSection = ({
   const handleUpdateProject = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
+    if (isLoading) return;
+    setIsLoading(true);
     event.preventDefault();
     setValidationErrors({});
     const apiUrl = `${server}/api/projects/${project.id}`;
     const data = new FormData(event.currentTarget);
     const object = createObjectFromForm(data);
-    const projectSkills = _(skills).map((x) => x.value).flatten();
+    const projectSkills = _(skills)
+      .map((x) => x.value)
+      .flatten();
 
     const updatedFields = {
       skills: projectSkills,
       isDraft: object.isDraft === "on" ? true : false,
       endDate: object.endDate ?? null,
-    }
-    console.log("handleUpdateProject", object);
-
-    const updatedObject = {object, ...updatedFields}
+    };
+    const updatedObject = { ...object, ...updatedFields };
     const requestOptions = {
       method: "PUT",
       headers: {
@@ -156,45 +177,43 @@ const ProjectSection = ({
       body: JSON.stringify(updatedObject),
     };
 
-    console.log("updatedObject", updatedObject);
-
-
     const response = await fetch(apiUrl, requestOptions);
 
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
-      setShowAlert("Updated");
+      displayToastSuccess("Successfully updated");
+      setIsLoading(false);
     } else {
       const {
         error: { errors },
       } = await response.json();
       const errorsToDisplay = createErrors(errors);
       setValidationErrors(errorsToDisplay);
-      console.log(errorsToDisplay);
+      setIsLoading(false);
     }
   };
 
   return (
     <Box
       component="form"
+      ref={projectSectionRef}
       onSubmit={project.id ? handleUpdateProject : createNewProject}
       sx={{
         my: 4,
-        px: 1,
-        py: 2,
-        border: "ridge 1px #9C27B0",
-        borderRadius: "8px",
+        px: 2,
+        py: 3,
+        borderRadius: "14px",
+        backgroundColor: "white",
       }}
     >
       <Stack flexDirection="row" justifyContent="flex-start">
         {project.isDraft && (
-          <Chip
-            sx={{ mt: -4, mb: 2, ml: 2 }}
-            color="primary"
-            label="Draft"
+          <ProjectChip
+            label="Draft project"
             title="Draft portfolios are not available in the view"
           />
         )}
+        {isNewProject && <ProjectChip label="New project" />}
       </Stack>
 
       <Stack direction="row" spacing={1}>
@@ -212,14 +231,16 @@ const ProjectSection = ({
           direction="row"
           alignItems="center"
           sx={{
-            mr: 2,
+            mr: 1,
             pb: 3,
             minWidth: "400px",
           }}
         >
-          <InputLabel id="client-industry-label">Client industry</InputLabel>
+          <InputLabel color="secondary" id="client-industry-label">
+            Client industry
+          </InputLabel>
           <Select
-            sx={{ minWidth: 280, ml: 2 }}
+            sx={{ minWidth: 270, ml: 2 }}
             labelId="client-industry-label"
             id="client-industry"
             name="clientIndustry"
@@ -227,6 +248,7 @@ const ProjectSection = ({
             onChange={handleSelectClientIndustryChange}
             value={clientIndustry}
             error={Boolean(validationErrors.clientIndustry)}
+            inputProps={{ MenuProps: { disableScrollLock: true } }}
           >
             {generateDropDownFields(companyIndustries)}
           </Select>
@@ -255,13 +277,14 @@ const ProjectSection = ({
         >
           <InputLabel id="project-type-label">Project type</InputLabel>
           <Select
-            sx={{ minWidth: 280, ml: 2 }}
+            sx={{ minWidth: 275, ml: 2 }}
             labelId="project-type-label"
             id="project-type"
             name="projectType"
             color="secondary"
             onChange={handleSelectProjectTypeChange}
             value={projectType}
+            inputProps={{ MenuProps: { disableScrollLock: true } }}
             error={Boolean(validationErrors.projectType)}
           >
             {generateDropDownFields(projectTypes)}
@@ -353,10 +376,9 @@ const ProjectSection = ({
         />
       </Box>
       <ProjectSectionButtons
+        isLoading={isLoading}
         setNewProject={setNewProject}
         project={project}
-        token={token}
-        setShowAlert={setShowAlert}
       />
     </Box>
   );

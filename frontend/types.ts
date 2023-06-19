@@ -25,8 +25,8 @@ export interface Project {
   updatedAt: string;
   skills: ISkills[];
   teamSize: string;
-  role: string,
-  projectType: string
+  role: string;
+  projectType: string;
 }
 
 export interface ValidationErrors {
@@ -45,6 +45,10 @@ export interface ValidationErrors {
   teamSize?: string;
   role?: string;
   projectType?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
 }
 
 export interface ISkills {
@@ -52,4 +56,24 @@ export interface ISkills {
   projectId?: number;
   type: string;
   value: string;
+}
+
+export interface IChartData {
+  labels: string[];
+  data: string[];
+}
+export interface IGeneralStatistics {
+  users: number;
+  portfolios: number;
+  projects: number;
+  happiness: string;
+}
+export interface ISkillsStatistics {
+    languages: IChartData;
+    frameworks: IChartData;
+    tools: IChartData;
+}
+
+export interface IStatistics extends IGeneralStatistics {
+  skills: ISkillsStatistics
 }

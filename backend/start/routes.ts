@@ -3,6 +3,7 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.post('register', 'UsersController.register')
   Route.post('login', 'UsersController.login')
+  Route.get('statistics', 'StatisticsController.statistics')
 
   Route.group(() => {
     Route.get('portfolios', 'PortfoliosController.index')
@@ -16,5 +17,7 @@ Route.group(() => {
     Route.get('projects/:id', 'ProjectsController.view')
     Route.put('projects/:id', 'ProjectsController.update')
     Route.delete('projects/:id', 'ProjectsController.delete')
+
+    Route.post('chat', 'OpenAIController.chat')
   }).middleware('auth:api')
 }).prefix('api')

@@ -57,6 +57,7 @@ const ProjectSectionDropdowns = ({
           onChange={handleSelectRoleChange}
           value={role}
           error={Boolean(validationErrors.role)}
+          inputProps={{ MenuProps: { disableScrollLock: true } }}
         >
           {generateDropDownFields(roles)}
         </Select>
@@ -79,6 +80,7 @@ const ProjectSectionDropdowns = ({
           onChange={handleSelectChange}
           value={size}
           error={Boolean(validationErrors.size)}
+          inputProps={{ MenuProps: { disableScrollLock: true } }}
         >
           {generateDropDownFields(projectSizesValues)}
         </Select>
@@ -101,6 +103,7 @@ const ProjectSectionDropdowns = ({
           onChange={handleSelectCloudChange}
           value={cloud}
           error={Boolean(validationErrors.cloud)}
+          inputProps={{ MenuProps: { disableScrollLock: true } }}
         >
           {generateDropDownFields(cloudValues)}
         </Select>
@@ -115,7 +118,7 @@ const ProjectSectionDropdowns = ({
       >
         <InputLabel id="team-size-label">Team size</InputLabel>
         <Select
-          sx={{ minWidth: 230, ml: 2 }}
+          sx={{ minWidth: 200, ml: 2 }}
           labelId="team-size-label"
           id="team-size"
           name="teamSize"
@@ -123,6 +126,7 @@ const ProjectSectionDropdowns = ({
           onChange={handleSelectTeamSizeChange}
           value={teamSize}
           error={Boolean(validationErrors.teamSize)}
+          inputProps={{ MenuProps: { disableScrollLock: true } }}
         >
           {generateDropDownFields(projectTeamSizeValues)}
         </Select>

@@ -47,7 +47,6 @@ const Skills = ({ defaultValue, name, setFunction, entities }: SkillsProps) => {
         skills.push({ type: name.toLowerCase(), value: el });
       }
     });
-    console.log("skills", skills);
     setFunction(skills);
   };
 

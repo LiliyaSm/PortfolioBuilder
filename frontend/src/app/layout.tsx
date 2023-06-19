@@ -1,21 +1,13 @@
-import React from "react"
-import './globals.css'
+import React from "react";
 
-export const metadata = {
-  title: 'Portfolio builder',
-  description: 'Portfolio builder',
-}
-
-const RootLayout = ({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
-}) => {
+}) {
   return (
     <html lang="en">
       <body>{children}</body>
     </html>
   )
 }
-
-export default RootLayout;
