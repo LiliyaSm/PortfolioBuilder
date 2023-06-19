@@ -12,34 +12,26 @@ export const defaultDarkTheme = createTheme({
     ].join(","),
   },
   palette: {
-    secondary: {
-      main: "#FFF",
-      contrastText: "#FFF",
-      light:"#FFF"
-
-    },
-    text: {
-      primary: "#FFF",
-      secondary: dark,
-      // disabled: styles.ttt,
-      // hint: styles.tttt,
-    },
     primary: {
       light,
-      main,
+      main: dark,
       dark,
       contrastText,
     },
-    background:{
-      default: "#31aab7"
-    }
+    text: {
+      primary: contrastText,
+      secondary: dark,
+    },
+    background: {
+      default: main,
+      paper: contrastText,
+    },
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           borderRadius: "6px",
-          // textTransform: 'none',
         },
       },
     },
@@ -47,7 +39,6 @@ export const defaultDarkTheme = createTheme({
       styleOverrides: {
         root: {
           color: "black",
-          // textTransform: 'none',
         },
       },
     },

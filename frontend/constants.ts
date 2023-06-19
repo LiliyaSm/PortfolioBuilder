@@ -1,14 +1,10 @@
-// export const contrastText = "#9C27B0"; 
-// export const light = "#faf9bb"; 
-// export const main = "#fdee00"; 
-// export const dark = "#f7f402";
-
 export const contrastText = "#fff"; 
-export const light = "#7fe7f2"; 
+export const light = "#00ffea"; 
 export const main = "#31aab7"; 
 export const dark = "#2e9aa6";
 
 export const darkGrey = "#2F4F4F";
+export const grey = "grey";
 export const lightGrey = "#edeef0"
 
 export const PADDING_TOP = 100;

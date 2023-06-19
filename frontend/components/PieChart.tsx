@@ -1,6 +1,7 @@
 import React from "react";
 import { Pie } from "react-chartjs-2";
-import type { ChartData, ChartOptions } from "chart.js";
+import { IChartData } from "@/types";
+import type { ChartData, ChartOptions, Chart } from "chart.js";
 
 var effectColors = {
   highlight: "rgba(255, 255, 255, 0.75)",
@@ -8,24 +9,35 @@ var effectColors = {
   glow: "rgb(255, 255, 0)",
 };
 
-const ShadowPlugin = {
-  beforeDraw: (chart, args, options) => {
+const shadowPlugin = {
+  id: "shadowPlugin",
+  beforeDraw: (chart: Chart) => {
     const { ctx } = chart;
     ctx.shadowColor = effectColors.shadow;
     ctx.shadowBlur = 10;
     ctx.shadowOffsetX = 3;
     ctx.shadowOffsetY = 3;
-    ctx.bevelWidth = 2;
-    ctx.bevelHighlightColor = effectColors.highlight;
-    ctx.bevelShadowColor = effectColors.shadow;
-    ctx.hoverInnerGlowWidth = 20;
-    ctx.hoverInnerGlowColor = effectColors.glow;
-    ctx.hoverOuterGlowWidth = 20;
-    ctx.hoverOuterGlowColor = effectColors.glow;
   },
 };
 
-function PieChart({ data, text }: { data: ChartData; text: "string" }) {
+function PieChart({
+  data: statisticsData,
+  text,
+}: {
+  data: IChartData;
+  text: string;
+}) {
+  const { data, labels } = statisticsData;
+  const dataset = {
+    labels,
+    datasets: [
+      {
+        label: "occurs times",
+        data,
+        borderWidth: 0,
+      },
+    ],
+  };
   const options = {
     plugins: {
       title: {
@@ -46,13 +58,18 @@ function PieChart({ data, text }: { data: ChartData; text: "string" }) {
         },
       },
     },
+    layout: {
+      padding: {
+        bottom: 10,
+      },
+    },
   };
   return (
     <div
       className="chart-container"
       style={{ position: "relative", width: "440px", height: "440px" }}
     >
-      <Pie data={data} options={options} plugins={[ShadowPlugin]} />
+      <Pie data={dataset} options={options} plugins={[shadowPlugin]} />
     </div>
   );
 }

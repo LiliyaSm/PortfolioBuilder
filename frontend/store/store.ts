@@ -1,11 +1,11 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import { statisticsSlice } from "./statisticsSlice";
+// import { statisticsSlice } from "./statisticsSlice";
 import { createWrapper } from "next-redux-wrapper";
 
 const makeStore = () =>
   configureStore({
     reducer: {
-      [statisticsSlice.name]: statisticsSlice.reducer,
+      // [statisticsSlice.name]: statisticsSlice.reducer,
     },
     devTools: true,
   });

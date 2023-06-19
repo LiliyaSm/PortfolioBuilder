@@ -83,7 +83,7 @@ const SignUp = (): React.ReactElement => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Let's get started
+            Let&apos;s get started
           </Typography>
           <Box
             component="form"
