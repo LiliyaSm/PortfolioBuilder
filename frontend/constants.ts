@@ -7,8 +7,8 @@ export const darkGrey = "#2F4F4F";
 export const grey = "grey";
 export const lightGrey = "#edeef0"
 
-export const PADDING_TOP = 100;
 export const HEADER_HEIGHT = 85;
+export const PADDING_TOP = HEADER_HEIGHT + 15;
 
 export const cloudValues = [
   { value: "AWS", label: "AWS" },

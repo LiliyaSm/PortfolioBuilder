@@ -32,7 +32,7 @@ import _ from "lodash";
 import { useSession } from "next-auth/react";
 
 interface IProjectSection {
-  isNewProject: boolean;
+  isNewProject?: boolean;
   project: Partial<Project>;
   setNewProject: (a: boolean) => void;
 }
@@ -40,9 +40,9 @@ interface IProjectSection {
 const ProjectSection = ({
   project,
   setNewProject,
-  isNewProject,
+  isNewProject = false,
 }: IProjectSection) => {
-  const projectSectionRef = React.createRef();
+  const projectSectionRef = React.createRef<HTMLDivElement>();
 
   const [clientIndustry, setClientIndustry] = useState<string>(
     project.clientIndustry || ""
@@ -83,10 +83,12 @@ const ProjectSection = ({
 
   useEffect(() => {
     if (isNewProject) {
-      window.scrollTo({
-        top: projectSectionRef?.current.offsetTop - PADDING_TOP,
-        behavior: "smooth",
-      });
+       if (projectSectionRef?.current !== null) {        
+        window.scrollTo({
+          behavior: "smooth",
+          top: projectSectionRef?.current.offsetTop - PADDING_TOP
+        });
+      }
     }
     if (project.skills) {
       const skillsList = createSkillsList(project.skills);

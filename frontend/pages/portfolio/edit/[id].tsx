@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { server } from "../../../config";
+import { server } from "@/config";
 import { Portfolio } from "@/types";
 import {
   TextField,
@@ -23,8 +23,6 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   const [newProject, setNewProject] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const projectSectionRef = React.createRef();
 
   const { data: session } = useSession();
   const token = session?.user?.token;
@@ -76,8 +74,6 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   };
 
   const createNewProject = () => {
-
-
     setNewProject(true);
   };
 
@@ -130,7 +126,6 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
       <div>
         {newProject && (
           <ProjectSection
-            ref={projectSectionRef}
             project={{ portfolioId: portfolio.id }}
             setNewProject={setNewProject}
             isNewProject
