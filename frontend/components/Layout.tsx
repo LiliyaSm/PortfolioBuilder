@@ -5,6 +5,9 @@ import Nav from "./Nav";
 import Container from "@mui/material/Container";
 import { usePathname } from "next/navigation";
 import GuestFooter from "@/components/GuestFooter";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "@/src/themes/defaultTheme";
+import { CssBaseline } from "@mui/material";
 
 export const metadata = {
   title: "Portfolio builder",
@@ -23,8 +26,11 @@ const Layout = ({ children }: ILayoutProps) => {
   return (
     <div>
       <Nav />
-      <Container component="main" maxWidth="lg" sx={{ mt: 18 }}>
-        {children}
+      <Container component="main" maxWidth="lg" sx={{ mt: 14 }}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {children}
+        </ThemeProvider>
       </Container>
       {showFooter && <GuestFooter />}
     </div>

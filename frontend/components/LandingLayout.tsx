@@ -11,7 +11,7 @@ const LandingLayout = ({ children }: ILayoutProps) => {
   return (
     <div>
       <Nav />
-      <div>{children}</div>
+      {children}
     </div>
   );
 };

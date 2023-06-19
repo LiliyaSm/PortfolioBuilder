@@ -1,3 +1,5 @@
+import type { NextPage } from 'next';
+import type { ReactElement, ReactNode } from 'react';
 export interface Portfolio {
   id: number;
   name: string;
@@ -77,3 +79,7 @@ export interface ISkillsStatistics {
 export interface IStatistics extends IGeneralStatistics {
   skills: ISkillsStatistics
 }
+
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};

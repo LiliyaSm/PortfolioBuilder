@@ -117,7 +117,7 @@ export default function Home({
               <Box>
                 <PieChart
                   data={skills[dataId as keyof ISkillsStatistics]}
-                  text={`Our most popular ${dataId}`}
+                  text={`Our users know these ${dataId} best`}
                 />
                 <Stack
                   direction="row"

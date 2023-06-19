@@ -51,7 +51,6 @@ const MenuAppBar = (): React.ReactElement => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box>
         <AppBar
           sx={{ minHeight: HEADER_HEIGHT, backgroundColor: "white" }}
           position="fixed"
@@ -149,7 +148,6 @@ const MenuAppBar = (): React.ReactElement => {
             </Toolbar>
           </Container>
         </AppBar>
-      </Box>
     </ThemeProvider>
   );
 };

@@ -9,7 +9,6 @@ import {
   Button,
   Tooltip,
 } from "@mui/material";
-import { ThemeProvider } from "@mui/material/styles";
 import ProjectSection from "@/components/ProjectSection";
 import { displayToastSuccess } from "@/utils";
 import AddIcon from "@mui/icons-material/Add";
@@ -17,7 +16,6 @@ import { GetServerSidePropsContext } from "next";
 import Link from "@/components/Link";
 import PreviewIcon from "@mui/icons-material/Preview";
 import { useSession, getSession } from "next-auth/react";
-import theme from "@/src/themes/defaultTheme";
 
 const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   const [newProject, setNewProject] = useState<boolean>(false);
@@ -32,7 +30,7 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   });
 
   const handleSubmitPortfolio = async () => {
-    if(isLoading) return;
+    if (isLoading) return;
     setIsLoading(true);
     const apiUrl = `${server}/api/portfolios/${portfolio.id}`;
     const requestOptions = {
@@ -79,7 +77,7 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <Box>
       <Box sx={{ backgroundColor: "white", p: 2, borderRadius: "14px" }}>
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="h5">
@@ -124,7 +122,7 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
           {renderAddNewIcon()}
         </Box>
       </Box>
-      <div>
+      <Box>
         {newProject && (
           <ProjectSection
             project={{ portfolioId: portfolio.id }}
@@ -139,8 +137,8 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
             setNewProject={setNewProject}
           />
         ))}
-      </div>
-    </ThemeProvider>
+      </Box>
+    </Box>
   );
 };
 

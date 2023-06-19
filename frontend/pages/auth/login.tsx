@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Box, CssBaseline, Grid } from "@mui/material";
-import theme from "@/src/themes/defaultTheme";
+import { Box, Grid } from "@mui/material";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {
@@ -12,7 +11,6 @@ import {
   Container,
 } from "@mui/material";
 import Link from "@/components/Link";
-import { ThemeProvider } from "@mui/material/styles";
 import LoginIcon from "@mui/icons-material/Login";
 
 const Login = (): React.ReactElement => {
@@ -54,18 +52,17 @@ const Login = (): React.ReactElement => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Container
-        component="main"
+        component="div"
         maxWidth="xs"
         sx={{
           backgroundColor: "white",
           borderRadius: "10px",
           p: 2,
           pb: 4,
+          mt: 18,
         }}
       >
-        <CssBaseline />
         <Box
           sx={{
             marginTop: 2,
@@ -77,7 +74,7 @@ const Login = (): React.ReactElement => {
           <Avatar sx={{ mb: 2, bgcolor: "secondary.main" }}>
             <LoginIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography variant="h5">
             Sign in
           </Typography>
           {error && (
@@ -132,12 +129,11 @@ const Login = (): React.ReactElement => {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
   );
 };
 
 // Login.getLayout = function getLayout(page: React.ReactElement) {
-//   return <>{page}</>;
+//   return <LandingLayout>{page}</LandingLayout>;
 // };
 
 export default Login;

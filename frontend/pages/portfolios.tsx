@@ -18,8 +18,6 @@ import { displayToastSuccess } from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { darkGrey } from "@/constants";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "@/src/themes/defaultTheme";
 
 const Portfolios = ({
   portfolios,
@@ -58,7 +56,6 @@ const Portfolios = ({
     );
   }
   return (
-    <ThemeProvider theme={theme}>
       <Container
         component="div"
         maxWidth="lg"
@@ -86,11 +83,11 @@ const Portfolios = ({
                       </Link>
                     </Typography>
                     <Typography color="text.secondary" variant="body2">
-                      Created at: {" "}
+                      Created at:{" "}
                       {new Date(portfolio.createdAt).toLocaleString()}
-                    </Typography> 
+                    </Typography>
                     <Typography color="text.secondary" variant="body2">
-                      Updated at: {" "}
+                      Updated at:{" "}
                       {new Date(portfolio.updatedAt).toLocaleString()}
                     </Typography>
                   </ListItemText>
@@ -125,7 +122,6 @@ const Portfolios = ({
           })}
         </List>
       </Container>
-    </ThemeProvider>
   );
 };
 

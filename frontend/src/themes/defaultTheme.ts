@@ -1,6 +1,5 @@
-import { purple } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
-import { contrastText, light, dark, main } from "@/constants";
+import { contrastText, light, dark, main, lightGrey } from "@/constants";
 
 const theme = createTheme({
   typography: {
@@ -14,7 +13,6 @@ const theme = createTheme({
   },
   palette: {
     secondary: {
-      // main: "#232323",
       main: "#31aab7",
       contrastText: "#232323",
     },
@@ -25,8 +23,7 @@ const theme = createTheme({
       contrastText,
     },
     background: {
-      // default: "#303030",
-      // paper: "#424242",
+      default: lightGrey
     },
     text: {
       // secondary: '#31aab7',
@@ -45,7 +42,6 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "black",
-          // textTransform: 'none',
         },
       },
     },
