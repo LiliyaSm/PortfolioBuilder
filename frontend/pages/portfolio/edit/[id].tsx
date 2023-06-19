@@ -46,7 +46,7 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
     try {
       const response = await fetch(apiUrl, requestOptions);
       if (response.ok) {
-        displayToastSuccess("name successfully updated");
+        displayToastSuccess("Successfully updated");
       }
       setIsLoading(false);
     } catch (error: any) {

@@ -128,7 +128,7 @@ const ProjectSection = ({
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
       setNewProject(false);
-      displayToastSuccess("Created");
+      displayToastSuccess("Successfully created");
       setIsLoading(false);
     } else {
       const {
@@ -181,7 +181,7 @@ const ProjectSection = ({
 
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
-      displayToastSuccess("Updated");
+      displayToastSuccess("Successfully updated");
       setIsLoading(false);
     } else {
       const {
