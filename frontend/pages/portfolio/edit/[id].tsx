@@ -32,6 +32,7 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   });
 
   const handleSubmitPortfolio = async () => {
+    if(isLoading) return;
     setIsLoading(true);
     const apiUrl = `${server}/api/portfolios/${portfolio.id}`;
     const requestOptions = {
@@ -113,7 +114,7 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
             }}
           />
           <Button
-            sx={{ mr: 3 }}
+            sx={{ mr: 3, minWidth: "173px" }}
             onClick={handleSubmitPortfolio}
             variant="contained"
             size="large"

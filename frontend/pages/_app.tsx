@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import Layout from "@/components/Layout";
 import type { AppProps } from "next/app";
@@ -10,12 +10,11 @@ import styled from "styled-components";
 import { dark } from "@/constants";
 import Head from "next/head";
 import { wrapper } from "../store/store";
-import {CategoryScale} from 'chart.js'; 
+import { CategoryScale } from "chart.js";
 import Chart from "chart.js/auto";
 
 Chart.register(CategoryScale);
 const StyledContainer = styled(ToastContainer)`
-
   .Toastify__progress-bar {
     background-color: ${dark};
     icon: ${"⚡"};
@@ -28,8 +27,15 @@ const MyApp = ({
 }: AppProps<{
   session: Session;
 }>) => {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const loader = document.getElementById("globalLoader");
+      if (loader) loader.remove();
+    }
+  }, []);
+  
   // Use the layout defined at the page level, if available
-  const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
+  const getLayout = Component.getLayout || ((page: React.ReactElement) => <Layout>{page}</Layout>);
   return (
     <SessionProvider session={pageProps.session}>
       <Head>

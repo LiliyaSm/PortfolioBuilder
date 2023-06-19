@@ -53,6 +53,7 @@ const ProjectSection = ({
   const [languages, setLanguages] = useState<ISkills[]>([]);
   const [tools, setTools] = useState<ISkills[]>([]);
   const [frameworks, setFrameworks] = useState<ISkills[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {}
   );
@@ -83,10 +84,10 @@ const ProjectSection = ({
 
   useEffect(() => {
     if (isNewProject) {
-       if (projectSectionRef?.current !== null) {        
+      if (projectSectionRef?.current !== null) {
         window.scrollTo({
           behavior: "smooth",
-          top: projectSectionRef?.current.offsetTop - PADDING_TOP
+          top: projectSectionRef?.current.offsetTop - PADDING_TOP,
         });
       }
     }
@@ -102,6 +103,8 @@ const ProjectSection = ({
   }, []);
 
   const createNewProject = async (event: React.FormEvent<HTMLFormElement>) => {
+    if (isLoading) return;
+    setIsLoading(true);
     event.preventDefault();
     const apiUrl = `${server}/api/portfolios/${project.portfolioId}/project`;
     const data = new FormData(event.currentTarget);
@@ -126,12 +129,14 @@ const ProjectSection = ({
       Router.push(`/portfolio/edit/${project.portfolioId}`);
       setNewProject(false);
       displayToastSuccess("Created");
+      setIsLoading(false);
     } else {
       const {
         error: { errors },
       } = await response.json();
       const errorsToDisplay = createErrors(errors);
       setValidationErrors(errorsToDisplay);
+      setIsLoading(false);
     }
   };
 
@@ -146,6 +151,8 @@ const ProjectSection = ({
   const handleUpdateProject = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
+    if (isLoading) return;
+    setIsLoading(true);
     event.preventDefault();
     setValidationErrors({});
     const apiUrl = `${server}/api/projects/${project.id}`;
@@ -175,12 +182,14 @@ const ProjectSection = ({
     if (response.ok) {
       Router.push(`/portfolio/edit/${project.portfolioId}`);
       displayToastSuccess("Updated");
+      setIsLoading(false);
     } else {
       const {
         error: { errors },
       } = await response.json();
       const errorsToDisplay = createErrors(errors);
       setValidationErrors(errorsToDisplay);
+      setIsLoading(false);
     }
   };
 
@@ -204,9 +213,7 @@ const ProjectSection = ({
             title="Draft portfolios are not available in the view"
           />
         )}
-        {isNewProject && (
-          <ProjectChip label="New project"/>
-        )}
+        {isNewProject && <ProjectChip label="New project" />}
       </Stack>
 
       <Stack direction="row" spacing={1}>
@@ -229,7 +236,9 @@ const ProjectSection = ({
             minWidth: "400px",
           }}
         >
-          <InputLabel color="secondary" id="client-industry-label">Client industry</InputLabel>
+          <InputLabel color="secondary" id="client-industry-label">
+            Client industry
+          </InputLabel>
           <Select
             sx={{ minWidth: 270, ml: 2 }}
             labelId="client-industry-label"
@@ -366,7 +375,11 @@ const ProjectSection = ({
           label="Save as draft (will not be available in the view)"
         />
       </Box>
-      <ProjectSectionButtons setNewProject={setNewProject} project={project} />
+      <ProjectSectionButtons
+        isLoading={isLoading}
+        setNewProject={setNewProject}
+        project={project}
+      />
     </Box>
   );
 };

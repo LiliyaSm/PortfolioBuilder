@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // import Image from "next/image";
 import PieChart from "@/components/PieChart";
 import theme from "@/src/themes/defaultDarkTheme";
@@ -11,6 +11,8 @@ import LandingLayout from "@/components/LandingLayout";
 import { light, HEADER_HEIGHT } from "@/constants";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { IGeneralStatistics, ISkillsStatistics, IStatistics } from "@/types";
+import { GetServerSidePropsContext } from "next";
+import { server } from "@/config";
 
 const dataList = ["Languages", "Frameworks", "Tools"];
 
@@ -26,7 +28,6 @@ export default function Home({
 }: {
   statisticsData: IStatistics;
 }) {
-  // const [loading, setLoading] = useState(false);
   const [dataId, setDataId] = useState("languages");
 
   const generalData = statisticsData as IGeneralStatistics;
@@ -34,12 +35,9 @@ export default function Home({
 
   const isSmallScreen = useMediaQuery("(max-width:1200px)");
 
-  useEffect(() => {
-    // setLoading(true);
-  }, []);
 
   const instructionsList = [
-    <span>Add your project to your portfolio</span>,
+    <span>Add project to your portfolio</span>,
     <span>
       Enhance with <span style={{ color: light }}> AI technology</span>
     </span>,
@@ -225,29 +223,16 @@ Home.getLayout = function getLayout(page: React.ReactElement) {
   return <LandingLayout>{page}</LandingLayout>;
 };
 
-export async function getServerSideProps() {
-  const statisticsData = {
-    skills: {
-      languages: {
-        labels: ["Javascript", "Python", "Java", "Other"],
-        data: [55, 23, 10, 20],
-      },
-      frameworks: {
-        labels: ["React", "Django", "Spring", "Other"],
-        data: [35, 20, 6, 25],
-      },
-      tools: {
-        labels: ["Visual Studio Code", "IntelliJ IDEA", "Jira", "Other"],
-        data: [15, 15, 7, 13],
-      },
-    },
-    users: 10,
-    portfolios: 10,
-    projects: 15,
-    happiness: "100%",
-  };
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const apiUrl = `${server}/api/statistics`;
 
+  const response = await fetch(apiUrl);
+
+  const statisticsData = await response.json();
+  console.log()
   return {
-    props: { statisticsData },
+    props: {
+      statisticsData,
+    },
   };
 }

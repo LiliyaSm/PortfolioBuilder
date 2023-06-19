@@ -9,16 +9,18 @@ import { displayToastSuccess } from "@/utils";
 export const ProjectSectionButtons = ({
   project,
   setNewProject,
+  isLoading = false,
 }: {
   project: Partial<Project>;
   setNewProject: (arg0: boolean) => void;
+  isLoading: boolean;
 }) => {
   const deleteNewProject = () => {
     setNewProject(false);
   };
 
   const router = useRouter();
-  
+
   const { data: session } = useSession();
   const token = session?.user?.token;
 
@@ -43,8 +45,13 @@ export const ProjectSectionButtons = ({
 
   return (
     <>
-      <Button type="submit" sx={{ mr: 2 }} variant="contained" size="large">
-        {buttonText}
+      <Button
+        type="submit"
+        sx={{ mr: 2, minWidth: "173px" }}
+        variant="contained"
+        size="large"
+      >
+        {isLoading ? "Loading..." : buttonText}
       </Button>
       <Button
         onClick={onClickDelete}

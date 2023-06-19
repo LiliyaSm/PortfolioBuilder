@@ -19,7 +19,6 @@ export default class OpenAIController {
       })
       return chatCompletion.data.choices[0]?.message?.content
     } catch (e) {
-      console.log(e)
       return { error: e.message }
     }
   }
