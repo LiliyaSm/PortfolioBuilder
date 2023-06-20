@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-key */
 "use client";
 import React, { useState } from "react";
-// import Image from "next/image";
 import PieChart from "@/components/PieChart";
 import theme from "@/src/themes/defaultDarkTheme";
 import { ThemeProvider } from "@mui/material/styles";

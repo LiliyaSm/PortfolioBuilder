@@ -1,5 +1,6 @@
 import React from "react";
 import { Html, Main, NextScript, Head } from "next/document";
+import GlobalLoader from "@/components/GlobalLoader";
 
 const Document = () => {
   return (
@@ -27,12 +28,7 @@ const Document = () => {
         <Main />
         <NextScript />
       </body>
-      <div id="globalLoader">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
-          alt=""
-        />
-      </div>
+      <GlobalLoader />
     </Html>
   );
 };
