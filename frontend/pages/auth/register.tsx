@@ -56,7 +56,7 @@ const SignUp = (): React.ReactElement => {
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
-      warningOnError();
+      warningOnError(error.message);
     }
   };
 

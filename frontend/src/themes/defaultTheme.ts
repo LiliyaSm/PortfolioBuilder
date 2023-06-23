@@ -23,7 +23,7 @@ const theme = createTheme({
       contrastText,
     },
     background: {
-      default: lightGrey
+      default: lightGrey,
     },
     text: {
       // secondary: '#31aab7',
@@ -42,6 +42,14 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "black",
+        },
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          fontSize: "14px",
+          maxWidth: 350,
         },
       },
     },

@@ -9,7 +9,7 @@ import {
   Button,
   Tooltip,
 } from "@mui/material";
-import ProjectSection from "@/components/ProjectSection";
+import ProjectSection from "@/components/Project/ProjectSection";
 import { displayToastSuccess } from "@/utils";
 import AddIcon from "@mui/icons-material/Add";
 import { GetServerSidePropsContext } from "next";

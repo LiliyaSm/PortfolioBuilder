@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { generateDropDownFields } from "../utils";
+import { generateDropDownFields } from "@/utils";
 import InputLabel from "@mui/material/InputLabel";
 import Stack from "@mui/material/Stack";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
@@ -8,8 +8,8 @@ import {
   projectSizesValues,
   projectTeamSizeValues,
   roles,
-} from "../constants";
-import { Project, ValidationErrors } from "../types";
+} from "@/constants";
+import { Project, ValidationErrors } from "@/types";
 
 const ProjectSectionDropdowns = ({
   validationErrors,
