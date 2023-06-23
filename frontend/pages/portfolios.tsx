@@ -61,14 +61,11 @@ const Portfolios = ({
         maxWidth="lg"
         sx={{ backgroundColor: "white", py: 3, borderRadius: "14px" }}
       >
-        {/* <Typography sx={{ textAlign: "center" }} variant="h3">
-          Portfolios:
-        </Typography> */}
         <List>
           {sortedPortfolios.map((portfolio) => {
             return (
               <div key={portfolio.id}>
-                <ListItem button>
+                <ListItem button onClick={()=>{Router.push(`/portfolio/edit/${portfolio.id}`)}}>
                   <ListItemText>
                     <Typography variant="h5" sx={{ mb: 2 }}>
                       <Link
