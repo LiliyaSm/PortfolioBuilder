@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
-import { Project, ValidationErrors } from "../types";
+import { Project, ValidationErrors } from "@/types";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";

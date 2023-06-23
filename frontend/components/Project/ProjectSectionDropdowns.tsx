@@ -18,26 +18,21 @@ const ProjectSectionDropdowns = ({
   project: Partial<Project>;
   validationErrors: ValidationErrors;
 }) => {
-  const [size, setSize] = useState<string>(project.size || "");
-  const [cloud, setCloud] = useState<string>(project.cloud || "");
-  const [role, setRole] = useState<string>(project.role || "");
-  const [teamSize, setTeamSize] = useState<string>(project.teamSize || "");
+  const [values, setValues] = useState({
+    size: project.size || "",
+    cloud: project.cloud || "",
+    role: project.role || "",
+    teamSize: project.teamSize || "",
+  });
 
-  const handleSelectChange = (event: SelectChangeEvent) => {
-    setSize(event.target.value as string);
+  const handleChange = (event: SelectChangeEvent) => {
+    const { name, value } = event.target;
+    setValues((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSelectCloudChange = (event: SelectChangeEvent) => {
-    setCloud(event.target.value as string);
-  };
-
-  const handleSelectTeamSizeChange = (event: SelectChangeEvent) => {
-    setTeamSize(event.target.value as string);
-  };
-
-  const handleSelectRoleChange = (event: SelectChangeEvent) => {
-    setRole(event.target.value as string);
-  };
   return (
     <>
       <Stack
@@ -54,8 +49,8 @@ const ProjectSectionDropdowns = ({
           id="role-size"
           name="role"
           color="secondary"
-          onChange={handleSelectRoleChange}
-          value={role}
+          onChange={handleChange}
+          value={values.role}
           error={Boolean(validationErrors.role)}
           inputProps={{ MenuProps: { disableScrollLock: true } }}
         >
@@ -77,8 +72,8 @@ const ProjectSectionDropdowns = ({
           id="size"
           name="size"
           color="secondary"
-          onChange={handleSelectChange}
-          value={size}
+          onChange={handleChange}
+          value={values.size}
           error={Boolean(validationErrors.size)}
           inputProps={{ MenuProps: { disableScrollLock: true } }}
         >
@@ -100,8 +95,8 @@ const ProjectSectionDropdowns = ({
           id="cloud"
           name="cloud"
           color="secondary"
-          onChange={handleSelectCloudChange}
-          value={cloud}
+          onChange={handleChange}
+          value={values.cloud}
           error={Boolean(validationErrors.cloud)}
           inputProps={{ MenuProps: { disableScrollLock: true } }}
         >
@@ -123,8 +118,8 @@ const ProjectSectionDropdowns = ({
           id="team-size"
           name="teamSize"
           color="secondary"
-          onChange={handleSelectTeamSizeChange}
-          value={teamSize}
+          onChange={handleChange}
+          value={values.teamSize}
           error={Boolean(validationErrors.teamSize)}
           inputProps={{ MenuProps: { disableScrollLock: true } }}
         >
