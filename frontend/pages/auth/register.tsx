@@ -13,6 +13,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { server } from "@/config";
 import { createErrors, warningOnError } from "@/utils";
 import { ValidationErrors } from "@/types";
+import { darkGrey } from "@/constants";
 import { signIn } from "next-auth/react";
 
 const SignUp = (): React.ReactElement => {
@@ -77,9 +78,7 @@ const SignUp = (): React.ReactElement => {
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography variant="h5">
-          Let&apos;s get started
-        </Typography>
+        <Typography variant="h5">Let&apos;s get started</Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -144,7 +143,16 @@ const SignUp = (): React.ReactElement => {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="./login" variant="body2" color="secondary">
+              <Link
+                href="./login"
+                variant="body2"
+                color="secondary"
+                sx={{
+                  "&:hover": {
+                    color: darkGrey,
+                  },
+                }}
+              >
                 Already have an account? Sign in
               </Link>
             </Grid>

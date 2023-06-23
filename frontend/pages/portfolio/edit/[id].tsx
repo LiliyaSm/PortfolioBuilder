@@ -165,6 +165,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   } else if (response.status == 401) {
     return { redirect: { destination: "/auth/login" } };
   }
+  return {
+    notFound: true,
+  }
 }
 
 export default EditPortfolio;
