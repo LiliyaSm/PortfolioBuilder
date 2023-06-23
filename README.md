@@ -11,11 +11,10 @@ This is a portfolio builder application that uses Adonis for API and React (Next
 
 ## Features
 
-- Create portfolios
-- Store portfolios
-- Delete portfolios
+- Create/Store/Update/Delete portfolios
 - View individual portfolios
 - Authentication using token
+- Enhance text with Artificial intelligence
 
 ## Architecture
 ![Database schema](./backend/images/architecture.svg)
