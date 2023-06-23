@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
-import { server } from "../config";
+import { server } from "@/config";
 import { Project, ValidationErrors, ISkills } from "@/types";
 import {
   createSkillsList,
@@ -22,12 +22,13 @@ import {
   programmingFrameworks,
   PADDING_TOP,
 } from "@/constants";
-import Skills from "@/components/Skills";
-import ProjectChip from "@/components/ProjectChip";
-import ProjectSectionButtons from "@/components/ProjectSectionButtons";
+import Skills from "@/components/Project/Skills";
+import ProjectChip from "@/components/Project/ProjectChip";
+import ProjectSectionButtons from "@/components/Project/ProjectSectionButtons";
+import AIButton from "@/components/Project/AIButton";
+import ProjectSectionDropdowns from "@/components/Project/ProjectSectionDropdowns";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import ProjectSectionDropdowns from "@/components/ProjectSectionDropdowns";
 import _ from "lodash";
 import { useSession } from "next-auth/react";
 
@@ -54,6 +55,8 @@ const ProjectSection = ({
   const [tools, setTools] = useState<ISkills[]>([]);
   const [frameworks, setFrameworks] = useState<ISkills[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [actions, setActions] = useState<string>(project.actions || "");
+  const [outcome, setOutcome] = useState<string>(project.outcome || "");
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {}
   );
@@ -91,6 +94,7 @@ const ProjectSection = ({
         });
       }
     }
+    // set skills if exist
     if (project.skills) {
       const skillsList = createSkillsList(project.skills);
       skills.forEach(({ name, setFunction }) => {
@@ -108,12 +112,12 @@ const ProjectSection = ({
     event.preventDefault();
     const apiUrl = `${server}/api/portfolios/${project.portfolioId}/project`;
     const data = new FormData(event.currentTarget);
-    const object = createObjectFromForm(data);
+    let projectData = createObjectFromForm(data);
     const projectSkills = _(skills)
       .map((x) => x.value)
       .flatten();
 
-    object.skills = projectSkills;
+    projectData = { ...projectData, skills: projectSkills, actions, outcome };
 
     const requestOptions = {
       method: "POST",
@@ -121,7 +125,7 @@ const ProjectSection = ({
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(object),
+      body: JSON.stringify(projectData),
     };
 
     const response = await fetch(apiUrl, requestOptions);
@@ -167,7 +171,7 @@ const ProjectSection = ({
       isDraft: object.isDraft === "on" ? true : false,
       endDate: object.endDate ?? null,
     };
-    const updatedObject = { ...object, ...updatedFields };
+    const updatedObject = { ...object, ...updatedFields, actions, outcome };
     const requestOptions = {
       method: "PUT",
       headers: {
@@ -329,30 +333,40 @@ const ProjectSection = ({
           validationErrors={validationErrors}
         />
       </Stack>
-      <TextField
-        fullWidth
-        color="secondary"
-        id="actions"
-        label="Actions"
-        multiline
-        rows={3}
-        defaultValue={project.actions}
-        name="actions"
-        error={Boolean(validationErrors.actions)}
-        helperText={validationErrors.actions ?? " "}
-      />
-      <TextField
-        fullWidth
-        color="secondary"
-        id="outcome"
-        label="Outcome"
-        multiline
-        rows={3}
-        defaultValue={project.outcome}
-        name="outcome"
-        error={Boolean(validationErrors.outcome)}
-        helperText={validationErrors.outcome ?? " "}
-      />
+      <Box sx={{ position: "relative" }}>
+        <TextField
+          fullWidth
+          color="secondary"
+          id="actions"
+          label="Actions"
+          multiline
+          rows={3}
+          defaultValue={project.actions}
+          value={actions}
+          onChange={(e) => setActions(e.target.value)}
+          error={Boolean(validationErrors.actions)}
+          inputProps={{ style: { resize: "vertical" } }}
+          helperText={validationErrors.actions ?? " "}
+        />
+        <AIButton text={actions} setResult={setActions} />
+      </Box>
+      <Box sx={{ position: "relative" }}>
+        <TextField
+          fullWidth
+          color="secondary"
+          id="outcome"
+          label="Outcome"
+          multiline
+          rows={3}
+          value={outcome}
+          onChange={(e) => setOutcome(e.target.value)}
+          defaultValue={project.outcome}
+          error={Boolean(validationErrors.outcome)}
+          inputProps={{ style: { resize: "vertical" } }}
+          helperText={validationErrors.outcome ?? " "}
+        />
+        <AIButton text={outcome} setResult={setOutcome} />
+      </Box>
       <Typography variant="h5" sx={{ ml: 1, mt: 1 }}>
         Skills
       </Typography>

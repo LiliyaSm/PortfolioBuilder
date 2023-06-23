@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
 import { dark } from "@/constants";
 import Head from "next/head";
-import { NextPageWithLayout } from '@/types'
+import { NextPageWithLayout } from "@/types";
 import { CategoryScale } from "chart.js";
 import Chart from "chart.js/auto";
 
@@ -33,9 +33,11 @@ const MyApp = ({
       if (loader) loader.remove();
     }
   }, []);
-  
+
   // Use the layout defined at the page level, if available
-  const getLayout = (Component as NextPageWithLayout).getLayout || ((page: React.ReactElement) => <Layout>{page}</Layout>);
+  const getLayout =
+    (Component as NextPageWithLayout).getLayout ||
+    ((page: React.ReactElement) => <Layout>{page}</Layout>);
   return (
     <SessionProvider session={pageProps.session}>
       <Head>

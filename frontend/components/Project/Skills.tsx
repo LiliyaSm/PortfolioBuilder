@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import HighlightOff from "@mui/icons-material/HighlightOff";
 import Stack from "@mui/material/Stack";
-import { ISkills } from "../types";
+import { ISkills } from "../../types";
 import Box from "@mui/material/Box";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";

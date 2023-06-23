@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "@mui/material/Button";
-import { server } from "../config";
+import { server } from "@/config";
 import { Project } from "@/types";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
