@@ -11,6 +11,7 @@ import ControlPointIcon from "@mui/icons-material/ControlPoint";
 
 const AIButtonSize = "37px";
 const addButtonSize = "32px";
+const minCharacters = 50;
 
 interface IAIButton {
   text: string;
@@ -69,14 +70,14 @@ const AIButton = ({ text, setResult }: IAIButton) => {
       <Box sx={{ mb: 1 }}> {improvement}</Box>
     </>
   ) : (
-    "Click the button to get enhanced text (from 50 characters)"
+    `Click the button to get enhanced text (from ${minCharacters} characters)`
   );
 
   const { data: session } = useSession();
   const token = session?.user?.token;
 
   const getAITextImprovement = async () => {
-    if (isLoading || !text) return;
+    if (isLoading || text.length < minCharacters ) return;
     setIsLoading(true);
 
     const apiUrl = `${server}/api/chat`;

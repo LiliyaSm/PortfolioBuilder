@@ -21,6 +21,7 @@ import {
   programmingLanguages,
   programmingFrameworks,
   PADDING_TOP,
+  SMALL_SCREEN,
 } from "@/constants";
 import Skills from "@/components/Project/Skills";
 import ProjectChip from "@/components/Project/ProjectChip";
@@ -31,6 +32,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import _ from "lodash";
 import { useSession } from "next-auth/react";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface IProjectSection {
   isNewProject?: boolean;
@@ -63,6 +65,7 @@ const ProjectSection = ({
 
   const { data: session } = useSession();
   const token = session?.user?.token;
+  const isSmallScreen = useMediaQuery(SMALL_SCREEN);
 
   const skills = [
     {
@@ -220,7 +223,7 @@ const ProjectSection = ({
         {isNewProject && <ProjectChip label="New project" />}
       </Stack>
 
-      <Stack direction="row" spacing={1}>
+      <Stack direction={isSmallScreen ? "column" : "row"} spacing={1}>
         <TextField
           fullWidth
           color="secondary"
@@ -230,12 +233,13 @@ const ProjectSection = ({
           name="clientName"
           error={Boolean(validationErrors.clientName)}
           helperText={validationErrors.clientName ?? " "}
+          sx={{ minWidth: "270px" }}
         />
         <Stack
           direction="row"
           alignItems="center"
           sx={{
-            mr: 1,
+            mr: 2,
             pb: 3,
             minWidth: "400px",
           }}
@@ -258,7 +262,11 @@ const ProjectSection = ({
           </Select>
         </Stack>
       </Stack>
-      <Stack direction="row" alignContent="center" spacing={1}>
+      <Stack
+        direction={isSmallScreen ? "column" : "row"}
+        alignContent="center"
+        spacing={1}
+      >
         <TextField
           fullWidth
           color="secondary"
@@ -267,12 +275,13 @@ const ProjectSection = ({
           defaultValue={project.projectName}
           name="projectName"
           error={Boolean(validationErrors.projectName)}
+          sx={{ minWidth: "270px" }}
           helperText={validationErrors.projectName ?? " "}
         />
         <Stack
           direction="row"
           alignItems="center"
-          justifyContent="flex-end"
+          justifyContent={isSmallScreen ? "flex-start" : "flex-end"}
           sx={{
             mr: 2,
             pb: 3,

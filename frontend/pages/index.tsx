@@ -34,7 +34,6 @@ export default function Home({
 
   const isSmallScreen = useMediaQuery("(max-width:1200px)");
 
-
   const instructionsList = [
     <span>Add project to your portfolio</span>,
     <span>
@@ -53,7 +52,7 @@ export default function Home({
           height: isSmallScreen ? "auto" : "100vh",
           display: "flex",
           justifyContent: "space-evenly",
-          paddingTop: `${HEADER_HEIGHT}px`,
+          pt: 14,
           px: 8,
         }}
       >
@@ -228,7 +227,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const response = await fetch(apiUrl);
 
   const statisticsData = await response.json();
-  console.log()
   return {
     props: {
       statisticsData,

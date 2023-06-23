@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { generateDropDownFields } from "@/utils";
 import InputLabel from "@mui/material/InputLabel";
-import Stack from "@mui/material/Stack";
+import { Stack } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import {
   cloudValues,
@@ -10,6 +10,8 @@ import {
   roles,
 } from "@/constants";
 import { Project, ValidationErrors } from "@/types";
+
+const dropDownStackStyle = { mr: 2, mb: 1.5 };
 
 const ProjectSectionDropdowns = ({
   validationErrors,
@@ -34,14 +36,8 @@ const ProjectSectionDropdowns = ({
   };
 
   return (
-    <>
-      <Stack
-        direction="row"
-        alignItems="center"
-        sx={{
-          mr: 2,
-        }}
-      >
+    <Stack direction="row" sx={{ flexWrap: "wrap" }}>
+      <Stack direction="row" alignItems="center" sx={dropDownStackStyle}>
         <InputLabel id="role-label">Role</InputLabel>
         <Select
           sx={{ minWidth: 190, ml: 2 }}
@@ -57,14 +53,7 @@ const ProjectSectionDropdowns = ({
           {generateDropDownFields(roles)}
         </Select>
       </Stack>
-      <Stack
-        direction="row"
-        alignItems="center"
-        sx={{
-          mr: 2,
-          flexWrap: "wrap",
-        }}
-      >
+      <Stack direction="row" alignItems="center" sx={dropDownStackStyle}>
         <InputLabel id="size-label">Project size</InputLabel>
         <Select
           sx={{ minWidth: 160, ml: 2 }}
@@ -80,14 +69,7 @@ const ProjectSectionDropdowns = ({
           {generateDropDownFields(projectSizesValues)}
         </Select>
       </Stack>
-      <Stack
-        direction="row"
-        alignItems="center"
-        sx={{
-          mr: 2,
-          flexWrap: "wrap",
-        }}
-      >
+      <Stack direction="row" alignItems="center" sx={dropDownStackStyle}>
         <InputLabel id="cloud-label">Cloud</InputLabel>
         <Select
           sx={{ minWidth: 160, ml: 2 }}
@@ -103,14 +85,7 @@ const ProjectSectionDropdowns = ({
           {generateDropDownFields(cloudValues)}
         </Select>
       </Stack>
-      <Stack
-        direction="row"
-        alignItems="center"
-        sx={{
-          mr: 2,
-          flexWrap: "wrap",
-        }}
-      >
+      <Stack direction="row" alignItems="center" sx={dropDownStackStyle}>
         <InputLabel id="team-size-label">Team size</InputLabel>
         <Select
           sx={{ minWidth: 200, ml: 2 }}
@@ -126,7 +101,7 @@ const ProjectSectionDropdowns = ({
           {generateDropDownFields(projectTeamSizeValues)}
         </Select>
       </Stack>
-    </>
+    </Stack>
   );
 };
 

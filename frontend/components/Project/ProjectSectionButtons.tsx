@@ -55,7 +55,6 @@ export const ProjectSectionButtons = ({
       </Button>
       <Button
         onClick={onClickDelete}
-        sx={{ mr: 10 }}
         variant="contained"
         size="large"
       >

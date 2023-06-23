@@ -22,43 +22,44 @@ const ProjectDates = ({
     !Boolean(project.endDate)
   );
   return (
-    <Stack
-      sx={{ my: 1 }}
-      direction="row"
-      alignItems="center"
-      justifyContent="flex-start"
-    >
-      <Box>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DateField
-            required
-            name="startDate"
-            label="Start date"
-            color="secondary"
-            defaultValue={dayjs(project.startDate) || ""}
-            helperText={validationErrors.startDate ?? " "}
-            sx={{ minWidth: 140 }}
-            format="YYYY-MM-DD"
-          />
-        </LocalizationProvider>
-      </Box>
-      <Box>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DateField
-            required={!isCurrentlyWorking}
-            disabled={isCurrentlyWorking}
-            color="secondary"
-            name="endDate"
-            label={!isCurrentlyWorking ? "End date" : ""}
-            defaultValue={dayjs(project.endDate) ?? ""}
-            helperText={validationErrors.endDate ?? " "}
-            format="YYYY-MM-DD"
-            sx={{ minWidth: 140, ml: 3 }}
-          />
-        </LocalizationProvider>
-      </Box>
+    <Stack direction="row" sx={{ flexWrap: "wrap", mt: 1 }}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="flex-start"
+      >
+        <Box>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateField
+              required
+              name="startDate"
+              label="Start date"
+              color="secondary"
+              defaultValue={dayjs(project.startDate) || ""}
+              helperText={validationErrors.startDate ?? " "}
+              sx={{ minWidth: 140, mr: 3 }}
+              format="YYYY-MM-DD"
+            />
+          </LocalizationProvider>
+        </Box>
+        <Box>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateField
+              required={!isCurrentlyWorking}
+              disabled={isCurrentlyWorking}
+              color="secondary"
+              name="endDate"
+              label={!isCurrentlyWorking ? "End date" : ""}
+              defaultValue={dayjs(project.endDate) ?? ""}
+              helperText={validationErrors.endDate ?? " "}
+              format="YYYY-MM-DD"
+              sx={{ minWidth: 140, mr: 3 }}
+            />
+          </LocalizationProvider>
+        </Box>
+      </Stack>
       <FormControlLabel
-        sx={{ ml: 2, mb: 2 }}
+        sx={{ mb: 2 }}
         control={
           <Checkbox
             color="secondary"
