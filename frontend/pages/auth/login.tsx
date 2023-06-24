@@ -173,8 +173,4 @@ const Login = (): React.ReactElement => {
   );
 };
 
-// Login.getLayout = function getLayout(page: React.ReactElement) {
-//   return <LandingLayout>{page}</LandingLayout>;
-// };
-
 export default Login;

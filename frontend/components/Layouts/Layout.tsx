@@ -1,7 +1,6 @@
 "use client";
 import React, { ReactNode } from "react";
-import "@/src/app/globals.css";
-import Nav from "./Nav";
+import Nav from "@/components/Nav";
 import Container from "@mui/material/Container";
 import { usePathname } from "next/navigation";
 import GuestFooter from "@/components/GuestFooter";

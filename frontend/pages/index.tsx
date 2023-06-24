@@ -2,11 +2,9 @@
 "use client";
 import React, { useState } from "react";
 import PieChart from "@/components/PieChart";
-import theme from "@/src/themes/defaultDarkTheme";
-import { ThemeProvider } from "@mui/material/styles";
 import List from "@mui/material/List";
 import { Box, Typography, Stack, Container, Button } from "@mui/material";
-import LandingLayout from "@/components/LandingLayout";
+import LandingLayout from "@/components/Layouts/LandingLayout";
 import { light, HEADER_HEIGHT } from "@/constants";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { IGeneralStatistics, ISkillsStatistics, IStatistics } from "@/types";
@@ -44,7 +42,6 @@ export default function Home({
   ];
 
   return (
-    <ThemeProvider theme={theme}>
       <Box
         sx={{
           backgroundColor: "background.default",
@@ -213,7 +210,6 @@ export default function Home({
           </Box>
         </Stack>
       </Box>
-    </ThemeProvider>
   );
 }
 

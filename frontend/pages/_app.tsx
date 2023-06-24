@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import "react-toastify/dist/ReactToastify.css";
-import Layout from "@/components/Layout";
+import Layout from "@/components/Layouts/Layout";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";

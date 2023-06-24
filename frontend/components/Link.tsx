@@ -6,7 +6,7 @@ import MuiLink, { LinkProps as MuiLinkProps } from '@mui/material/Link';
 import { styled } from '@mui/material/styles';
 
 // Add support for the sx prop for consistency with the other branches.
-const Anchor = styled('a')({});
+const Anchor = styled("a")({ textDecoration: "none !important" });
 
 interface NextLinkComposedProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>,
