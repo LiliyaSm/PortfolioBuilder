@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState } from "react";
-import Link from "../components/Link";
+import Link from "@/components/Link";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import PreviewIcon from "@mui/icons-material/Preview";
@@ -11,13 +11,14 @@ import Container from "@mui/material/Container";
 import { Tooltip, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import { Portfolio } from "../types";
-import { server } from "../config";
+import { Portfolio } from "@/types";
+import { server } from "@/config";
 import Router from "next/router";
 import { displayToastSuccess } from "@/utils";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { darkGrey, lightGrey } from "@/constants";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const Portfolios = ({
   portfolios,
@@ -59,8 +60,14 @@ const Portfolios = ({
     <Container
       component="div"
       maxWidth="lg"
-      sx={{ backgroundColor: "white", py: 3, borderRadius: "14px" }}
+      sx={{
+        backgroundColor: "white",
+        py: 3,
+        borderRadius: "14px",
+        position: "relative",
+      }}
     >
+      <Breadcrumbs />
       <List>
         {sortedPortfolios.map((portfolio) => {
           return (
@@ -81,7 +88,7 @@ const Portfolios = ({
                         color: "text.primary",
                         textDecoration: "none",
                       }}
-                      href={`/portfolio/edit/${portfolio.id}`}
+                      href={`/portfolios/${portfolio.id}/edit`}
                     >
                       {portfolio.name}
                     </Link>
@@ -97,14 +104,14 @@ const Portfolios = ({
                   <Tooltip title="Preview portfolio">
                     <Link
                       sx={{ textDecoration: "none" }}
-                      href={`/portfolio/${portfolio.id}`}
+                      href={`/portfolios/${portfolio.id}`}
                     >
                       <PreviewIcon color="primary" />
                     </Link>
                   </Tooltip>
                   <Link
                     sx={{ color: darkGrey, textDecoration: "none" }}
-                    href={`/portfolio/edit/${portfolio.id}`}
+                    href={`/portfolios/${portfolio.id}/edit`}
                   >
                     <Tooltip title="Edit portfolio">
                       <EditIcon color="primary" />

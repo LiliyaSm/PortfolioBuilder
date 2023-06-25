@@ -40,7 +40,7 @@ const MenuAppBar = (): React.ReactElement => {
     const response = await fetch(apiUrl, requestOptions);
     const portfolio = await response.json();
     if (response.ok) {
-      router.push(`/portfolio/edit/${portfolio.id}`);
+      router.push(`/portfolios/${portfolio.id}/edit`);
     }
   };
 

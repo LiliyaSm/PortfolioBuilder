@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import Box from "@mui/material/Box";
 import ListItem from "@mui/material/ListItem";
-import Container from "@mui/material/Container";
+import {Container, Tooltip} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -14,6 +14,9 @@ import { roles, darkGrey } from "@/constants";
 import upperFirst from "lodash/capitalize";
 import { getSession } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import Link from "@/components/Link";
+import EditIcon from "@mui/icons-material/Edit";
 
 const dateOptions = {
   year: "numeric",
@@ -30,11 +33,25 @@ const View = ({ portfolio }: { portfolio: Portfolio }): React.ReactElement => {
     <Container
       component="div"
       maxWidth="md"
-      sx={{ backgroundColor: "white", p: 2, borderRadius: "10px" }}
+      sx={{
+        backgroundColor: "white",
+        p: 2,
+        borderRadius: "10px",
+        position: "relative",
+      }}
     >
-      <Typography variant="h4">
-        {session?.user?.name}
-      </Typography>
+      <Breadcrumbs />
+      <Stack direction="row" justifyContent="space-between">
+        <Typography variant="h4">{session?.user?.name}</Typography>
+        <Tooltip title="Edit">
+          <Link
+            sx={{ mr: 2, textDecoration: "none" }}
+            href={`/portfolios/${portfolio.id}/edit`}
+          >
+            <EditIcon color="secondary" />
+          </Link>
+        </Tooltip>
+      </Stack>
       <Divider />
       {sortedProjects.length ? (
         sortedProjects.map((project) => {
@@ -129,7 +146,7 @@ const View = ({ portfolio }: { portfolio: Portfolio }): React.ReactElement => {
           );
         })
       ) : (
-        <Typography sx={{mt: 2}}>No data to display</Typography>
+        <Typography sx={{ mt: 2 }}>No data to display</Typography>
       )}
       <List></List>
     </Container>
@@ -161,7 +178,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
   return {
     notFound: true,
-  }
+  };
 }
 
 export default View;

@@ -25,7 +25,7 @@ const Layout = ({ children }: ILayoutProps) => {
   return (
     <div>
       <Nav />
-      <Container component="main" maxWidth="lg" sx={{ mt: 14 }}>
+      <Container component="main" maxWidth="lg" sx={{ mt: 17 }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           {children}
