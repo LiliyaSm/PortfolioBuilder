@@ -35,7 +35,7 @@ export const ProjectSectionButtons = ({
     };
     const response = await fetch(apiUrl, requestOptions);
     if (response.ok) {
-      router.push(`/portfolio/edit/${project.portfolioId}`);
+      router.push(`/portfolios/${project.portfolioId}/edit`);
       displayToastSuccess("Deleted");
     }
   };

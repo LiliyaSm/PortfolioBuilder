@@ -133,7 +133,7 @@ const ProjectSection = ({
 
     const response = await fetch(apiUrl, requestOptions);
     if (response.ok) {
-      Router.push(`/portfolio/edit/${project.portfolioId}`);
+      Router.push(`/portfolios/${project.portfolioId}/edit`);
       setNewProject(false);
       displayToastSuccess("Successfully created");
       setIsLoading(false);
@@ -187,7 +187,7 @@ const ProjectSection = ({
     const response = await fetch(apiUrl, requestOptions);
 
     if (response.ok) {
-      Router.push(`/portfolio/edit/${project.portfolioId}`);
+      Router.push(`/portfolios/${project.portfolioId}/edit`);
       displayToastSuccess("Successfully updated");
       setIsLoading(false);
     } else {

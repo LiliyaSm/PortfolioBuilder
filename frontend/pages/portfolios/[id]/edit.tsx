@@ -16,6 +16,7 @@ import { GetServerSidePropsContext } from "next";
 import Link from "@/components/Link";
 import PreviewIcon from "@mui/icons-material/Preview";
 import { useSession, getSession } from "next-auth/react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
   const [newProject, setNewProject] = useState<boolean>(false);
@@ -78,15 +79,23 @@ const EditPortfolio = ({ portfolio }: { portfolio: Portfolio }) => {
 
   return (
     <Box>
-      <Box sx={{ backgroundColor: "white", p: 2, borderRadius: "14px" }}>
+      <Box
+        sx={{
+          backgroundColor: "white",
+          p: 2,
+          borderRadius: "14px",
+          position: "relative",
+        }}
+      >
+        <Breadcrumbs />
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="h5">
             Edit the Portfolio: {portfolio.name}
           </Typography>
-          <Tooltip title="Go to view">
+          <Tooltip title="View">
             <Link
               sx={{ mr: 2, textDecoration: "none" }}
-              href={`/portfolio/${portfolio.id}`}
+              href={`/portfolios/${portfolio.id}`}
             >
               <PreviewIcon color="secondary" />
             </Link>
@@ -167,7 +176,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
   return {
     notFound: true,
-  }
+  };
 }
 
 export default EditPortfolio;

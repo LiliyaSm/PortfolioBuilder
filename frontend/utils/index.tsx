@@ -50,3 +50,15 @@ export const displayToastSuccess = (msg: string) =>
   toast.success(msg, {
     icon: "⚡",
   });
+
+  export function getPaths(pathname: string): { name: string; path: string }[] {
+    const segments = pathname.split('/').filter(segment => segment !== '');
+  
+    let path = '';
+    const result = segments.map(segment => {
+      path += "/" + segment;
+      return { name: segment, path };
+    });
+  
+    return [{ name: 'home', path: '/' }, ...result];
+  }
